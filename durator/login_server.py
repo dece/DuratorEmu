@@ -1,11 +1,14 @@
+import binascii
 import socket
 from struct import Struct
+import time
 import threading
 
 from shgck_tools.bin import dump_data
 
 from durator.network import netstr_to_str
 from durator.srp import Srp
+from durator.utils import hexlify
 
 
 class LoginServer(object):
@@ -28,6 +31,8 @@ class LoginServer(object):
         self._stop_listening()
 
     def _start_listening(self):
+        """ Start listening with a non-blocking socket,
+        to still capture Windows signals. """
         self.socket = socket.socket()
         self.socket.settimeout(1)
         self.socket.bind( (LoginServer.HOST, LoginServer.PORT) )
@@ -71,6 +76,8 @@ class LoginConnection(object):
         self.server = server
         self.socket = socket
         self.address = address
+        self.keep_connected = True
+        self.pass_entry = None
         self.srp = Srp()
 
     def __del__(self):
@@ -82,7 +89,7 @@ class LoginConnection(object):
         connection_thread.start()
 
     def _handle(self):
-        while True:
+        while self.keep_connected:
             data = self.socket.recv(1024)
             if not data:
                 break
@@ -90,21 +97,42 @@ class LoginConnection(object):
         print("Connection closed.")
 
     def _handle_packet(self, data):
-        print(dump_data(data), end = "")
         opcode = data[0]
         if opcode == LoginOpCodes.CHALLENGE:
-            print("Received challenge.")
+            print("Received challenge query.")
             self._handle_challenge(data[1:])
+        elif opcode == LoginOpCodes.PROOF:
+            print("Received proof query.")
+            self._handle_proof(data[1:])
         else:
             print("Unknown operation:", opcode)
+            print(dump_data(data), end = "")
 
     def _handle_challenge(self, data):
         challenge = LoginChallenge(data)
-        pass_entry = self.server.get_pass_entry(challenge.account_name)
-        answer = challenge.get_answer(self.srp, pass_entry)
-        print("Answering challenge:")
-        print(dump_data(answer), end = "")
+        print("->", challenge.account_name, challenge.format_ip())
+        self.pass_entry = self.server.get_pass_entry(challenge.account_name)
+        answer = challenge.get_answer(self.srp, self.pass_entry)
+        time.sleep(0.5)
         self.socket.sendall(answer)
+        print("Challenge answer sent.")
+
+    def _handle_proof(self, data):
+        proof = LoginProof(data)
+        if not self.srp.verify_proof(proof, self.pass_entry):
+            print("WRONG PROOF:\n\tReceived='{}'\n\tComputed='{}'".format(
+                hexlify(proof.client_proof), hexlify(self.srp.client_proof)
+            ))
+            self.keep_connected = False
+            return
+        else:
+            print("Client proof correct.")
+        self.srp.gen_server_proof(proof)
+        answer = proof.get_answer(self.srp.server_proof)
+        time.sleep(0.5)
+        self.socket.sendall(answer)
+        print("Server proof sent.")
+
 
 
 class LoginOpCodes(object):
@@ -120,11 +148,12 @@ class LoginChallenge(object):
 
     CHALL_HEADER_BIN = Struct("<BH")
     CHALL_CONTENT_BIN = Struct("<4s3BH4s4s4sI4BB")
-    REPR_FORMAT = ( "Error={}, Size={}, Game='{}', Version={}.{}.{}.{}, "
-                    "Arch='{}', Platform='{}', Locale='{}', TZ={}, "
-                    "IP={}.{}.{}.{}, Account='{}'" )
-
     CHALL_ANSWER_BIN = Struct("<3B32sB1sB32s32s16sB")
+
+    REPR_FORMAT = ( "Account='{}', IP={}.{}.{}.{}, Error={}, Size={}, "
+                    "Game='{}', Version={}.{}.{}.{}, "
+                    "Arch='{}', Platform='{}', Locale='{}', TZ={}" )
+    IP_FORMAT = "{}.{}.{}.{}"
 
     def __init__(self, packet):
         self.unk_code = 0
@@ -145,12 +174,12 @@ class LoginChallenge(object):
 
     def __repr__(self):
         return LoginChallenge.REPR_FORMAT.format(
+            self.account_name,
+            self.ip[0], self.ip[1], self.ip[2], self.ip[3],
             self.unk_code, self.size, self.game_name,
             self.version_major, self.version_minor,
             self.version_patch, self.version_build,
-            self.arch, self.platform, self.locale, self.timezone,
-            self.ip[0], self.ip[1], self.ip[2], self.ip[3],
-            self.account_name
+            self.arch, self.platform, self.locale, self.timezone
         )
 
     def parse_packet(self, packet):
@@ -158,7 +187,6 @@ class LoginChallenge(object):
         self._parse_packet_header(offset, packet)
         offset += LoginChallenge.CHALL_HEADER_BIN.size
         self._parse_packet_content(offset, packet)
-        print(self)
 
     def _parse_packet_header(self, offset, packet):
         end_offset = offset + LoginChallenge.CHALL_HEADER_BIN.size
@@ -187,6 +215,11 @@ class LoginChallenge(object):
         account_name = packet[ end_offset : end_offset+self.account_name_size ]
         self.account_name = account_name.decode("ascii")
 
+    def format_ip(self):
+        return LoginChallenge.IP_FORMAT.format(
+            self.ip[0], self.ip[1], self.ip[2], self.ip[3]
+        )
+
     def get_answer(self, srp, pass_entry):
         srp.gen_server_ephemeral(pass_entry.verifier)
         server_ephemeral = int.to_bytes(srp.server_ephemeral, 32, "little")
@@ -195,17 +228,10 @@ class LoginChallenge(object):
         salt = pass_entry.salt
 
         answer = LoginChallenge.CHALL_ANSWER_BIN.pack(
-            LoginOpCodes.CHALLENGE,
-            LoginChallengeResults.SUCCESS,
-            0,
-            server_ephemeral,
-            1,
-            generator,
-            32,
-            modulus,
-            salt,
-            b"\x00" * 16,
-            0
+            LoginOpCodes.CHALLENGE, LoginChallengeResults.SUCCESS,
+            0, server_ephemeral,
+            len(generator), generator, len(modulus), modulus, salt,
+            b"\x00"*16, 0
         )
         return answer
 
@@ -213,3 +239,35 @@ class LoginChallenge(object):
 class LoginChallengeResults(object):
 
     SUCCESS = 0x00
+
+
+class LoginProof(object):
+    """ Process the SRP proof packets. Ephemeral and proof are converted to
+    big integers. """
+
+    PROOF_BIN = Struct("<32s20s20sB")
+    ANSWER_BIN = Struct("<2B20sB")
+
+    REPR_FORMAT = "ClientEphemeral={}, ClientProof={}, Checksum={}"
+
+    def __init__(self, packet):
+        self.parse_packet(packet)
+
+    def __repr__(self):
+        return LoginProof.REPR_FORMAT.format(
+            self.client_ephemeral, self.client_proof,
+            binascii.hexlify(self.checksum).decode("ascii")
+        )
+
+    def parse_packet(self, packet):
+        data = LoginProof.PROOF_BIN.unpack(packet)
+        self.client_ephemeral = int.from_bytes(data[0], "little")
+        self.client_proof = data[1]
+        self.checksum = data[2]
+        self.unk = data[3]
+
+    def get_answer(self, server_proof):
+        answer = LoginProof.ANSWER_BIN.pack(
+            LoginOpCodes.PROOF, 0, server_proof, 0
+        )
+        return answer
