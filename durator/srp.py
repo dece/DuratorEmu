@@ -4,6 +4,8 @@ import hashlib
 import os
 import random
 
+from durator.utils import hexlify
+
 random.seed()
 
 
@@ -19,7 +21,7 @@ class Srp(object):
     """
 
     MODULUS    = \
-        0x0894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7
+        0x894B645E89E1535BBDAD5B8B290650530801B18EBFBF5E8FAB3C82872A3E9BB7
     GENERATOR  = 7
     MULTIPLIER = 3
 
@@ -58,6 +60,7 @@ class Srp(object):
         pow_verifier *= client_eph
         to_interleave = pow(pow_verifier, self.priv_ephemeral, Srp.MODULUS)
         self.session_key = _sha1_interleave(to_interleave)
+        print("Session key: " + hexlify(self.session_key))
 
     @staticmethod
     def _scramble_a_b(big_int_a, big_int_b):
@@ -83,6 +86,7 @@ class Srp(object):
                     pass_entry.salt + client_eph + server_eph +
                     self.session_key )
         self.client_proof = _sha1(to_hash)
+        print("Generated client proof: " + hexlify(self.client_proof))
 
     def gen_server_proof(self, proof):
         client_eph = int.to_bytes(proof.client_ephemeral, 32, "little")
@@ -91,6 +95,8 @@ class Srp(object):
 
     @staticmethod
     def gen_pass_entry(ident, password):
+        ident = ident.upper()
+        password = password.upper()
         salt = os.urandom(32)
         verifier = Srp._gen_verifier(ident, password, salt)
         pass_entry = SrpPassEntry(ident, verifier, salt)
@@ -137,21 +143,16 @@ def _sha1_interleave(big_int):
 
     part1 = b""
     part2 = b""
-    i = 0
-    while i < len(big_array):
+    for i in range(len(big_array)):
         if i % 2 == 0:
             part1 += big_array[i:i+1]
         else:
             part2 += big_array[i:i+1]
-        i += 1
 
     hash1 = _sha1(part1)
     hash2 = _sha1(part2)
     interleaved = b""
-    i = 0
-    while i < 20:
+    for i in range(20):
         interleaved += hash1[i:i+1] + hash2[i:i+1]
-        i += 1
 
-    assert len(interleaved) == 40
     return interleaved

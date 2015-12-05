@@ -1,4 +1,5 @@
 import binascii
+import os
 import socket
 from struct import Struct
 import time
@@ -9,6 +10,22 @@ from shgck_tools.bin import dump_data
 from durator.network import netstr_to_str
 from durator.srp import Srp
 from durator.utils import hexlify
+
+
+class LoginOpCodes(object):
+    """ Opcodes used during the login process. """
+
+    LOGIN_CHALL   = 0x00
+    LOGIN_PROOF   = 0x01
+    RECON_CHALL   = 0x02
+    RECON_PROOF   = 0x03
+    REALMLIST     = 0x10
+    XFER_INITIATE = 0x30
+    XFER_DATA     = 0x31
+
+class LoginChallengeResults(object):
+
+    SUCCESS = 0x00
 
 
 class LoginServer(object):
@@ -97,50 +114,43 @@ class LoginConnection(object):
         print("Connection closed.")
 
     def _handle_packet(self, data):
-        opcode = data[0]
-        if opcode == LoginOpCodes.CHALLENGE:
+        print(dump_data(data), end = "")
+        opcode, packet = data[0], data[1:]
+        if opcode == LoginOpCodes.LOGIN_CHALL:
             print("Received challenge query.")
-            self._handle_challenge(data[1:])
-        elif opcode == LoginOpCodes.PROOF:
+            self._handle_challenge(packet)
+        elif opcode == LoginOpCodes.LOGIN_PROOF:
             print("Received proof query.")
-            self._handle_proof(data[1:])
+            self._handle_proof(packet)
         else:
             print("Unknown operation:", opcode)
             print(dump_data(data), end = "")
 
     def _handle_challenge(self, data):
         challenge = LoginChallenge(data)
-        print("->", challenge.account_name, challenge.format_ip())
+        print(challenge.account_name, challenge.format_ip())
         self.pass_entry = self.server.get_pass_entry(challenge.account_name)
-        answer = challenge.get_answer(self.srp, self.pass_entry)
-        time.sleep(0.5)
-        self.socket.sendall(answer)
-        print("Challenge answer sent.")
+        response = challenge.get_response(self.srp, self.pass_entry)
+        print(dump_data(response), end = "")
+        time.sleep(0.1)
+        self.socket.sendall(response)
+        print("Challenge response sent.")
 
     def _handle_proof(self, data):
         proof = LoginProof(data)
+        print("Received proof: " + hexlify(proof.client_proof))
         if not self.srp.verify_proof(proof, self.pass_entry):
-            print("WRONG PROOF:\n\tReceived='{}'\n\tComputed='{}'".format(
-                hexlify(proof.client_proof), hexlify(self.srp.client_proof)
-            ))
+            print("WRONG PROOF!")
             self.keep_connected = False
             return
         else:
-            print("Client proof correct.")
+            print("Authenticated!")
         self.srp.gen_server_proof(proof)
-        answer = proof.get_answer(self.srp.server_proof)
-        time.sleep(0.5)
-        self.socket.sendall(answer)
+        response = proof.get_response(self.srp.server_proof)
+        print(dump_data(response), end = "")
+        time.sleep(0.1)
+        self.socket.sendall(response)
         print("Server proof sent.")
-
-
-
-class LoginOpCodes(object):
-    """ Opcodes used during the login process. """
-
-    CHALLENGE = 0x00
-    PROOF     = 0x01
-    REALMLIST = 0x10
 
 
 class LoginChallenge(object):
@@ -148,7 +158,7 @@ class LoginChallenge(object):
 
     CHALL_HEADER_BIN = Struct("<BH")
     CHALL_CONTENT_BIN = Struct("<4s3BH4s4s4sI4BB")
-    CHALL_ANSWER_BIN = Struct("<3B32sB1sB32s32s16sB")
+    CHALL_RESPONSE_BIN = Struct("<3B32sB1sB32s32s16sB")
 
     REPR_FORMAT = ( "Account='{}', IP={}.{}.{}.{}, Error={}, Size={}, "
                     "Game='{}', Version={}.{}.{}.{}, "
@@ -216,29 +226,25 @@ class LoginChallenge(object):
         self.account_name = account_name.decode("ascii")
 
     def format_ip(self):
+        # TODO should be elsewhere
         return LoginChallenge.IP_FORMAT.format(
             self.ip[0], self.ip[1], self.ip[2], self.ip[3]
         )
 
-    def get_answer(self, srp, pass_entry):
+    def get_response(self, srp, pass_entry):
         srp.gen_server_ephemeral(pass_entry.verifier)
         server_ephemeral = int.to_bytes(srp.server_ephemeral, 32, "little")
         generator = int.to_bytes(Srp.GENERATOR, 1, "little")
         modulus = int.to_bytes(Srp.MODULUS, 32, "little")
         salt = pass_entry.salt
 
-        answer = LoginChallenge.CHALL_ANSWER_BIN.pack(
-            LoginOpCodes.CHALLENGE, LoginChallengeResults.SUCCESS,
+        response = LoginChallenge.CHALL_RESPONSE_BIN.pack(
+            LoginOpCodes.LOGIN_CHALL, LoginChallengeResults.SUCCESS,
             0, server_ephemeral,
             len(generator), generator, len(modulus), modulus, salt,
-            b"\x00"*16, 0
+            os.urandom(16), 0
         )
-        return answer
-
-
-class LoginChallengeResults(object):
-
-    SUCCESS = 0x00
+        return response
 
 
 class LoginProof(object):
@@ -246,7 +252,7 @@ class LoginProof(object):
     big integers. """
 
     PROOF_BIN = Struct("<32s20s20sB")
-    ANSWER_BIN = Struct("<2B20sB")
+    RESPONSE_BIN = Struct("<2B20sI")
 
     REPR_FORMAT = "ClientEphemeral={}, ClientProof={}, Checksum={}"
 
@@ -266,8 +272,8 @@ class LoginProof(object):
         self.checksum = data[2]
         self.unk = data[3]
 
-    def get_answer(self, server_proof):
-        answer = LoginProof.ANSWER_BIN.pack(
-            LoginOpCodes.PROOF, 0, server_proof, 0
+    def get_response(self, server_proof):
+        response = LoginProof.RESPONSE_BIN.pack(
+            LoginOpCodes.LOGIN_PROOF, 0, server_proof[::-1], 0
         )
-        return answer
+        return response
