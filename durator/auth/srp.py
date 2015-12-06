@@ -9,6 +9,7 @@ import os
 import random
 
 from durator.utils.misc import hexlify
+from durator.utils.logger import LOG
 
 random.seed()
 
@@ -38,14 +39,12 @@ class Srp(object):
         self.server_proof = b""
 
     def _generate_priv_ephemeral(self):
-        """ Generate the private ephemeral (b) """
         random_19_bytes = os.urandom(19)
         big_random_int = int.from_bytes(random_19_bytes, "little")
         priv_ephemeral = big_random_int % Srp.MODULUS
         self.priv_ephemeral = priv_ephemeral
 
     def generate_server_ephemeral(self, verifier):
-        """ Generate the server ephemeral (B) """
         big_integer = pow(Srp.GENERATOR, self.priv_ephemeral, Srp.MODULUS)
         ephemeral = (Srp.MULTIPLIER * verifier + big_integer) % Srp.MODULUS
         self.server_ephemeral = ephemeral
@@ -57,7 +56,6 @@ class Srp(object):
         pow_verifier *= client_eph
         to_interleave = pow(pow_verifier, self.priv_ephemeral, Srp.MODULUS)
         self.session_key = _sha1_interleave(to_interleave)
-        print("Session key: " + hexlify(self.session_key))
 
     @staticmethod
     def _scramble_a_b(big_int_a, big_int_b):
@@ -85,7 +83,7 @@ class Srp(object):
                     account.srp_salt + client_eph + server_eph +
                     self.session_key )
         self.client_proof = _sha1(to_hash)
-        print("Generated client proof: " + hexlify(self.client_proof))
+        LOG.debug("Generated client proof: " + hexlify(self.client_proof))
 
     def generate_server_proof(self, client_ephemeral):
         assert self.session_key
@@ -106,6 +104,7 @@ class Srp(object):
 
     @staticmethod
     def _generate_verifier(ident, password, salt):
+        """ Generate an SRP verifier from these log informations. """
         logs = ident + ":" + password
         logs_hash = _sha1(logs.encode("ascii"))
         x_content = salt + logs_hash

@@ -5,6 +5,7 @@ from durator.auth.account import Account
 from durator.auth.constants import LoginOpCodes, LoginResults
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
+from durator.utils.logger import LOG
 from durator.utils.network import ip_to_str, netstr_to_str
 
 
@@ -39,7 +40,7 @@ class LoginChallenge(object):
         """ Process the challenge packet: parse its data and check whether that
         account name can log. """
         self._parse_packet(self.packet)
-        print(self.account_name, ip_to_str(self.ip_address))
+        LOG.debug("Account: " + self.account_name)
         return self._process_account()
 
     def _parse_packet(self, packet):
@@ -78,13 +79,11 @@ class LoginChallenge(object):
         """ Check if the account received can log to the server. TODO checks """
         account = self.conn.server.get_account(self.account_name)
         if account.can_log():
-            print(":-)")
             self.conn.account = account
             self.conn.srp.generate_server_ephemeral(account.srp_verifier)
             response = self._get_success_response()
             return LoginConnectionState.SENT_CHALL, response
         else:
-            print(":-(")
             response = self._get_failure_response(account)
             return LoginConnectionState.CLOSED, response
 

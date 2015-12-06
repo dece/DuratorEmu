@@ -3,6 +3,7 @@ import socket
 from durator.auth.account import Account
 from durator.auth.login_connection import LoginConnection
 from durator.auth.srp import Srp
+from durator.utils.logger import LOG
 
 
 class LoginServer(object):
@@ -27,14 +28,14 @@ class LoginServer(object):
         self.socket.settimeout(1)
         self.socket.bind( (LoginServer.HOST, LoginServer.PORT) )
         self.socket.listen(LoginServer.BACKLOG_SIZE)
-        print("Login server running.")
+        LOG.info("Login server running.")
 
     def _accept_connections(self):
         try:
             while True:
                 self._try_accept_connection()
         except KeyboardInterrupt:
-            print("KeyboardInterrupt received, stopping server.")
+            LOG.info("KeyboardInterrupt received, stopping server.")
 
     def _try_accept_connection(self):
         try:
@@ -44,14 +45,14 @@ class LoginServer(object):
             pass
 
     def _handle_connection(self, connection, address):
-        print("Accepting connection from", address)
+        LOG.info("Accepting connection from " + str(address))
         login_connection = LoginConnection(self, connection, address)
         login_connection.threaded_handle_connection()
 
     def _stop_listening(self):
         self.socket.close()
         self.socket = None
-        print("Login server stopped.")
+        LOG.info("Login server stopped.")
 
     def get_account(self, account_name):
         """ (TEMP) Create a dummy account with account name as password. """

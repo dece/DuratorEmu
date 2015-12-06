@@ -6,6 +6,7 @@ from durator.auth.login_challenge import LoginChallenge
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.login_proof import LoginProof
 from durator.auth.srp import Srp
+from durator.utils.logger import LOG
 from durator.utils.misc import dump_data
 
 
@@ -42,6 +43,7 @@ class LoginConnection(object):
         """ Close connection with client. """
         self.state = LoginConnectionState.CLOSED
         self.socket.close()
+        LOG.debug("Server closed the connection.")
 
     def threaded_handle_connection(self):
         """ Start another thread to handle the connection. """
@@ -53,23 +55,24 @@ class LoginConnection(object):
         while self.state != LoginConnectionState.CLOSED:
             data = self.socket.recv(1024)
             if not data:
+                LOG.debug("Client closed the connection.")
                 break
             self._handle_packet(data)
-        print("Connection closed.")
 
     def _handle_packet(self, data):
+        print("<<<")
         print(dump_data(data), end = "")
 
         opcode, packet = LoginOpCodes(data[0]), data[1:]
         if not self.is_opcode_legal(opcode):
-            print( "Received illegal opcode", LoginOpCodes(opcode),
-                   "in state", self.state )
+            LOG.debug( "Received illegal opcode " + LoginOpCodes(opcode)
+                     + " in state " + self.state )
             self.close_connection()
             return
 
         handler_class = LoginConnection.OP_HANDLERS.get(opcode)
         if handler_class is None:
-            print("Unknown operation:", opcode)
+            LOG.debug("Unknown operation: " + opcode)
             self.close_connection()
             return
 
@@ -80,6 +83,7 @@ class LoginConnection(object):
         next_state, response = handler.process()
 
         if response:
+            print(">>>")
             print(dump_data(response), end = "")
             time.sleep(0.1)
             self.socket.sendall(response)
