@@ -1,4 +1,4 @@
-import durator.login_server as login_server
+import durator.auth.login_server as login_server
 
 
 def main():
