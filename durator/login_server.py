@@ -25,7 +25,21 @@ class LoginOpCodes(object):
 
 class LoginChallengeResults(object):
 
-    SUCCESS = 0x00
+    SUCCESS               = 0x00
+    FAIL_UNK1             = 0x01
+    FAIL_UNK1             = 0x02
+    FAIL_BANNED           = 0x03
+    FAIL_UNKNOWN_ACCOUNT  = 0x04
+    FAIL_WRONG_PASSWORD   = 0x05
+    FAIL_ALREADY_ONLINE   = 0x06
+    FAIL_NO_TIME          = 0x07
+    FAIL_DB_BUSY          = 0x08
+    FAIL_VERSION_INVALID  = 0x09
+    FAIL_VERSION_UPDATE   = 0x0A
+    FAIL_INVALID_SERVER   = 0x0B
+    FAIL_SUSPENDED        = 0x0C
+    FAIL_NOACCESS         = 0x0D
+    FAIL_PARENTAL_CONTROL = 0x0F
 
 
 class LoginServer(object):
@@ -274,6 +288,6 @@ class LoginProof(object):
 
     def get_response(self, server_proof):
         response = LoginProof.RESPONSE_BIN.pack(
-            LoginOpCodes.LOGIN_PROOF, 0, server_proof[::-1], 0
+            LoginOpCodes.LOGIN_PROOF, 0, server_proof, 0
         )
         return response
