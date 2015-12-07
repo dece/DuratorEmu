@@ -14,7 +14,7 @@ class LoginChallenge(object):
 
     HEADER_BIN = Struct("<BH")
     CONTENT_BIN = Struct("<4s3BH4s4s4sI4BB")
-    RESPONSE_SUCC_BIN = Struct("<3B32sB1sB32s32s16sB")
+    RESPONSE_SUCC_BIN = Struct("<3B32sB1sB32s32s16s")
     RESPONSE_FAIL_BIN = Struct("<2B")
 
     def __init__(self, connection, packet):
@@ -104,8 +104,7 @@ class LoginChallenge(object):
             len(modulus),
             modulus,
             salt,
-            os.urandom(16),
-            0
+            os.urandom(16)
         )
         return response
 
