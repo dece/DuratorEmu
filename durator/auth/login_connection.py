@@ -65,14 +65,14 @@ class LoginConnection(object):
 
         opcode, packet = LoginOpCodes(data[0]), data[1:]
         if not self.is_opcode_legal(opcode):
-            LOG.debug( "Received illegal opcode " + LoginOpCodes(opcode)
-                     + " in state " + self.state )
+            LOG.debug( "Received illegal opcode " + str(opcode)
+                     + " in state " + str(self.state) )
             self.close_connection()
             return
 
         handler_class = LoginConnection.OP_HANDLERS.get(opcode)
         if handler_class is None:
-            LOG.debug("Unknown operation: " + opcode)
+            LOG.debug("Unknown operation: " + str(opcode))
             self.close_connection()
             return
 
