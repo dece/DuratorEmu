@@ -6,7 +6,7 @@ from durator.auth.constants import LoginOpCodes, LoginResults
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
 from durator.utils.logger import LOG
-from durator.utils.network import ip_to_str, netstr_to_str
+from durator.utils.network import netstr_to_str
 
 
 class LoginChallenge(object):

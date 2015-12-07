@@ -32,5 +32,3 @@ class LoginResults(Enum):
     FAIL_INVALID_SERVER   = 0x0B
     FAIL_SUSPENDED        = 0x0C
     FAIL_NOACCESS         = 0x0D
-    SUCCESS_UNK1          = 0x0E
-    FAIL_PARENTAL_CONTROL = 0x0F

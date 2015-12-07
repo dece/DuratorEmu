@@ -4,14 +4,9 @@ Details on SRP are available here: https://www.ietf.org/rfc/rfc2945.txt
 WoW use it with fixed modulus and generator values.
 """
 
-import hashlib
 import os
-import random
 
-from durator.utils.misc import hexlify
-from durator.utils.logger import LOG
-
-random.seed()
+from durator.utils.crypto import sha1, sha1_interleave
 
 
 class Srp(object):
@@ -55,13 +50,13 @@ class Srp(object):
         pow_verifier = pow(verifier, scramble, Srp.MODULUS)
         pow_verifier *= client_eph
         to_interleave = pow(pow_verifier, self.priv_ephemeral, Srp.MODULUS)
-        self.session_key = _sha1_interleave(to_interleave)
+        self.session_key = sha1_interleave(to_interleave)
 
     @staticmethod
     def _scramble_a_b(big_int_a, big_int_b):
         a_bytes = int.to_bytes(big_int_a, 32, "little")
         b_bytes = int.to_bytes(big_int_b, 32, "little")
-        scramble_hash = _sha1(a_bytes + b_bytes)
+        scramble_hash = sha1(a_bytes + b_bytes)
         scramble = int.from_bytes(scramble_hash, "little")
         return scramble
 
@@ -69,9 +64,9 @@ class Srp(object):
         assert self.server_ephemeral
         assert self.session_key
         modulus_bytes = int.to_bytes(Srp.MODULUS, 32, "little").rstrip(b"\x00")
-        modulus_hash = _sha1(modulus_bytes)
+        modulus_hash = sha1(modulus_bytes)
         gen_bytes = int.to_bytes(Srp.GENERATOR, 32, "little").rstrip(b"\x00")
-        gen_hash = _sha1(gen_bytes)
+        gen_hash = sha1(gen_bytes)
         xor_hash = b""
         for m_byte, g_byte in zip(modulus_hash, gen_hash):
             xor_hash += int.to_bytes(m_byte^g_byte, 1, "little")
@@ -79,18 +74,17 @@ class Srp(object):
         client_eph = int.to_bytes(client_ephemeral, 32, "little")
         server_eph = int.to_bytes(self.server_ephemeral, 32, "little")
 
-        to_hash = ( xor_hash + _sha1(account.name.encode("ascii")) +
+        to_hash = ( xor_hash + sha1(account.name.encode("ascii")) +
                     account.srp_salt + client_eph + server_eph +
                     self.session_key )
-        self.client_proof = _sha1(to_hash)
-        LOG.debug("Generated client proof: " + hexlify(self.client_proof))
+        self.client_proof = sha1(to_hash)
 
     def generate_server_proof(self, client_ephemeral):
         assert self.session_key
         assert self.client_proof
         client_eph = int.to_bytes(client_ephemeral, 32, "little")
         to_hash = client_eph + self.client_proof + self.session_key
-        self.server_proof = _sha1(to_hash)
+        self.server_proof = sha1(to_hash)
 
     @staticmethod
     def generate_account_srp_data(account, password):
@@ -106,36 +100,9 @@ class Srp(object):
     def _generate_verifier(ident, password, salt):
         """ Generate an SRP verifier from these log informations. """
         logs = ident + ":" + password
-        logs_hash = _sha1(logs.encode("ascii"))
+        logs_hash = sha1(logs.encode("ascii"))
         x_content = salt + logs_hash
-        x_bytes = _sha1(x_content)
+        x_bytes = sha1(x_content)
         x_int = int.from_bytes(x_bytes, "little")
         verifier = pow(Srp.GENERATOR, x_int, Srp.MODULUS)
         return verifier
-
-
-def _sha1(data):
-    hasher = hashlib.sha1(data)
-    return hasher.digest()
-
-def _sha1_interleave(big_int):
-    big_array = int.to_bytes(big_int, 128, "little")
-    big_array = big_array.rstrip(b"\x00")
-    if len(big_array) % 2 == 1:
-        big_array = big_array[1:]
-
-    part1 = b""
-    part2 = b""
-    for i in range(len(big_array)):
-        if i % 2 == 0:
-            part1 += big_array[i:i+1]
-        else:
-            part2 += big_array[i:i+1]
-
-    hash1 = _sha1(part1)
-    hash2 = _sha1(part2)
-    interleaved = b""
-    for i in range(20):
-        interleaved += hash1[i:i+1] + hash2[i:i+1]
-
-    return interleaved

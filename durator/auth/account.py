@@ -5,7 +5,7 @@ from durator.auth.srp import Srp
 
 class Account(object):
     """ Account with SRP data.
-    
+
     Attributes:
         name: str, account name
         status: Status, determine if that account is usable or not

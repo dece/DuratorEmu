@@ -10,3 +10,4 @@ class LoginConnectionState(Enum):
     SENT_CHALL  = 2
     SENT_PROOF  = 3
     RECON_CHALL = 4
+    RECON_PROOF = 5

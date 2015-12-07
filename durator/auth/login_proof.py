@@ -3,7 +3,6 @@ from struct import Struct
 from durator.auth.constants import LoginOpCodes, LoginResults
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.utils.logger import LOG
-from durator.utils.misc import hexlify
 
 
 class LoginProof(object):
@@ -24,7 +23,6 @@ class LoginProof(object):
 
     def process(self):
         self._parse_packet(self.packet)
-        LOG.debug("Received proof: " + hexlify(self.client_proof))
 
         account = self.conn.account
         verifier = account.srp_verifier
@@ -34,6 +32,7 @@ class LoginProof(object):
 
         if local_client_proof == self.client_proof:
             LOG.debug("Authenticated!")
+            self.conn.accept_login()
             self.conn.srp.generate_server_proof(self.client_ephemeral)
             response = self._get_success_response()
             return LoginConnectionState.SENT_PROOF, response

@@ -1,9 +1,19 @@
 import socket
+import threading
 
 from durator.auth.account import Account
 from durator.auth.login_connection import LoginConnection
 from durator.auth.srp import Srp
 from durator.utils.logger import LOG
+
+
+def access_logged_in_list(func):
+    def decorator(self, *args, **kwargs):
+        self.logged_in_lock.acquire()
+        return_value = func(self, *args, **kwargs)
+        self.logged_in_lock.release()
+        return return_value
+    return decorator
 
 
 class LoginServer(object):
@@ -15,6 +25,8 @@ class LoginServer(object):
 
     def __init__(self):
         self.socket = None
+        self.logged_in = {}
+        self.logged_in_lock = threading.Lock()
 
     def start(self):
         self._start_listening()
@@ -57,3 +69,27 @@ class LoginServer(object):
     def get_account(self, account_name):
         """ (TEMP) Create a dummy account with account name as password. """
         return Account.get_dummy_account(account_name)
+
+    @access_logged_in_list
+    def accept_account_login(self, account, session_key):
+        self.logged_in[account.name] = {
+            "account": account,
+            "session_key": session_key
+        }
+
+    @access_logged_in_list
+    def logout_account(self, account):
+        del self.logged_in[account.name]
+
+    @access_logged_in_list
+    def is_logged_in(self, account_name):
+        is_logged_in = account_name in self.logged_in
+        return is_logged_in
+
+    @access_logged_in_list
+    def get_logged_in_account(self, account_name):
+        return self.logged_in[account_name]["account"]
+
+    @access_logged_in_list
+    def get_logged_in_session_key(self, account_name):
+        return self.logged_in[account_name]["session_key"]

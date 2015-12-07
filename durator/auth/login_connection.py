@@ -4,6 +4,8 @@ import threading
 from durator.auth.constants import LoginOpCodes
 from durator.auth.login_challenge import LoginChallenge
 from durator.auth.login_connection_state import LoginConnectionState
+from durator.auth.recon_challenge import ReconChallenge
+from durator.auth.recon_proof import ReconProof
 from durator.auth.login_proof import LoginProof
 from durator.auth.srp import Srp
 from durator.utils.logger import LOG
@@ -14,14 +16,20 @@ class LoginConnection(object):
     """ Handle the login process of a client with a SRP challenge. """
 
     LEGAL_OPS = {
-        LoginConnectionState.INIT:        [LoginOpCodes.LOGIN_CHALL],
-        LoginConnectionState.CLOSED:      [],
-        LoginConnectionState.SENT_CHALL:  [LoginOpCodes.LOGIN_PROOF]
+        LoginConnectionState.INIT:        [ LoginOpCodes.LOGIN_CHALL
+                                          , LoginOpCodes.RECON_CHALL ],
+        LoginConnectionState.CLOSED:      [ ],
+        LoginConnectionState.SENT_CHALL:  [ LoginOpCodes.LOGIN_PROOF ],
+        LoginConnectionState.SENT_PROOF:  [ LoginOpCodes.REALMLIST ],
+        LoginConnectionState.RECON_CHALL: [ LoginOpCodes.RECON_PROOF ],
+        LoginConnectionState.RECON_PROOF: [ LoginOpCodes.REALMLIST ],
     }
 
     OP_HANDLERS = {
         LoginOpCodes.LOGIN_CHALL: LoginChallenge,
-        LoginOpCodes.LOGIN_PROOF: LoginProof
+        LoginOpCodes.LOGIN_PROOF: LoginProof,
+        LoginOpCodes.RECON_CHALL: ReconChallenge,
+        LoginOpCodes.RECON_PROOF: ReconProof
     }
 
     def __init__(self, server, connection, address):
@@ -29,8 +37,9 @@ class LoginConnection(object):
         self.socket = connection
         self.address = address
         self.state = LoginConnectionState.INIT
-        self.pass_entry = None
+        self.account = None
         self.srp = Srp()
+        self.recon_challenge = b""
 
     def __del__(self):
         self.socket.close()
@@ -57,7 +66,14 @@ class LoginConnection(object):
             if not data:
                 LOG.debug("Client closed the connection.")
                 break
+            self._try_handle_packet(data)
+
+    def _try_handle_packet(self, data):
+        try:
             self._handle_packet(data)
+        except Exception:
+            LOG.error("Unhandled exception in LoginConnection._handle_packet")
+            raise
 
     def _handle_packet(self, data):
         print("<<<")
@@ -65,14 +81,14 @@ class LoginConnection(object):
 
         opcode, packet = LoginOpCodes(data[0]), data[1:]
         if not self.is_opcode_legal(opcode):
-            LOG.debug( "Received illegal opcode " + str(opcode)
-                     + " in state " + str(self.state) )
+            LOG.warning( "Received illegal opcode " + str(opcode)
+                       + " in state " + str(self.state) )
             self.close_connection()
             return
 
         handler_class = LoginConnection.OP_HANDLERS.get(opcode)
         if handler_class is None:
-            LOG.debug("Unknown operation: " + str(opcode))
+            LOG.warning("Unknown operation: " + str(opcode))
             self.close_connection()
             return
 
@@ -91,3 +107,7 @@ class LoginConnection(object):
         self.state = next_state
         if self.state == LoginConnectionState.CLOSED:
             self.close_connection()
+
+    def accept_login(self):
+        session_key = self.srp.session_key
+        self.server.accept_account_login(self.account, session_key)
