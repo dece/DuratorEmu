@@ -2,7 +2,8 @@
 
 import argparse
 
-import durator.auth.login_server as login_server
+from durator.auth.login_server import LoginServer
+from durator.world.world_server import WorldServer
 from pyshgck.logger import LOG
 
 
@@ -10,14 +11,15 @@ def main():
     LOG.info("DuratorEmu - WoW 1.1.2.4125 Sandbox Server - Shgck 2015")
 
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("server", type = str, help = "server type")
+    argparser.add_argument("server_type", type = str, help = "server type")
     args = argparser.parse_args()
 
     if args.server_type == "login":
-        my_login_server = login_server.LoginServer()
-        my_login_server.start()
+        login_server = LoginServer()
+        login_server.start()
     elif args.server_type == "world":
-        pass
+        world_server = WorldServer()
+        world_server.start()
 
 
 if __name__ == "__main__":

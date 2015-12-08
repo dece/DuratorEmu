@@ -1,8 +1,10 @@
 import socket
 import threading
+import time
 
 from durator.auth.account import Account
 from durator.auth.login_connection import LoginConnection
+from durator.auth.realm_connection import RealmConnection
 from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG
 
@@ -21,19 +23,35 @@ class LoginServer(object):
 
     HOST = "0.0.0.0"
     PORT = 3724
+    REALMS_HOST = "127.0.0.1"
+    REALMS_PORT = 3725
     BACKLOG_SIZE = 64
+    REALM_MAX_UPDATE_TIME = 120
 
     def __init__(self):
         self.socket = None
+        self.realms_socket = None
+        self.realms_socket_lock = threading.Lock()
         self.logged_in = {}
         self.logged_in_lock = threading.Lock()
+        self.realms = {}
+        self.realms_lock = threading.Lock()
+        self.shutdown_flag = threading.Event()
 
     def start(self):
         self._start_listening()
+        simple_thread(self._accept_realm_connections)
         self._accept_connections()
         self._stop_listening()
 
     def _start_listening(self):
+        """ Start listening with non-blocking sockets, to still capture
+        Windows signals. """
+        self.realms_socket = socket.socket()
+        self.realms_socket.settimeout(1)
+        address = (LoginServer.REALMS_HOST, LoginServer.REALMS_PORT)
+        self.realms_socket.bind(address)
+        self.realms_socket.listen(LoginServer.BACKLOG_SIZE)
         """ Start listening with a non-blocking socket,
         to still capture Windows signals. """
         self.socket = socket.socket()
@@ -61,9 +79,39 @@ class LoginServer(object):
         login_connection = LoginConnection(self, connection, address)
         simple_thread(login_connection.handle_connection)
 
+    def _accept_realm_connections(self):
+        """ Accept incoming realm connections forever, so this has to run in
+        another thread. """
+        while not self.shutdown_flag.is_set():
+            with self.realms_socket_lock:
+                try:
+                    connection, address = self.realms_socket.accept()
+                    self._handle_realm_connection(connection, address)
+                except socket.timeout:
+                    pass
+
+    def _handle_realm_connection(self, connection, address):
+        """ Start another thread to securely handle the realm connection. """
+        LOG.debug("Accepting realm connection from " + str(address))
+        realm_connection = RealmConnection(self, connection, address)
+        simple_thread(realm_connection.handle_connection)
+
+    def maintain_realm_list(self):
+        """ Maintain realmlist by removing realms not updated for a while. """
+        with self.realms_lock:
+            to_remove = []
+            for realm in self.realms:
+                update_delay = time.time() - self.realms[realm]["last_update"]
+                if update_delay > LoginServer.REALM_MAX_UPDATE_TIME:
+                    to_remove.append(realm)
+                    LOG.debug("Realm " + realm + " down, removed from list.")
+            for realm_to_remove in to_remove:
+                del self.realms[realm_to_remove]
+
     def _stop_listening(self):
-        self.socket.close()
-        self.socket = None
+        with self.realms_socket_lock:
+            self.realms_socket.close()
+            self.realms_socket = None
         LOG.info("Login server stopped.")
 
     def get_account(self, account_name):
@@ -93,3 +141,9 @@ class LoginServer(object):
     @access_logged_in_list
     def get_logged_in_session_key(self, account_name):
         return self.logged_in[account_name]["session_key"]
+
+    def get_realm_list(self):
+        self.maintain_realm_list()
+        with self.realms_lock:
+            realm_list_copy = self.realms.copy()
+        return realm_list_copy
