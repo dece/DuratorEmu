@@ -5,6 +5,7 @@ from durator.auth.constants import LoginOpCodes
 from durator.auth.login_challenge import LoginChallenge
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.login_proof import LoginProof
+from durator.auth.realmlist_request import RealmlistRequest
 from durator.auth.recon_challenge import ReconChallenge
 from durator.auth.recon_proof import ReconProof
 from durator.auth.srp import Srp
@@ -29,7 +30,8 @@ class LoginConnection(object):
         LoginOpCodes.LOGIN_CHALL: LoginChallenge,
         LoginOpCodes.LOGIN_PROOF: LoginProof,
         LoginOpCodes.RECON_CHALL: ReconChallenge,
-        LoginOpCodes.RECON_PROOF: ReconProof
+        LoginOpCodes.RECON_PROOF: ReconProof,
+        LoginOpCodes.REALMLIST:   RealmlistRequest
     }
 
     def __init__(self, server, connection, address):
