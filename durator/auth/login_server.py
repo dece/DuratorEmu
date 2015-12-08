@@ -3,8 +3,8 @@ import threading
 
 from durator.auth.account import Account
 from durator.auth.login_connection import LoginConnection
-from durator.auth.srp import Srp
-from durator.utils.logger import LOG
+from pyshgck.concurrency import simple_thread
+from pyshgck.logger import LOG
 
 
 def access_logged_in_list(func):
@@ -59,7 +59,7 @@ class LoginServer(object):
     def _handle_connection(self, connection, address):
         LOG.info("Accepting connection from " + str(address))
         login_connection = LoginConnection(self, connection, address)
-        login_connection.threaded_handle_connection()
+        simple_thread(login_connection.handle_connection)
 
     def _stop_listening(self):
         self.socket.close()

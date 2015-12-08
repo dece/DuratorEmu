@@ -5,8 +5,8 @@ from durator.auth.account import Account
 from durator.auth.constants import LoginOpCodes, LoginResults
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
-from durator.utils.logger import LOG
-from durator.utils.network import netstr_to_str
+from durator.utils.network_formats import netstr_to_str
+from pyshgck.logger import LOG
 
 
 class LoginChallenge(object):

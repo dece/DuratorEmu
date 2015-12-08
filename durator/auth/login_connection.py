@@ -4,12 +4,12 @@ import threading
 from durator.auth.constants import LoginOpCodes
 from durator.auth.login_challenge import LoginChallenge
 from durator.auth.login_connection_state import LoginConnectionState
+from durator.auth.login_proof import LoginProof
 from durator.auth.recon_challenge import ReconChallenge
 from durator.auth.recon_proof import ReconProof
-from durator.auth.login_proof import LoginProof
 from durator.auth.srp import Srp
-from durator.utils.logger import LOG
-from durator.utils.misc import dump_data
+from pyshgck.format import dump_data
+from pyshgck.logger import LOG
 
 
 class LoginConnection(object):
@@ -53,12 +53,6 @@ class LoginConnection(object):
         self.state = LoginConnectionState.CLOSED
         self.socket.close()
         LOG.debug("Server closed the connection.")
-
-    def threaded_handle_connection(self):
-        """ Start another thread to handle the connection. """
-        connection_thread = threading.Thread(target = self.handle_connection)
-        connection_thread.daemon = True
-        connection_thread.start()
 
     def handle_connection(self):
         while self.state != LoginConnectionState.CLOSED:
@@ -104,7 +98,8 @@ class LoginConnection(object):
             time.sleep(0.1)
             self.socket.sendall(response)
 
-        self.state = next_state
+        if next_state is not None:
+            self.state = next_state
         if self.state == LoginConnectionState.CLOSED:
             self.close_connection()
 

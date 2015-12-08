@@ -1,3 +1,5 @@
+""" Specific crypto functions used by WoW. """
+
 import hashlib
 
 

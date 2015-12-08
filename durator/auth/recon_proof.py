@@ -3,8 +3,7 @@ from struct import Struct
 from durator.auth.constants import LoginOpCodes, LoginResults
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.utils.crypto import sha1
-from durator.utils.logger import LOG
-from durator.utils.misc import hexlify
+from pyshgck.logger import LOG
 
 
 class ReconProof(object):
