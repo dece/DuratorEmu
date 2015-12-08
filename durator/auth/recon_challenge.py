@@ -51,14 +51,14 @@ class ReconChallenge(object):
     def _process_reconnection(self):
         is_logged_in = self.conn.server.is_logged_in(self.account_name)
         if is_logged_in:
-            LOG.debug("Account was logged in.")
+            LOG.debug("Reconnection: account was logged in.")
             account = self.conn.server.get_logged_in_account(self.account_name)
             self.conn.account = account
             self.conn.recon_challenge = os.urandom(16)
             response = self._get_success_response()
             return LoginConnectionState.RECON_CHALL, response
         else:
-            LOG.warning("Account wasn't logged in.")
+            LOG.warning("Reconnection: Account wasn't logged in!")
             response = self._get_failure_response()
             return LoginConnectionState.CLOSED, response
 

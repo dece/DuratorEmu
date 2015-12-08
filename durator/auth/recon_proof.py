@@ -27,11 +27,11 @@ class ReconProof(object):
         self._parse_packet(self.packet)
         self._generate_local_proof()
         if self.client_proof == self.local_proof:
-            LOG.debug("Correct recon proof")
+            LOG.debug("Reconnection: correct proof")
             response = self._get_success_response()
             return LoginConnectionState.RECON_PROOF, response
         else:
-            LOG.warning("Wrong recon proof!")
+            LOG.warning("Reconnection: wrong proof!")
             response = self._get_failure_response()
             return LoginConnectionState.CLOSED, response
 

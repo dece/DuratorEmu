@@ -66,29 +66,39 @@ class LoginConnection(object):
         try:
             self._handle_packet(data)
         except Exception:
-            LOG.error("Unhandled exception in LoginConnection._handle_packet")
+            LOG.error("Uncaught exception in LoginConnection._handle_packet")
             raise
 
     def _handle_packet(self, data):
+        """ Handle packet and update connection state.
+
+        If the packet has a legal opcode for that state, the appropriate handler
+        class is grabbed and instantiated. """
         print("<<<")
         print(dump_data(data), end = "")
 
         opcode, packet = LoginOpCodes(data[0]), data[1:]
         if not self.is_opcode_legal(opcode):
-            LOG.warning( "Received illegal opcode " + str(opcode)
+            LOG.warning( "Connection: received illegal opcode " + str(opcode)
                        + " in state " + str(self.state) )
             self.close_connection()
             return
 
         handler_class = LoginConnection.OP_HANDLERS.get(opcode)
         if handler_class is None:
-            LOG.warning("Unknown operation: " + str(opcode))
+            LOG.warning("Connection: unknown operation: " + str(opcode))
             self.close_connection()
             return
 
         self._call_handler(handler_class, packet)
 
     def _call_handler(self, handler_class, packet):
+        """ Instantiate a handle with that packet and process its result.
+
+        The handler returns the next state of the connection (or None if state
+        should stay the same) and bytes that should be sent back to the client
+        (if not empty).
+        """
         handler = handler_class(self, packet)
         next_state, response = handler.process()
 

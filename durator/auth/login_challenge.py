@@ -40,7 +40,7 @@ class LoginChallenge(object):
         """ Process the challenge packet: parse its data and check whether that
         account name can log. """
         self._parse_packet(self.packet)
-        LOG.debug("Account: " + self.account_name)
+        LOG.debug("Login: account " + self.account_name)
         return self._process_account()
 
     def _parse_packet(self, packet):

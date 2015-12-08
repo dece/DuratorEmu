@@ -31,13 +31,13 @@ class LoginProof(object):
         local_client_proof = self.conn.srp.client_proof
 
         if local_client_proof == self.client_proof:
-            LOG.debug("Authenticated!")
+            LOG.debug("Login: authenticated!")
             self.conn.accept_login()
             self.conn.srp.generate_server_proof(self.client_ephemeral)
             response = self._get_success_response()
             return LoginConnectionState.SENT_PROOF, response
         else:
-            LOG.warning("Wrong proof!")
+            LOG.warning("Login: wrong proof!")
             response = self._get_failure_response()
             return LoginConnectionState.CLOSED, response
 
