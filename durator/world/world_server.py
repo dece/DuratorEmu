@@ -10,14 +10,13 @@ from pyshgck.logger import LOG
 
 class Population(Enum):
 
-    EMPTY   = 0
-    LOW     = 1
-    AVERAGE = 2
-    HIGH    = 3
-    FULL    = 4
+    LOW     = 0
+    AVERAGE = 1
+    HIGH    = 2
+    FULL    = 3
 
     def as_float(self):
-        return self.value / max(1, (len(Population)-1))
+        return float(self.value)
 
 
 class WorldServer(object):
