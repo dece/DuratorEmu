@@ -29,7 +29,7 @@ class LoginServer(object):
     listener function.
     """
 
-    # Hardcoded values, change that
+    # Hardcoded values, change that TODO
     CLIENTS_HOST = "0.0.0.0"
     CLIENTS_PORT = 3724
     REALMS_HOST = "127.0.0.1"
@@ -48,10 +48,15 @@ class LoginServer(object):
         self.shutdown_flag = threading.Event()
 
     def start(self):
+        LOG.info("Starting login server")
         self._start_listening()
+
         simple_thread(self._accept_realm_connections)
         self._accept_client_connections()
+
+        self.shutdown_flag.set()
         self._stop_listening()
+        LOG.info("Login server stopped.")
 
     def _start_listening(self):
         """ Start listening with non-blocking sockets, to still capture
@@ -68,16 +73,13 @@ class LoginServer(object):
         self.clients_socket.bind(address)
         self.clients_socket.listen(LoginServer.BACKLOG_SIZE)
 
-        LOG.info("Login server running.")
-
     def _accept_client_connections(self):
         """ Accept incoming clients connections until manual interruption. """
         try:
             while not self.shutdown_flag.is_set():
                 self._try_accept_client_connection()
         except KeyboardInterrupt:
-            LOG.info("KeyboardInterrupt received, stopping server.")
-            self.shutdown_flag.set()
+            LOG.info("KeyboardInterrupt received, stop accepting clients.")
 
     def _try_accept_client_connection(self):
         try:
@@ -128,8 +130,6 @@ class LoginServer(object):
 
         self.clients_socket.close()
         self.clients_socket = None
-
-        LOG.info("Login server stopped.")
 
     def get_account(self, account_name):
         """ (TEMP) Create a dummy account with account name as password. """
