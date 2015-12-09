@@ -15,7 +15,7 @@ class LoginChallenge(object):
     HEADER_BIN = Struct("<BH")
     CONTENT_BIN = Struct("<4s3BH4s4s4sI4BB")
     RESPONSE_SUCC_BIN = Struct("<3B32sB1sB32s32s16s")
-    RESPONSE_FAIL_BIN = Struct("<2B")
+    RESPONSE_FAIL_BIN = Struct("<3B")
 
     def __init__(self, connection, packet):
         self.conn = connection
@@ -96,8 +96,8 @@ class LoginChallenge(object):
 
         response = LoginChallenge.RESPONSE_SUCC_BIN.pack(
             LoginOpCodes.LOGIN_CHALL.value,
-            LoginResults.SUCCESS.value,
             0,
+            LoginResults.SUCCESS.value,
             server_eph,
             len(generator),
             generator,
@@ -120,6 +120,7 @@ class LoginChallenge(object):
             fail_code = LoginResults.FAIL_1
         response = LoginChallenge.RESPONSE_FAIL_BIN.pack(
             LoginOpCodes.LOGIN_CHALL.value,
+            0,
             fail_code.value
         )
         return response

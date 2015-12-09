@@ -76,8 +76,8 @@ class LoginConnection(object):
 
         If the packet has a legal opcode for that state, the appropriate handler
         class is grabbed and instantiated. """
-        print("<<<")
-        print(dump_data(data), end = "")
+        # print("<<<")
+        # print(dump_data(data), end = "")
 
         opcode, packet = LoginOpCodes(data[0]), data[1:]
         if not self.is_opcode_legal(opcode):
@@ -105,9 +105,9 @@ class LoginConnection(object):
         next_state, response = handler.process()
 
         if response:
-            print(">>>")
-            print(dump_data(response), end = "")
-            time.sleep(0.1)
+            # print(">>>")
+            # print(dump_data(response), end = "")
+            # time.sleep(0.1)
             self.socket.sendall(response)
 
         if next_state is not None:

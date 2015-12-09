@@ -10,7 +10,7 @@ class ReconProof(object):
 
     CONTENT_BIN = Struct("<16s20s20sB")
     RESPONSE_SUCC_BIN = Struct("<2B")
-    RESPONSE_FAIL_BIN = Struct("<")
+    RESPONSE_FAIL_BIN = Struct("<2B")
 
     def __init__(self, connection, packet):
         self.conn = connection
@@ -58,7 +58,7 @@ class ReconProof(object):
         return response
 
     def _get_failure_response(self):
-        response = ReconProof.RESPONSE_SUCC_BIN.pack(
+        response = ReconProof.RESPONSE_FAIL_BIN.pack(
             LoginOpCodes.RECON_PROOF.value,
             LoginResults.FAIL_1.value
         )
