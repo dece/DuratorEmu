@@ -48,8 +48,8 @@ class WorldServer(object):
         while not self.shutdown_flag.is_set():
             LOG.debug("Sending heartbeat to login server")
             state_packet = self._get_state_packet()
-            socket_is_opened = self._open_login_server_socket()
-            if socket_is_opened:
+            self._open_login_server_socket()
+            if self.login_server_socket:
                 self.login_server_socket.sendall(state_packet)
             self._close_login_server_socket()
             time.sleep(30)
@@ -68,14 +68,13 @@ class WorldServer(object):
 
     def _open_login_server_socket(self):
         self.login_server_socket = socket.socket()
-        # Hardcoded login server address, change that
+        # Hardcoded login server address, change that TODO
         address = ("127.0.0.1", 3725)
         try:
             self.login_server_socket.connect(address)
-            return True
         except ConnectionError as exc:
             LOG.error("Couldn't join login server! " + str(exc))
-            return False
+            self.login_server_socket = None
 
     def _close_login_server_socket(self):
         self.login_server_socket.close()
