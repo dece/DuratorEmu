@@ -3,23 +3,31 @@
 import argparse
 
 from durator.auth.login_server import LoginServer
+from durator.db.database_client import DatabaseClient
 from durator.world.world_server import WorldServer
 from pyshgck.logger import LOG
+
+
+MODULES = {
+    "login": LoginServer,
+    "world": WorldServer,
+    "db": DatabaseClient
+}
 
 
 def main():
     LOG.info("DuratorEmu - WoW 1.1.2.4125 Sandbox Server - Shgck 2015")
 
     argparser = argparse.ArgumentParser()
-    argparser.add_argument("server_type", type = str, help = "server type")
+    argparser.add_argument("module", type = str, help = "module to start")
     args = argparser.parse_args()
 
-    if args.server_type == "login":
-        login_server = LoginServer()
-        login_server.start()
-    elif args.server_type == "world":
-        world_server = WorldServer()
-        world_server.start()
+    if args.module in MODULES:
+        module_class = MODULES[args.module]
+        module = module_class()
+        module.start()
+    else:
+        print("Unknown module:", args.module)
 
 
 if __name__ == "__main__":
