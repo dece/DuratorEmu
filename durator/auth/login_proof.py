@@ -25,7 +25,7 @@ class LoginProof(object):
         self._parse_packet(self.packet)
 
         account = self.conn.account
-        verifier = account.srp_verifier
+        verifier = account.srp_verifier_as_int
         self.conn.srp.generate_session_key(self.client_ephemeral, verifier)
         self.conn.srp.generate_client_proof(self.client_ephemeral, account)
         local_client_proof = self.conn.srp.client_proof

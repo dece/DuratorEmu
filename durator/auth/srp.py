@@ -4,6 +4,7 @@ Details on SRP are available here: https://www.ietf.org/rfc/rfc2945.txt
 WoW use it with fixed modulus and generator values.
 """
 
+import base64
 import os
 
 from durator.utils.crypto import sha1, sha1_interleave
@@ -75,8 +76,8 @@ class Srp(object):
         server_eph = int.to_bytes(self.server_ephemeral, 32, "little")
 
         to_hash = ( xor_hash + sha1(account.name.encode("ascii")) +
-                    account.srp_salt + client_eph + server_eph +
-                    self.session_key )
+                    account.srp_salt_as_bytes +
+                    client_eph + server_eph + self.session_key )
         self.client_proof = sha1(to_hash)
 
     def generate_server_proof(self, client_ephemeral):
@@ -93,8 +94,8 @@ class Srp(object):
         password = password.upper()
         salt = os.urandom(32)
         verifier = Srp._generate_verifier(ident, password, salt)
-        account.srp_salt = salt
-        account.srp_verifier = verifier
+        account.srp_salt_as_bytes = salt
+        account.srp_verifier_as_int = verifier
 
     @staticmethod
     def _generate_verifier(ident, password, salt):

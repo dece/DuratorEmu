@@ -80,7 +80,7 @@ class LoginChallenge(object):
         account = self.conn.server.get_account(self.account_name)
         if account is not None and account.is_valid():
             self.conn.account = account
-            self.conn.srp.generate_server_ephemeral(account.srp_verifier)
+            self.conn.srp.generate_server_ephemeral(account.srp_verifier_as_int)
             response = self._get_success_response()
             return LoginConnectionState.SENT_CHALL, response
         else:
@@ -93,7 +93,7 @@ class LoginChallenge(object):
     def _get_success_response(self):
         """ Return a success packet with appropriate SRP data. """
         server_eph = int.to_bytes(self.conn.srp.server_ephemeral, 32, "little")
-        salt = self.conn.account.srp_salt
+        salt = self.conn.account.srp_salt_as_bytes
         generator = int.to_bytes(Srp.GENERATOR, 1, "little")
         modulus = int.to_bytes(Srp.MODULUS, 32, "little")
 
