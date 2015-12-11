@@ -1,5 +1,8 @@
+import getpass
+
 from peewee import OperationalError
 
+from durator.auth.account import AccountManager
 from durator.db.database import DB, db_connection
 from durator.db.models import MODELS
 from pyshgck.logger import LOG
@@ -26,6 +29,10 @@ class DatabaseClient(object):
             "test": {
                 "help": "test database availability",
                 "func": self._test_db
+            },
+            "new_account": {
+                "help": "create a new player account",
+                "func": self._new_account
             }
         }
 
@@ -98,3 +105,16 @@ class DatabaseClient(object):
         except OperationalError as exc:
             print("Database access test failed :(")
             print(str(exc))
+
+    def _new_account(self):
+        name = input("Name: ")
+        password = getpass.getpass("Password: ")
+        if not name or not password:
+            print("Invalid arguments.")
+            return
+
+        account = AccountManager.create_account(name, password)
+        if account:
+            print("Account created.")
+        else:
+            print("Account couldn't be created.")
