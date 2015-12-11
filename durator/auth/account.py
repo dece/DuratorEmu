@@ -1,9 +1,13 @@
 from enum import Enum
+import re
 
 from peewee import Model, CharField, IntegerField, BlobField, BigIntegerField
 
 from durator.auth.srp import Srp
 from durator.db.database import DB, db_connection
+
+
+_ACCOUNT_NAME_RE = re.compile(r"\w+")
 
 
 class Account(Model):
@@ -39,15 +43,18 @@ class AccountStatus(Enum):
 
 
 class AccountManager(object):
-    """ Manage the accounts in the database. """
+    """ Collection of functions to manage the accounts in the database. """
 
     @staticmethod
     @db_connection
     def create_account(account_name, password):
-        """ Create a valid account and add it to the database. """
-        account = Account(
-            name = account_name, status = AccountStatus.NOT_READY.value
-        )
+        """ Create a valid account and add it to the database, or None if the
+        arguments are invalid. """
+        if not _ACCOUNT_NAME_RE.match(account_name):
+            return None
+
+        account = Account( name = account_name.upper()
+                         , status = AccountStatus.NOT_READY.value )
         Srp.generate_account_srp_data(account, password)
         account.status = AccountStatus.VALID.value
         account.save()
