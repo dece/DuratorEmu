@@ -38,14 +38,14 @@ class RealmlistRequest(object):
         )
         realm_struct = Struct(realm_struct_format)
         packet = realm_struct.pack(
-            0,  # icon ??
-            0,  # flags ??
+            0,  # icon
+            0,  # flags
             name_bytes,
             address_bytes,
             realm["population"],
-            0,  # num_chars ?
-            0,  # timezone ?
-            0   # unknown ?
+            0,  # num_chars
+            0,  # timezone
+            0   # unknown
         )
         return packet
 
