@@ -9,7 +9,7 @@ from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG
 
 
-class Population(Enum):
+class WorldPopulation(Enum):
 
     LOW     = 0
     AVERAGE = 1
@@ -32,8 +32,8 @@ class WorldServer(object):
     BACKLOG_SIZE = 64
 
     def __init__(self):
-        self.name = "excelen"
-        self.population = Population.AVERAGE
+        self.name = "D^8>*"
+        self.population = WorldPopulation.AVERAGE
         self.host = WorldServer.DEFAULT_HOST
         self.port = WorldServer.DEFAULT_PORT
 
@@ -86,10 +86,15 @@ class WorldServer(object):
             self._open_login_server_socket()
             if self.login_server_socket:
                 self.login_server_socket.sendall(state_packet)
-            self._close_login_server_socket()
+                self._close_login_server_socket()
             time.sleep(30)
 
     def _get_state_packet(self):
+        """ Return a packet describing the realm state.
+
+        TODO change this into the actual RealmInfo_S struct so the login server
+        can use it directly.
+        """
         packet = b""
         name = self.name.encode("ascii")
         packet += int.to_bytes(len(name), 1, "little")
@@ -102,6 +107,8 @@ class WorldServer(object):
         return packet
 
     def _open_login_server_socket(self):
+        """ Open the login server socket, or set it to None if it couldn't
+        connect properly. """
         self.login_server_socket = socket.socket()
         # Hardcoded login server address, change that TODO
         address = ("127.0.0.1", 3725)
