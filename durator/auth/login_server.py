@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 
-from durator.auth.account import Account
+from durator.auth.account import AccountManager
 from durator.auth.login_connection import LoginConnection
 from durator.auth.realm_connection import RealmConnection
 from pyshgck.concurrency import simple_thread
@@ -132,8 +132,7 @@ class LoginServer(object):
         self.clients_socket = None
 
     def get_account(self, account_name):
-        """ (TEMP) Create a dummy account with account name as password. """
-        return Account.get_dummy_account(account_name)
+        return AccountManager.get_account(account_name)
 
     @access_logged_in_list
     def accept_account_login(self, account, session_key):

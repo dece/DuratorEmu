@@ -1,7 +1,7 @@
 import os
 from struct import Struct
 
-from durator.auth.account import Account
+from durator.auth.account import AccountStatus
 from durator.auth.constants import LoginOpCodes, LoginResults
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
@@ -78,12 +78,15 @@ class LoginChallenge(object):
     def _process_account(self):
         """ Check if the account received can log to the server. TODO checks """
         account = self.conn.server.get_account(self.account_name)
-        if account.can_log():
+        if account is not None and account.is_valid():
             self.conn.account = account
             self.conn.srp.generate_server_ephemeral(account.srp_verifier)
             response = self._get_success_response()
             return LoginConnectionState.SENT_CHALL, response
         else:
+            LOG.warning("Invalid account {} tried to login".format(
+                self.account_name
+            ))
             response = self._get_failure_response(account)
             return LoginConnectionState.CLOSED, response
 
@@ -109,15 +112,18 @@ class LoginChallenge(object):
         return response
 
     ERROR_CODES = {
-        Account.Status.SUSPENDED: LoginResults.FAIL_SUSPENDED,
-        Account.Status.BANNED:    LoginResults.FAIL_BANNED
+        AccountStatus.SUSPENDED: LoginResults.FAIL_SUSPENDED,
+        AccountStatus.BANNED:    LoginResults.FAIL_BANNED
     }
 
     def _get_failure_response(self, account):
         """ Return a failure packet with appropriate error code. """
-        fail_code = LoginChallenge.ERROR_CODES.get(account.status)
-        if fail_code is None:
+        if account is None:
             fail_code = LoginResults.FAIL_1
+        else:
+            account_status = AccountStatus(account.status)
+            fail_code = ( LoginChallenge.ERROR_CODES.get(account_status)
+                          or LoginResults.FAIL_1 )
         response = LoginChallenge.RESPONSE_FAIL_BIN.pack(
             LoginOpCodes.LOGIN_CHALL.value,
             0,
