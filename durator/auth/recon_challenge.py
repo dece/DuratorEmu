@@ -49,11 +49,10 @@ class ReconChallenge(object):
         self.account_name = account_name.decode("ascii")
 
     def _process_reconnection(self):
-        is_logged_in = self.conn.server.is_logged_in(self.account_name)
-        if is_logged_in:
+        session = self.conn.server.get_account_session(self.account_name)
+        if session is not None:
             LOG.debug("Reconnection: account was logged in.")
-            account = self.conn.server.get_logged_in_account(self.account_name)
-            self.conn.account = account
+            self.conn.account = session.account
             self.conn.recon_challenge = os.urandom(16)
             response = self._get_success_response()
             return LoginConnectionState.RECON_CHALL, response

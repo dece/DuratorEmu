@@ -44,10 +44,10 @@ class ReconProof(object):
 
     def _generate_local_proof(self):
         account_name = self.conn.account.name
-        session_key = self.conn.server.get_logged_in_session_key(account_name)
+        session = self.conn.server.get_account_session(account_name)
         challenge = self.conn.recon_challenge
         to_hash = ( account_name.encode("ascii") + self.proof_data +
-                    challenge + session_key )
+                    challenge + session.session_key_as_bytes )
         self.local_proof = sha1(to_hash)
 
     def _get_success_response(self):

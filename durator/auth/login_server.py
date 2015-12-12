@@ -2,19 +2,12 @@ import socket
 import threading
 import time
 
-from durator.auth.account import AccountManager
+from durator.auth.account import AccountManager, AccountSessionManager
 from durator.auth.login_connection import LoginConnection
 from durator.auth.realm_connection import RealmConnection
+from durator.db.database import DB, db_connection
 from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG
-
-
-def access_logged_in_list(func):
-    def decorator(self, *args, **kwargs):
-        with self.locks["logged_in"]:
-            return_value = func(self, *args, **kwargs)
-        return return_value
-    return decorator
 
 
 class LoginServer(object):
@@ -53,6 +46,7 @@ class LoginServer(object):
 
     def start(self):
         LOG.info("Starting login server")
+        self._clean_db()
         self._start_listening()
 
         simple_thread(self._accept_realm_connections)
@@ -61,6 +55,9 @@ class LoginServer(object):
         self.shutdown_flag.set()
         self._stop_listening()
         LOG.info("Login server stopped.")
+
+    def _clean_db(self):
+        AccountSessionManager.delete_all_sessions()
 
     def _start_listening(self):
         """ Start listening with non-blocking sockets, to still capture
@@ -124,31 +121,16 @@ class LoginServer(object):
         self.clients_socket = None
 
     def get_account(self, account_name):
+        """ Return the account with that name. """
         return AccountManager.get_account(account_name)
 
-    @access_logged_in_list
     def accept_account_login(self, account, session_key):
-        self.logged_in[account.name] = {
-            "account": account,
-            "session_key": session_key
-        }
+        """ Accept the account login in the active sessions table. """
+        AccountSessionManager.add_session(account, session_key)
 
-    @access_logged_in_list
-    def logout_account(self, account):
-        del self.logged_in[account.name]
-
-    @access_logged_in_list
-    def is_logged_in(self, account_name):
-        is_logged_in = account_name in self.logged_in
-        return is_logged_in
-
-    @access_logged_in_list
-    def get_logged_in_account(self, account_name):
-        return self.logged_in[account_name]["account"]
-
-    @access_logged_in_list
-    def get_logged_in_session_key(self, account_name):
-        return self.logged_in[account_name]["session_key"]
+    def get_account_session(self, account_name):
+        """ Return the account session if it's logged in, None otherwise. """
+        return AccountSessionManager.get_session(account_name)
 
     def get_realm_list(self):
         """ Return a copy of the realm states dict. """

@@ -61,7 +61,7 @@ class AccountStatus(Enum):
 
 class AccountSession(Model):
 
-    account = ForeignKeyField(Account)
+    account = ForeignKeyField(Account, unique = True)
     session_key = CharField(max_length = 80)
 
     class Meta(object):
@@ -94,6 +94,12 @@ class AccountManager(object):
         return account
 
     @staticmethod
+    def create_dummy_account(name):
+        """ Get a dummy testing account, using account name as a password. """
+        account = AccountManager.create_account(name, name)
+        return account
+
+    @staticmethod
     @db_connection
     def get_account(account_name):
         """ Return the account from the database if it exists, or None. """
@@ -102,8 +108,37 @@ class AccountManager(object):
         except Account.DoesNotExist:
             return None
 
+
+class AccountSessionManager(object):
+    """ Collection of functions to manage the sessions in the database. """
+
     @staticmethod
-    def create_dummy_account(name):
-        """ Get a dummy testing account, using account name as a password. """
-        account = AccountManager.create_account(name, name)
-        return account
+    @db_connection
+    def add_session(account, session_key):
+        """ Add a new session for that account, or update the session_key if the
+        account already had a session. """
+        session = AccountSessionManager.get_session(account.name)
+        if session is None:
+            session = AccountSession(account = account)
+        session.session_key_as_bytes = session_key
+        session.save()
+
+    @staticmethod
+    @db_connection
+    def get_session(account_name):
+        """ Return the session associated with the account with that name,
+        or None if no session or account can be found. """
+        account = AccountManager.get_account(account_name)
+        if account is None:
+            return None
+
+        try:
+            return AccountSession.get(AccountSession.account == account)
+        except AccountSession.DoesNotExist:
+            return None
+
+    @staticmethod
+    @db_connection
+    def delete_all_sessions():
+        delete_sessions_q = AccountSession.delete()
+        delete_sessions_q.execute()
