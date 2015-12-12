@@ -64,6 +64,6 @@ class RealmConnection(object):
         LOG.debug("Updating informations about realm " + realm_name)
         realm_state["last_update"] = time.time()
 
-        with self.server.realms_lock:
+        with self.server.locks["realms"]:
             self.server.realms[realm_name] = realm_state
         self.server.maintain_realm_list()

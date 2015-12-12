@@ -11,7 +11,7 @@ from pyshgck.logger import LOG
 
 def access_logged_in_list(func):
     def decorator(self, *args, **kwargs):
-        with self.logged_in_lock:
+        with self.locks["logged_in"]:
             return_value = func(self, *args, **kwargs)
         return return_value
     return decorator
@@ -40,12 +40,12 @@ class LoginServer(object):
     def __init__(self):
         self.clients_socket = None
         self.realms_socket = None
-        self.realms_socket_lock = threading.Lock()
         self.logged_in = {}
-        self.logged_in_lock = threading.Lock()
         self.realms = {}
-        self.realms_lock = threading.Lock()
         self.shutdown_flag = threading.Event()
+
+        self.locks = { attr: threading.Lock() for attr in
+                       ["realms_socket", "realms", "logged_in"] }
 
     def start(self):
         LOG.info("Starting login server")
@@ -98,7 +98,7 @@ class LoginServer(object):
         """ Accept incoming realm connections forever, so this has to run in
         another thread. """
         while not self.shutdown_flag.is_set():
-            with self.realms_socket_lock:
+            with self.locks["realms_socket"]:
                 try:
                     connection, address = self.realms_socket.accept()
                     self._handle_realm_connection(connection, address)
@@ -113,7 +113,7 @@ class LoginServer(object):
 
     def maintain_realm_list(self):
         """ Maintain realmlist by removing realms not updated for a while. """
-        with self.realms_lock:
+        with self.locks["realms"]:
             to_remove = []
             for realm in self.realms:
                 update_delay = time.time() - self.realms[realm]["last_update"]
@@ -124,7 +124,7 @@ class LoginServer(object):
                 del self.realms[realm_to_remove]
 
     def _stop_listening(self):
-        with self.realms_socket_lock:
+        with self.locks["realms_socket"]:
             self.realms_socket.close()
             self.realms_socket = None
 
@@ -160,6 +160,6 @@ class LoginServer(object):
 
     def get_realm_list(self):
         self.maintain_realm_list()
-        with self.realms_lock:
+        with self.locks["realms"]:
             realm_list_copy = self.realms.copy()
         return realm_list_copy
