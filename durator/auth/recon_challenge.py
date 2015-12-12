@@ -9,8 +9,8 @@ from pyshgck.logger import LOG
 class ReconChallenge(object):
     """ Handle a client's reconnection challenge request (opcode 0x2). """
 
-    HEADER_BIN = Struct("<BH")
-    CONTENT_BIN = Struct("<4s3BH4s4s4sI4BB")
+    HEADER_BIN        = Struct("<BH")
+    CONTENT_BIN       = Struct("<4s3BH4s4s4sI4BB")
     RESPONSE_SUCC_BIN = Struct("<2B16s2Q")
     RESPONSE_FAIL_BIN = Struct("<2B")
 

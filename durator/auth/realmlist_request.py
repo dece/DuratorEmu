@@ -10,7 +10,7 @@ class RealmlistRequest(object):
 
     RESPONSE_HEADER_BIN = Struct("<BHIB")
     RESPONSE_FOOTER_BIN = Struct("<H")
-    REALM_PACKET_FMT = "<IB{name_len}s{addr_len}sf3B"
+    REALM_PACKET_FMT    = "<IB{name_len}s{addr_len}sf3B"
 
     def __init__(self, connection, packet):
         self.conn = connection

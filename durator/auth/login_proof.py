@@ -8,7 +8,7 @@ from pyshgck.logger import LOG
 class LoginProof(object):
     """ Process a proof request and answer with the server proof. """
 
-    PROOF_BIN = Struct("<32s20s20sB")
+    PROOF_BIN         = Struct("<32s20s20sB")
     RESPONSE_SUCC_BIN = Struct("<2B20sI")
     RESPONSE_FAIL_BIN = Struct("<2B")
 

@@ -22,9 +22,9 @@ class Account(Model):
         srp_verifier: big int, stored as base64'd little endian bytes
     """
 
-    name = CharField(max_length = 64)
-    status = IntegerField()
-    srp_salt = CharField(max_length = 64)
+    name         = CharField(max_length = 64)
+    status       = IntegerField()
+    srp_salt     = CharField(max_length = 64)
     srp_verifier = CharField(max_length = 64)
 
     class Meta(object):
@@ -61,7 +61,7 @@ class AccountStatus(Enum):
 
 class AccountSession(Model):
 
-    account = ForeignKeyField(Account, unique = True)
+    account     = ForeignKeyField(Account, unique = True)
     session_key = CharField(max_length = 80)
 
     class Meta(object):

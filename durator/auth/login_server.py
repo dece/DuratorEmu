@@ -27,11 +27,11 @@ class LoginServer(object):
     """
 
     # Hardcoded values, change that TODO
-    CLIENTS_HOST = "0.0.0.0"
-    CLIENTS_PORT = 3724
-    REALMS_HOST = "127.0.0.1"
-    REALMS_PORT = 3725
-    BACKLOG_SIZE = 64
+    CLIENTS_HOST          = "0.0.0.0"
+    CLIENTS_PORT          = 3724
+    REALMS_HOST           = "127.0.0.1"
+    REALMS_PORT           = 3725
+    BACKLOG_SIZE          = 64
     REALM_MAX_UPDATE_TIME = 120
 
     def __init__(self):
