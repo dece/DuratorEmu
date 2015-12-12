@@ -7,6 +7,8 @@ from pyshgck.logger import LOG
 
 
 class RealmConnection(object):
+    """ Handle the connection with a world server to update the local login
+    server realm state list. """
 
     def __init__(self, server, connection, address):
         self.server = server

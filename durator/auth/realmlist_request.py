@@ -4,6 +4,7 @@ from durator.auth.constants import LoginOpCodes
 
 
 class RealmlistRequest(object):
+    """ Handle a realm list request (opcode 0x10). """
 
     MIN_RESPONSE_SIZE = 7
 

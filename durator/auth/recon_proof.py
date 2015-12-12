@@ -7,6 +7,7 @@ from pyshgck.logger import LOG
 
 
 class ReconProof(object):
+    """ Handle a client's reconnection proof request (opcode 0x3). """
 
     CONTENT_BIN = Struct("<16s20s20sB")
     RESPONSE_SUCC_BIN = Struct("<2B")
