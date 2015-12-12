@@ -1,5 +1,5 @@
-from durator.world.opcodes import Opcode
-from durator.world.char_selection import CharSelectionProcess
+from durator.world.char_selection.connection import CharSelectionConnection
+from pyshgck.format import dump_data
 from pyshgck.logger import LOG
 
 
@@ -15,5 +15,11 @@ class WorldConnection(object):
         self._process_char_selection()
 
     def _process_char_selection(self):
-        char_selection_process = CharSelectionProcess(self, self.socket)
-        char_selection_process.process()
+        char_selection = CharSelectionConnection(self, self.socket)
+        char_selection.process()
+        LOG.debug("Char selection done, we should handle to rest now.")
+
+        # Placeholder
+        while True:
+            data = self.socket.recv(1024)
+            print(dump_data(data), end = "")
