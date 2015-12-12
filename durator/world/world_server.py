@@ -5,21 +5,10 @@ import threading
 import time
 
 from durator.db.database import db_connection
-from durator.world.realm import Realm, RealmGameType
+from durator.world.realm import Realm, RealmId, RealmFlags, RealmPopulation
 from durator.world.world_connection import WorldConnection
 from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG
-
-
-class WorldPopulation(Enum):
-
-    LOW     = 0
-    AVERAGE = 1
-    HIGH    = 2
-    FULL    = 3
-
-    def as_float(self):
-        return float(self.value)
 
 
 class WorldServer(object):
@@ -41,7 +30,7 @@ class WorldServer(object):
         self.port = WorldServer.DEFAULT_PORT
         self.realm = None
         self._create_realm()
-        self.population = WorldPopulation.LOW
+        self.population = RealmPopulation.LOW
 
         self.login_server_socket = None
         self.clients_socket = None
@@ -62,7 +51,7 @@ class WorldServer(object):
         self.realm = Realm(
             "Bob Ross",
             self.host + ":" + str(self.port),
-            RealmGameType.NORMAL
+            RealmId.SERVER8
         )
 
     def _start_listening_for_clients(self):
@@ -96,7 +85,9 @@ class WorldServer(object):
         while not self.shutdown_flag.is_set():
             LOG.debug("Sending heartbeat to login server")
 
-            state_packet = self.realm.get_state_packet(self.population)
+            state_packet = self.realm.get_state_packet(
+                RealmFlags.NORMAL, self.population
+            )
 
             self._open_login_server_socket()
             if self.login_server_socket:
