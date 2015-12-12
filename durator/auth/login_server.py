@@ -54,9 +54,11 @@ class LoginServer(object):
 
         self.shutdown_flag.set()
         self._stop_listening()
+        self._clean_db()
         LOG.info("Login server stopped.")
 
     def _clean_db(self):
+        LOG.debug("Cleaning database")
         AccountSessionManager.delete_all_sessions()
 
     def _start_listening(self):
