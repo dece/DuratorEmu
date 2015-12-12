@@ -2,7 +2,8 @@ import base64
 from enum import Enum
 import re
 
-from peewee import Model, CharField, IntegerField, BlobField, BigIntegerField
+from peewee import ( Model, CharField, IntegerField, BlobField, BigIntegerField
+                   , ForeignKeyField )
 
 from durator.auth.srp import Srp
 from durator.db.database import DB, db_connection
@@ -27,7 +28,6 @@ class Account(Model):
     srp_verifier = CharField(max_length = 64)
 
     class Meta(object):
-
         database = DB
 
     def is_valid(self):
@@ -48,7 +48,7 @@ class Account(Model):
     def srp_verifier_as_int(self, value_int):
         verifier_bytes = int.to_bytes(value_int, 32, "little")
         self.srp_verifier = base64.b64encode(verifier_bytes).decode("ascii")
-    
+
 
 class AccountStatus(Enum):
     """ Determine if an account can log in (VALID) or not (any other value). """
@@ -57,6 +57,22 @@ class AccountStatus(Enum):
     VALID     = 1
     BANNED    = 2
     SUSPENDED = 3
+
+
+class AccountSession(Model):
+
+    account = ForeignKeyField(Account)
+    session_key = CharField(max_length = 80)
+
+    class Meta(object):
+        database = DB
+
+    @property
+    def session_key_as_bytes(self):
+        return base64.b64decode(self.session_key.encode("ascii"))
+    @session_key_as_bytes.setter
+    def session_key_as_bytes(self, value_bytes):
+        self.session_key = base64.b64encode(value_bytes).decode("ascii")
 
 
 class AccountManager(object):
