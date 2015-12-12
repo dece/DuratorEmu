@@ -38,5 +38,6 @@ class Realm(object):
 
 class RealmGameType(Enum):
 
-    NORMAL = 0
-    PVP    = 1
+    NORMAL   = 0
+    PVP      = 1
+    ROLEPLAY = 6
