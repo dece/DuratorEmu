@@ -1,6 +1,3 @@
-import time
-import threading
-
 from durator.auth.constants import LoginOpCodes
 from durator.auth.login_challenge import LoginChallenge
 from durator.auth.login_connection_state import LoginConnectionState
@@ -9,7 +6,6 @@ from durator.auth.realmlist_request import RealmlistRequest
 from durator.auth.recon_challenge import ReconChallenge
 from durator.auth.recon_proof import ReconProof
 from durator.auth.srp import Srp
-from pyshgck.format import dump_data
 from pyshgck.logger import LOG
 
 
@@ -75,10 +71,8 @@ class LoginConnection(object):
         """ Handle packet and update connection state.
 
         If the packet has a legal opcode for that state, the appropriate handler
-        class is grabbed and instantiated. """
-        # print("<<<")
-        # print(dump_data(data), end = "")
-
+        class is grabbed and instantiated.
+        """
         opcode, packet = LoginOpCodes(data[0]), data[1:]
         if not self.is_opcode_legal(opcode):
             LOG.warning( "Connection: received illegal opcode " + str(opcode)
@@ -105,9 +99,6 @@ class LoginConnection(object):
         next_state, response = handler.process()
 
         if response:
-            # print(">>>")
-            # print(dump_data(response), end = "")
-            # time.sleep(0.1)
             self.socket.sendall(response)
 
         if next_state is not None:
