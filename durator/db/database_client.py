@@ -79,12 +79,10 @@ class DatabaseClient(object):
         self.shutdown_flag = True
 
     def _install_db(self):
-        print("This will drop all tables from the database.")
-        if input("Continue? [y/N]") != "y":
-            return
+        drop_tables = input("Do you want to drop existing tables? [y/N]") == "y"
 
         try:
-            self._install_db_tables()
+            self._install_db_tables(drop_tables = drop_tables)
             print("Database installation OK")
         except OperationalError as exc:
             print("A problem occured while accessing the database!")
@@ -94,9 +92,10 @@ class DatabaseClient(object):
             print(str(exc))
 
     @db_connection
-    def _install_db_tables(self):
-        DB.drop_tables(MODELS)
-        DB.create_tables(MODELS)
+    def _install_db_tables(self, drop_tables = False):
+        if drop_tables:
+            DB.drop_tables(MODELS, safe = True)
+        DB.create_tables(MODELS, safe = True)
 
     def _test_db(self):
         @db_connection
