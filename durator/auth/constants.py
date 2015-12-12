@@ -3,7 +3,7 @@
 from enum import Enum
 
 
-class LoginOpCodes(Enum):
+class LoginOpCode(Enum):
     """ Opcodes used during the login process """
 
     LOGIN_CHALL   = 0x00
@@ -15,7 +15,7 @@ class LoginOpCodes(Enum):
     XFER_DATA     = 0x31
 
 
-class LoginResults(Enum):
+class LoginResult(Enum):
     """ Error codes in server packets """
 
     SUCCESS               = 0x00

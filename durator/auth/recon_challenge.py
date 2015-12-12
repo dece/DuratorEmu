@@ -1,7 +1,7 @@
 import os
 from struct import Struct
 
-from durator.auth.constants import LoginOpCodes, LoginResults
+from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from pyshgck.logger import LOG
 
@@ -64,8 +64,8 @@ class ReconChallenge(object):
 
     def _get_success_response(self):
         response = ReconChallenge.RESPONSE_SUCC_BIN.pack(
-            LoginOpCodes.RECON_CHALL.value,
-            LoginResults.SUCCESS.value,
+            LoginOpCode.RECON_CHALL.value,
+            LoginResult.SUCCESS.value,
             self.conn.recon_challenge,
             0,
             0
@@ -74,7 +74,7 @@ class ReconChallenge(object):
 
     def _get_failure_response(self):
         response = ReconChallenge.RESPONSE_FAIL_BIN.pack(
-            LoginOpCodes.RECON_CHALL.value,
-            LoginResults.FAIL_1.value
+            LoginOpCode.RECON_CHALL.value,
+            LoginResult.FAIL_1.value
         )
         return response

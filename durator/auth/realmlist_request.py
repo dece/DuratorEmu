@@ -1,6 +1,6 @@
 from struct import Struct
 
-from durator.auth.constants import LoginOpCodes
+from durator.auth.constants import LoginOpCode
 
 
 class RealmlistRequest(object):
@@ -32,7 +32,7 @@ class RealmlistRequest(object):
     def _get_realmlist_packet(self, realminfos, num_realms):
         full_packet_size = RealmlistRequest.MIN_RESPONSE_SIZE + len(realminfos)
         header = RealmlistRequest.RESPONSE_HEADER_BIN.pack(
-            LoginOpCodes.REALMLIST.value,
+            LoginOpCode.REALMLIST.value,
             full_packet_size,
             0,  # unknown
             num_realms

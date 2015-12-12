@@ -1,4 +1,4 @@
-from durator.auth.constants import LoginOpCodes
+from durator.auth.constants import LoginOpCode
 from durator.auth.login_challenge import LoginChallenge
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.login_proof import LoginProof
@@ -13,21 +13,21 @@ class LoginConnection(object):
     """ Handle the login process of a client with a SRP challenge. """
 
     LEGAL_OPS = {
-        LoginConnectionState.INIT:        [ LoginOpCodes.LOGIN_CHALL
-                                          , LoginOpCodes.RECON_CHALL ],
+        LoginConnectionState.INIT:        [ LoginOpCode.LOGIN_CHALL
+                                          , LoginOpCode.RECON_CHALL ],
         LoginConnectionState.CLOSED:      [ ],
-        LoginConnectionState.SENT_CHALL:  [ LoginOpCodes.LOGIN_PROOF ],
-        LoginConnectionState.SENT_PROOF:  [ LoginOpCodes.REALMLIST ],
-        LoginConnectionState.RECON_CHALL: [ LoginOpCodes.RECON_PROOF ],
-        LoginConnectionState.RECON_PROOF: [ LoginOpCodes.REALMLIST ],
+        LoginConnectionState.SENT_CHALL:  [ LoginOpCode.LOGIN_PROOF ],
+        LoginConnectionState.SENT_PROOF:  [ LoginOpCode.REALMLIST ],
+        LoginConnectionState.RECON_CHALL: [ LoginOpCode.RECON_PROOF ],
+        LoginConnectionState.RECON_PROOF: [ LoginOpCode.REALMLIST ],
     }
 
     OP_HANDLERS = {
-        LoginOpCodes.LOGIN_CHALL: LoginChallenge,
-        LoginOpCodes.LOGIN_PROOF: LoginProof,
-        LoginOpCodes.RECON_CHALL: ReconChallenge,
-        LoginOpCodes.RECON_PROOF: ReconProof,
-        LoginOpCodes.REALMLIST:   RealmlistRequest
+        LoginOpCode.LOGIN_CHALL: LoginChallenge,
+        LoginOpCode.LOGIN_PROOF: LoginProof,
+        LoginOpCode.RECON_CHALL: ReconChallenge,
+        LoginOpCode.RECON_PROOF: ReconProof,
+        LoginOpCode.REALMLIST:   RealmlistRequest
     }
 
     def __init__(self, server, connection, address):

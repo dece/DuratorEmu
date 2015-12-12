@@ -1,6 +1,6 @@
 from struct import Struct
 
-from durator.auth.constants import LoginOpCodes, LoginResults
+from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.utils.crypto import sha1
 from pyshgck.logger import LOG
@@ -53,14 +53,14 @@ class ReconProof(object):
 
     def _get_success_response(self):
         response = ReconProof.RESPONSE_SUCC_BIN.pack(
-            LoginOpCodes.RECON_PROOF.value,
-            LoginResults.SUCCESS.value
+            LoginOpCode.RECON_PROOF.value,
+            LoginResult.SUCCESS.value
         )
         return response
 
     def _get_failure_response(self):
         response = ReconProof.RESPONSE_FAIL_BIN.pack(
-            LoginOpCodes.RECON_PROOF.value,
-            LoginResults.FAIL_1.value
+            LoginOpCode.RECON_PROOF.value,
+            LoginResult.FAIL_1.value
         )
         return response

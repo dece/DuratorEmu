@@ -2,7 +2,7 @@ import os
 from struct import Struct
 
 from durator.auth.account import AccountStatus
-from durator.auth.constants import LoginOpCodes, LoginResults
+from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
 from durator.utils.network_formats import netstr_to_str
@@ -98,9 +98,9 @@ class LoginChallenge(object):
         modulus = int.to_bytes(Srp.MODULUS, 32, "little")
 
         response = LoginChallenge.RESPONSE_SUCC_BIN.pack(
-            LoginOpCodes.LOGIN_CHALL.value,
+            LoginOpCode.LOGIN_CHALL.value,
             0,
-            LoginResults.SUCCESS.value,
+            LoginResult.SUCCESS.value,
             server_eph,
             len(generator),
             generator,
@@ -112,20 +112,20 @@ class LoginChallenge(object):
         return response
 
     ERROR_CODES = {
-        AccountStatus.SUSPENDED: LoginResults.FAIL_SUSPENDED,
-        AccountStatus.BANNED:    LoginResults.FAIL_BANNED
+        AccountStatus.SUSPENDED: LoginResult.FAIL_SUSPENDED,
+        AccountStatus.BANNED:    LoginResult.FAIL_BANNED
     }
 
     def _get_failure_response(self, account):
         """ Return a failure packet with appropriate error code. """
         if account is None:
-            fail_code = LoginResults.FAIL_1
+            fail_code = LoginResult.FAIL_1
         else:
             account_status = AccountStatus(account.status)
             fail_code = ( LoginChallenge.ERROR_CODES.get(account_status)
-                          or LoginResults.FAIL_1 )
+                          or LoginResult.FAIL_1 )
         response = LoginChallenge.RESPONSE_FAIL_BIN.pack(
-            LoginOpCodes.LOGIN_CHALL.value,
+            LoginOpCode.LOGIN_CHALL.value,
             0,
             fail_code.value
         )

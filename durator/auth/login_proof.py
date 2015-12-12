@@ -1,6 +1,6 @@
 from struct import Struct
 
-from durator.auth.constants import LoginOpCodes, LoginResults
+from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from pyshgck.logger import LOG
 
@@ -50,8 +50,8 @@ class LoginProof(object):
 
     def _get_success_response(self):
         response = LoginProof.RESPONSE_SUCC_BIN.pack(
-            LoginOpCodes.LOGIN_PROOF.value,
-            LoginResults.SUCCESS.value,
+            LoginOpCode.LOGIN_PROOF.value,
+            LoginResult.SUCCESS.value,
             self.conn.srp.server_proof,
             0
         )
@@ -59,7 +59,7 @@ class LoginProof(object):
 
     def _get_failure_response(self):
         response = LoginProof.RESPONSE_FAIL_BIN.pack(
-            LoginOpCodes.LOGIN_PROOF.value,
-            LoginResults.FAIL_1.value
+            LoginOpCode.LOGIN_PROOF.value,
+            LoginResult.FAIL_1.value
         )
         return response
