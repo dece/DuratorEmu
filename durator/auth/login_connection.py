@@ -42,23 +42,21 @@ class LoginConnection(object):
     def __del__(self):
         self.socket.close()
 
-    def is_opcode_legal(self, opcode):
-        """ Check if that opcode is legal for the current connection state. """
-        return opcode in LoginConnection.LEGAL_OPS[self.state]
-
-    def close_connection(self):
-        """ Close connection with client. """
-        self.state = LoginConnectionState.CLOSED
-        self.socket.close()
-        LOG.debug("Server closed the connection.")
-
     def handle_connection(self):
+        """ Handle received packets.
+
+        TODO this assumes that all packets are received in one piece which is
+        a wrong way to look at networking, so clean that later.
+        """
         while self.state != LoginConnectionState.CLOSED:
             data = self.socket.recv(1024)
             if not data:
                 LOG.debug("Client closed the connection.")
                 break
+
             self._try_handle_packet(data)
+            if self.state == LoginConnectionState.CLOSED:
+                self.close_connection()
 
     def _try_handle_packet(self, data):
         try:
@@ -73,20 +71,24 @@ class LoginConnection(object):
         If the packet has a legal opcode for that state, the appropriate handler
         class is grabbed and instantiated.
         """
-        opcode, packet = LoginOpCodes(data[0]), data[1:]
+        opcode, packet = LoginOpCode(data[0]), data[1:]
         if not self.is_opcode_legal(opcode):
-            LOG.warning( "Connection: received illegal opcode " + str(opcode)
-                       + " in state " + str(self.state) )
-            self.close_connection()
+            LOG.error( "Connection: received illegal opcode " + str(opcode)
+                     + " in state " + str(self.state) )
+            self.state = LoginConnectionState.CLOSED
             return
 
         handler_class = LoginConnection.OP_HANDLERS.get(opcode)
         if handler_class is None:
             LOG.warning("Connection: unknown operation: " + str(opcode))
-            self.close_connection()
+            self.state = LoginConnectionState.CLOSED
             return
 
         self._call_handler(handler_class, packet)
+
+    def is_opcode_legal(self, opcode):
+        """ Check if that opcode is legal for the current connection state. """
+        return opcode in LoginConnection.LEGAL_OPS[self.state]
 
     def _call_handler(self, handler_class, packet):
         """ Instantiate a handle with that packet and process its result.
@@ -100,11 +102,13 @@ class LoginConnection(object):
 
         if response:
             self.socket.sendall(response)
-
         if next_state is not None:
             self.state = next_state
-        if self.state == LoginConnectionState.CLOSED:
-            self.close_connection()
+
+    def close_connection(self):
+        """ Close connection with client. """
+        self.socket.close()
+        LOG.debug("Server closed the connection.")
 
     def accept_login(self):
         session_key = self.srp.session_key
