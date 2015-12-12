@@ -4,6 +4,8 @@ import struct
 import threading
 import time
 
+from durator.db.database import db_connection
+from durator.world.realm import Realm, RealmGameType
 from durator.world.world_connection import WorldConnection
 from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG
@@ -23,7 +25,10 @@ class WorldPopulation(Enum):
 class WorldServer(object):
     """ World server accepting connections from clients.
 
-    It also updates its state regularly to the login server.
+    At this point in development, it is the world server that creates and
+    registers to the database the realm it hosts. In the long run though, it
+    would probably be better to separate them and that a world server gets
+    initialized with an already existing realm.
     """
 
     # Hardcoded values, change that TODO
@@ -32,27 +37,35 @@ class WorldServer(object):
     BACKLOG_SIZE = 64
 
     def __init__(self):
-        self.name = "D^8>*"
-        self.population = WorldPopulation.AVERAGE
         self.host = WorldServer.DEFAULT_HOST
         self.port = WorldServer.DEFAULT_PORT
+        self.realm = None
+        self._create_realm()
+        self.population = WorldPopulation.LOW
 
         self.login_server_socket = None
         self.clients_socket = None
         self.shutdown_flag = threading.Event()
 
     def start(self):
-        LOG.info("Starting world server " + self.name)
-        self._start_listening()
+        LOG.info("Starting world server " + self.realm.name)
+        self._start_listening_for_clients()
 
         simple_thread(self._handle_login_server_connection)
         self._accept_client_connections()
 
         self.shutdown_flag.set()
-        self._stop_listening()
+        self._stop_listening_for_clients()
         LOG.info("World server stopped.")
 
-    def _start_listening(self):
+    def _create_realm(self):
+        self.realm = Realm(
+            "Bob Ross",
+            self.host + ":" + str(self.port),
+            RealmGameType.NORMAL
+        )
+
+    def _start_listening_for_clients(self):
         self.clients_socket = socket.socket()
         self.clients_socket.settimeout(1)
         address = (self.host, self.port)
@@ -82,29 +95,15 @@ class WorldServer(object):
         """ Update forever the realm state to the login server. """
         while not self.shutdown_flag.is_set():
             LOG.debug("Sending heartbeat to login server")
-            state_packet = self._get_state_packet()
+
+            state_packet = self.realm.get_state_packet(self.population)
+
             self._open_login_server_socket()
             if self.login_server_socket:
                 self.login_server_socket.sendall(state_packet)
                 self._close_login_server_socket()
+
             time.sleep(30)
-
-    def _get_state_packet(self):
-        """ Return a packet describing the realm state.
-
-        TODO change this into the actual RealmInfo_S struct so the login server
-        can use it directly.
-        """
-        packet = b""
-        name = self.name.encode("ascii")
-        packet += int.to_bytes(len(name), 1, "little")
-        packet += name
-        packet += struct.pack("f", self.population.as_float())
-        address = (self.host + ":" + str(self.port)).encode("ascii")
-        packet += int.to_bytes(len(address), 1, "little")
-        packet += address
-        packet = int.to_bytes(len(packet), 1, "little") + packet
-        return packet
 
     def _open_login_server_socket(self):
         """ Open the login server socket, or set it to None if it couldn't
@@ -122,6 +121,6 @@ class WorldServer(object):
         self.login_server_socket.close()
         self.login_server_socket = None
 
-    def _stop_listening(self):
+    def _stop_listening_for_clients(self):
         self.clients_socket.close()
         self.clients_socket = None

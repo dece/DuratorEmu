@@ -1,6 +1,8 @@
+import io
 from struct import Struct
 import time
 
+from pyshgck.bin import read_cstring
 from pyshgck.logger import LOG
 
 
@@ -11,18 +13,25 @@ class RealmConnection(object):
         self.socket = connection
         self.address = address
 
+        self.realm_name = ""
+
     def handle_connection(self):
         data = self._get_whole_packet()
         if data is None:
             return
-        realm_state = RealmConnection._parse_realm_packet(data)
-        self._handle_realm_state(realm_state)
+
+        realm_info_packet = data[1:]
+        self._parse_realm_info_packet(realm_info_packet)
+        realm_state = self._get_realm_state(realm_info_packet)
+        self._register_realm_state(realm_state)
+
         self.socket.close()
 
     def _get_whole_packet(self):
         data = self.socket.recv(1024)
         if not data:
             return None
+
         packet_size = data[0]
         while len(data[1:]) < packet_size:
             data_part = self.socket.recv(1024)
@@ -32,38 +41,16 @@ class RealmConnection(object):
 
         return data
 
-    @staticmethod
-    def _parse_realm_packet(packet):
-        """ Parse that realm packet and return the realm state it describes. """
-        realm_state = {}
-        offset = 1
+    def _parse_realm_info_packet(self, packet):
+        """ Parse that realm packet and grab the realm name. """
+        packet_io = io.BytesIO(packet)
+        self.realm_name = read_cstring(packet_io, 5).decode("ascii")
 
-        name_size = packet[offset]
-        offset += 1
-
-        realm_state["name"] = packet[offset : offset+name_size]
-        realm_state["name"] = realm_state["name"].decode("ascii")
-        offset += name_size
-
-        float_struct = Struct("f")
-        float_bytes = packet[offset : offset+float_struct.size]
-        realm_state["population"] = float_struct.unpack(float_bytes)[0]
-        offset += float_struct.size
-
-        address_size = packet[offset]
-        offset += 1
-
-        realm_state["address"] = packet[offset : offset+address_size]
-        realm_state["address"] = realm_state["address"].decode("ascii")
-        offset += address_size
-
+    def _get_realm_state(self, packet):
+        realm_state = { "packet": packet, "last_update": time.time() }
         return realm_state
 
-    def _handle_realm_state(self, realm_state):
-        realm_name = realm_state["name"]
-        LOG.debug("Updating informations about realm " + realm_name)
-        realm_state["last_update"] = time.time()
-
+    def _register_realm_state(self, realm_state):
+        LOG.debug("Updating informations about realm " + self.realm_name)
         with self.server.locks["realms"]:
-            self.server.realms[realm_name] = realm_state
-        self.server.maintain_realm_list()
+            self.server.realms[self.realm_name] = realm_state

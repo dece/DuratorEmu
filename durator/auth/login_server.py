@@ -27,6 +27,10 @@ class LoginServer(object):
     updated from other thread, the server contains a lock for each shared
     object, including the sockets used by other thread, e.g. by the realm
     listener function.
+
+    self.realms is dict mapping realm names to realm_state dicts. These dicts
+    contains a ready RealmInfo_S "packet" to be send to clients, and a timestamp
+    "last_update" of the last time it got updated by the remote world server.
     """
 
     # Hardcoded values, change that TODO
@@ -111,18 +115,6 @@ class LoginServer(object):
         realm_connection = RealmConnection(self, connection, address)
         simple_thread(realm_connection.handle_connection)
 
-    def maintain_realm_list(self):
-        """ Maintain realmlist by removing realms not updated for a while. """
-        with self.locks["realms"]:
-            to_remove = []
-            for realm in self.realms:
-                update_delay = time.time() - self.realms[realm]["last_update"]
-                if update_delay > LoginServer.REALM_MAX_UPDATE_TIME:
-                    to_remove.append(realm)
-                    LOG.debug("Realm " + realm + " down, removed from list.")
-            for realm_to_remove in to_remove:
-                del self.realms[realm_to_remove]
-
     def _stop_listening(self):
         with self.locks["realms_socket"]:
             self.realms_socket.close()
@@ -159,7 +151,20 @@ class LoginServer(object):
         return self.logged_in[account_name]["session_key"]
 
     def get_realm_list(self):
-        self.maintain_realm_list()
+        """ Return a copy of the realm states dict. """
+        self._maintain_realm_list()
         with self.locks["realms"]:
             realm_list_copy = self.realms.copy()
         return realm_list_copy
+
+    def _maintain_realm_list(self):
+        """ Maintain realmlist by removing realms not updated for a while. """
+        with self.locks["realms"]:
+            to_remove = []
+            for realm in self.realms:
+                update_delay = time.time() - self.realms[realm]["last_update"]
+                if update_delay > LoginServer.REALM_MAX_UPDATE_TIME:
+                    to_remove.append(realm)
+                    LOG.debug("Realm " + realm + " down, removed from list.")
+            for realm_to_remove in to_remove:
+                del self.realms[realm_to_remove]
