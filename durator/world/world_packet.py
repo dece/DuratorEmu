@@ -1,18 +1,22 @@
+from durator.common.crypto.session_cipher import SessionCipher
 from durator.world.opcodes import OpCode
 from pyshgck.format import dump_data
 
 
 class WorldPacket(object):
 
+    # This static packet buffer ensures that all world packets are correctly
+    # received in their entirety.
     _PACKET_BUF = b""
 
+    def __init__(self, data = None):
     def __init__(self):
         self.length = 0
         self.opcode = None
-        self.data = b""
+        self.data = data or b""
 
     @staticmethod
-    def from_socket(socket):
+    def from_socket(socket, session_cipher = None):
         """ Receive a WorldPacket through socket, or None if the connection is
         closed during reception. """
         packet = WorldPacket()
@@ -23,10 +27,14 @@ class WorldPacket(object):
                 return None
             WorldPacket._PACKET_BUF += data_part
 
-            # If there isn't enough to compute the packet size, just continue
-            # receiving data.
-            if len(WorldPacket._PACKET_BUF) < 2:
+            # Continue receiving data until we have a complete header.
+            if len(WorldPacket._PACKET_BUF) < SessionCipher.DECRYPT_HEADER_SIZE:
                 continue
+
+            # If a session cipher is provided, use it to decrypt the header.
+            if session_cipher is not None:
+                decrypted = session_cipher.decrypt(WorldPacket._PACKET_BUF)
+                WorldPacket._PACKET_BUF = decrypted
 
             packet_size = int.from_bytes(WorldPacket._PACKET_BUF[0:2], "big")
             WorldPacket._PACKET_BUF = WorldPacket._PACKET_BUF[2:]
