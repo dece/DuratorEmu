@@ -9,6 +9,7 @@ class AuthSessionHandler(object):
 
     def process(self):
         self._parse_packet(self.packet)
+        return None, b""
 
     def _parse_packet(self, packet):
         pass

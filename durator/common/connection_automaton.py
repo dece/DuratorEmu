@@ -42,7 +42,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
     @abstractmethod
     def _recv_packet(self):
-        """ Receive a message from the socket and return the packet. """
+        """ Receive a message from the socket and return the packet or None. """
         pass
 
     def _try_handle_packet(self, packet):
@@ -55,7 +55,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
             raise
 
     def _handle_packet(self, packet):
-        opcode, packet = self._parse_packet(packet)
+        opcode, packet_data = self._parse_packet(packet)
         if not self.opcode_is_legal(opcode):
             LOG.error("{}: received illegal opcode {} in state {}".format(
                 type(self).__name__, str(opcode), str(self.state)
@@ -71,15 +71,15 @@ class ConnectionAutomaton(metaclass = ABCMeta):
             self.state = self.MAIN_ERROR_STATE
             return
 
-        self._call_handler(handler_class, packet)
+        self._call_handler(handler_class, packet_data)
 
     @abstractmethod
     def _parse_packet(self, packet):
         """ Return opcode and packet content. """
         pass
 
-    def _call_handler(self, handler_class, packet):
-        handler = handler_class(self, packet)
+    def _call_handler(self, handler_class, packet_data):
+        handler = handler_class(self, packet_data)
         next_state, response = handler.process()
 
         if response:

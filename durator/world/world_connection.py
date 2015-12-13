@@ -16,7 +16,7 @@ class WorldConnection(object):
 
     def _process_char_selection(self):
         char_selection = CharSelectionConnection(self, self.socket)
-        char_selection.process()
+        char_selection.handle_connection()
         LOG.debug("Char selection done, we should handle to rest now.")
 
         # Placeholder
