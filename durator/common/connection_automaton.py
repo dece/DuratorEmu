@@ -7,9 +7,11 @@ class ConnectionAutomaton(metaclass = ABCMeta):
     """ This base class handle an active connection, handle incoming & outgoing
     packets, change state in consequence.
 
-    The LEGAL_OPS dict takes a state as key and a list of possible opcodes. The
-    OP_HANDLERS dict takes opcodes and a handler class. END_STATES is a list of
-    states that means this automaton can stop.
+    * The LEGAL_OPS dict takes a state as key and a list of possible opcodes.
+    * The OP_HANDLERS dict takes opcodes and a handler class.
+    * INIT_STATE is the entry state of the automaton
+    * END_STATES is a list of states that means this automaton can stop.
+    * MAIN_ERROR_STATE is a general end state when something went wrong.
     """
 
     LEGAL_OPS   = {}
