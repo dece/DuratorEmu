@@ -1,10 +1,7 @@
-from enum import Enum
 import socket
-import struct
 import threading
 import time
 
-from durator.db.database import db_connection
 from durator.world.realm import Realm, RealmId, RealmFlags, RealmPopulation
 from durator.world.world_connection import WorldConnection
 from pyshgck.concurrency import simple_thread
@@ -61,6 +58,10 @@ class WorldServer(object):
         self.clients_socket.bind(address)
         self.clients_socket.listen(WorldServer.BACKLOG_SIZE)
 
+    def _stop_listening_for_clients(self):
+        self.clients_socket.close()
+        self.clients_socket = None
+
     def _accept_client_connections(self):
         try:
             while True:
@@ -111,7 +112,3 @@ class WorldServer(object):
     def _close_login_server_socket(self):
         self.login_server_socket.close()
         self.login_server_socket = None
-
-    def _stop_listening_for_clients(self):
-        self.clients_socket.close()
-        self.clients_socket = None
