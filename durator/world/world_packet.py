@@ -1,9 +1,14 @@
+from struct import Struct
+
 from durator.common.crypto.session_cipher import SessionCipher
 from durator.world.opcodes import OpCode
 from pyshgck.format import dump_data
 
 
 class WorldPacket(object):
+
+    OUTGOING_SIZE_BIN   = Struct(">H")
+    OUTGOING_OPCODE_BIN = Struct("<H")
 
     # This static packet buffer ensures that all world packets are correctly
     # received in their entirety.
@@ -49,12 +54,26 @@ class WorldPacket(object):
             WorldPacket._PACKET_BUF = WorldPacket._PACKET_BUF[packet_size:]
             break
 
+        print("<<<")
         print(dump_data(data), end = "")
         # packet.length = packet_size
-        opcode_bytes, data = data[0:4], data[4:]
+        opcode_bytes, data = data[:4], data[4:]
         opcode_value = int.from_bytes(opcode_bytes, "little")
         packet.opcode = OpCode(opcode_value)
         packet.data = data
         return packet
+
+    def to_socket(self, session_cipher = None):
+        """ Return ready-to-send bytes, possibly encrypted, from the packet. """
+        opcode_bytes = self.OUTGOING_OPCODE_BIN.pack(self.opcode.value)
+        packet = opcode_bytes + self.data
+        size_bytes = self.OUTGOING_SIZE_BIN.pack(len(packet))
+        packet = size_bytes + packet
+
+        if session_cipher is not None:
+            packet = session_cipher.encrypt(packet)
+
+        return packet
+
     # def compute_length(self):
     #     self.length = self.OUTGOING_OPCODE_BIN.size + len(self.data)
