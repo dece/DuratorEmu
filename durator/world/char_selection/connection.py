@@ -18,11 +18,12 @@ class CharSelectionConnection(ConnectionAutomaton):
     an auth challenge.
     """
 
-    PACKET_SIZE_BIN    = Struct(">H")
-    AUTH_CHALLENGE_BIN = Struct("<HI")
+    AUTH_CHALLENGE_BIN = Struct("<I")
 
     LEGAL_OPS = {
-        CharSelectionState.INIT: [ OpCode.CMSG_AUTH_SESSION ]
+        CharSelectionState.INIT:           [ OpCode.CMSG_AUTH_SESSION ],
+        CharSelectionState.ERROR:          [ ],
+        CharSelectionState.SENT_AUTH_RESP: [ ]
     }
 
     OP_HANDLERS = {
@@ -37,14 +38,17 @@ class CharSelectionConnection(ConnectionAutomaton):
         self.world_conn = world_connection
         super().__init__(socket)
         self.auth_seed = int.from_bytes(os.urandom(4), "little")
+        self.session_cipher = None
 
-    def _send_packet(self, data):
-        """ Send data prepended with the data size in big endian. """
-        packet = CharSelectionConnection.PACKET_SIZE_BIN.pack(len(data)) + data
-        self.socket.sendall(packet)
+    def _send_packet(self, world_packet):
+        print(">>>")
+        print(dump_data(world_packet.data), end = "")
+        ready_packet = world_packet.to_socket(self.session_cipher)
+        print(dump_data(ready_packet), end = "")
+        self.socket.sendall(ready_packet)
 
     def _recv_packet(self):
-        return WorldPacket.from_socket(self.socket)
+        return WorldPacket.from_socket(self.socket, self.session_cipher)
 
     def _parse_packet(self, packet):
         """ Return opcode and packet content. """
@@ -55,8 +59,7 @@ class CharSelectionConnection(ConnectionAutomaton):
         self._send_auth_challenge()
 
     def _send_auth_challenge(self):
-        packet = CharSelectionConnection.AUTH_CHALLENGE_BIN.pack(
-            OpCode.SMSG_AUTH_CHALLENGE.value,
-            self.auth_seed
-        )
+        packet_data = self.AUTH_CHALLENGE_BIN.pack(self.auth_seed)
+        packet = WorldPacket(packet_data)
+        packet.opcode = OpCode.SMSG_AUTH_CHALLENGE
         self._send_packet(packet)
