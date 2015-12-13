@@ -7,7 +7,7 @@ WoW use it with fixed modulus and generator values.
 import base64
 import os
 
-from durator.utils.crypto import sha1, sha1_interleave
+from durator.common.crypto import sha1, sha1_interleave
 
 
 class Srp(object):

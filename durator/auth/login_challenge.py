@@ -5,7 +5,7 @@ from durator.auth.account import AccountStatus
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
-from durator.utils.network_formats import netstr_to_str
+from durator.common.network_formats import netstr_to_str
 from pyshgck.logger import LOG
 
 
