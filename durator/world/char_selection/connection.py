@@ -33,9 +33,9 @@ class CharSelectionConnection(ConnectionAutomaton):
     END_STATES       = [ CharSelectionState.ERROR ]
     MAIN_ERROR_STATE = CharSelectionState.ERROR
 
-    def __init__(self, world_server, connection):
-        self.world_server = world_server
-        super().__init__(connection)
+    def __init__(self, world_connection, socket):
+        self.world_conn = world_connection
+        super().__init__(socket)
         self.auth_seed = int.from_bytes(os.urandom(4), "little")
 
     def _send_packet(self, data):
