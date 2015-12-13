@@ -5,6 +5,7 @@ from durator.common.connection_automaton import ConnectionAutomaton
 from durator.world.char_selection.auth_session import AuthSessionHandler
 from durator.world.char_selection.connection_state import CharSelectionState
 from durator.world.opcodes import OpCode
+from durator.world.world_packet import WorldPacket
 from pyshgck.format import dump_data
 from pyshgck.logger import LOG
 
@@ -43,32 +44,11 @@ class CharSelectionConnection(ConnectionAutomaton):
         self.socket.sendall(packet)
 
     def _recv_packet(self):
-        """ Receive a full-sized packet, and return it without the size uint16.
-
-        Ok so if two packets get packed in the same TCP frame, we might get them
-        concatenated, right? The fact that the data size prepended is of various
-        size and endianness sucks, but if I find some consistency later I might
-        write a generic packet handler that'll handle all that.
-        """
-        data = b""
-        while True:
-            data_part = self.socket.recv(1024)
-            if not data:
-                return None
-            data += data_part
-
-            if len(data) < 2:
-                continue
-
-            packet_size = int.from_bytes(data[0:2], "big")
-            if len(data[2:]) >= packet_size:
-                data = data[2 : 2+packet_size]
-                print(dump_data(data), end = "")
-                return data
+        return WorldPacket.from_socket(self.socket)
 
     def _parse_packet(self, packet):
         """ Return opcode and packet content. """
-        pass #DO ET
+        return packet.opcode, packet.data
 
     def _actions_before_main_loop(self):
         LOG.debug("Entering the char selection process")
