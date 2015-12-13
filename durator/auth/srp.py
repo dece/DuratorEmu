@@ -4,7 +4,6 @@ Details on SRP are available here: https://www.ietf.org/rfc/rfc2945.txt
 WoW use it with fixed modulus and generator values.
 """
 
-import base64
 import os
 
 from durator.common.crypto import sha1, sha1_interleave

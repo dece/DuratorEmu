@@ -2,8 +2,7 @@ import base64
 from enum import Enum
 import re
 
-from peewee import ( Model, CharField, IntegerField, BlobField, BigIntegerField
-                   , ForeignKeyField )
+from peewee import Model, CharField, IntegerField, ForeignKeyField
 
 from durator.auth.srp import Srp
 from durator.db.database import DB, db_connection

@@ -5,7 +5,6 @@ import time
 from durator.auth.account import AccountManager, AccountSessionManager
 from durator.auth.login_connection import LoginConnection
 from durator.auth.realm_connection import RealmConnection
-from durator.db.database import DB, db_connection
 from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG
 
