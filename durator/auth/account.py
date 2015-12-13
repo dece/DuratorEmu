@@ -11,6 +11,15 @@ from durator.db.database import DB, db_connection
 _ACCOUNT_NAME_RE = re.compile(r"\w+")
 
 
+class AccountStatus(Enum):
+    """ Determine if an account can log in (VALID) or not (any other value). """
+
+    NOT_READY = 0
+    VALID     = 1
+    BANNED    = 2
+    SUSPENDED = 3
+
+
 class Account(Model):
     """ Account with SRP data.
 
@@ -22,7 +31,7 @@ class Account(Model):
     """
 
     name         = CharField(max_length = 64)
-    status       = IntegerField()
+    status       = IntegerField(default = AccountStatus.NOT_READY.value)
     srp_salt     = CharField(max_length = 64)
     srp_verifier = CharField(max_length = 64)
 
@@ -47,15 +56,6 @@ class Account(Model):
     def srp_verifier_as_int(self, value_int):
         verifier_bytes = int.to_bytes(value_int, 32, "little")
         self.srp_verifier = base64.b64encode(verifier_bytes).decode("ascii")
-
-
-class AccountStatus(Enum):
-    """ Determine if an account can log in (VALID) or not (any other value). """
-
-    NOT_READY = 0
-    VALID     = 1
-    BANNED    = 2
-    SUSPENDED = 3
 
 
 class AccountSession(Model):
