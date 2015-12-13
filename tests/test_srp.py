@@ -1,6 +1,7 @@
 import unittest
 
 import durator.auth.srp as srp
+import durator.common.crypto.sha1 as sha1
 
 
 IDENT           = "IDENT"
@@ -34,5 +35,5 @@ class TestSrp(unittest.TestCase):
         expected = \
             b"6\xa0\xf9\xcf\x1f\xe01\x96\xfc\x87\xd7F-\x88\xfd\x9a\xd0\xa5" \
             b"\xe0C\xdb\xdc\xfb\xf7\xf7\x04\x8b\xa8\x12\r/4SjR^7:\x86U"
-        result = srp._sha1_interleave(big_int)
+        result = sha1.sha1_interleave(big_int)
         self.assertEquals(result, expected)

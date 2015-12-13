@@ -6,7 +6,7 @@ WoW use it with fixed modulus and generator values.
 
 import os
 
-from durator.common.crypto import sha1, sha1_interleave
+from durator.common.crypto.sha1 import sha1, sha1_interleave
 
 
 class Srp(object):
