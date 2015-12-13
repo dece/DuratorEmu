@@ -1,6 +1,7 @@
 import os
 from struct import Struct
 
+from durator.common.connection_automaton import ConnectionAutomaton
 from durator.world.char_selection.auth_session import AuthSessionHandler
 from durator.world.char_selection.connection_state import CharSelectionState
 from durator.world.opcodes import OpCode
@@ -8,7 +9,7 @@ from pyshgck.format import dump_data
 from pyshgck.logger import LOG
 
 
-class CharSelectionConnection(object):
+class CharSelectionConnection(ConnectionAutomaton):
     """ Handle a client connection during the char selection process.
 
     During this step, the server and the client communicate about character
@@ -27,24 +28,14 @@ class CharSelectionConnection(object):
         OpCode.CMSG_AUTH_SESSION: AuthSessionHandler
     }
 
-    END_STATES = [ CharSelectionState.ERROR ]
+    INIT_STATE       = CharSelectionState.INIT
+    END_STATES       = [ CharSelectionState.ERROR ]
+    MAIN_ERROR_STATE = CharSelectionState.ERROR
 
     def __init__(self, world_server, connection):
         self.world_server = world_server
-        self.socket = connection
-        self.state = CharSelectionState.INIT
+        super().__init__(connection)
         self.auth_seed = int.from_bytes(os.urandom(4), "little")
-
-    def process(self):
-        LOG.debug("Entering the char selection process")
-        self._send_auth_challenge()
-        while self.state not in CharSelectionConnection.END_STATES:
-            data = self._recv_packet()
-            print(dump_data(data), end = "")
-            self._handle_packet(data)
-
-            if self.state in CharSelectionConnection.END_STATES:
-                break
 
     def _send_packet(self, data):
         """ Send data prepended with the data size in big endian. """
@@ -71,33 +62,17 @@ class CharSelectionConnection(object):
 
             packet_size = int.from_bytes(data[0:2], "big")
             if len(data[2:]) >= packet_size:
-                return data[2 : 2+packet_size]
+                data = data[2 : 2+packet_size]
+                print(dump_data(data), end = "")
+                return data
 
-    def _handle_packet(self, packet):
-        opcode_value = int.from_bytes(packet[0:2], "little")
-        opcode = OpCode(opcode_value)
-        if not self.is_opcode_legal(opcode):
-            LOG.error( "Char selection: Received opcode " + str(opcode) +
-                       " in state " + str(self.state) )
-            self.state = CharSelectionState.ERROR
-            return
+    def _parse_packet(self, packet):
+        """ Return opcode and packet content. """
+        pass #DO ET
 
-        handler_class = CharSelectionConnection.OP_HANDLERS.get(opcode)
-        self._call_handler(handler_class, packet)
-
-    def _call_handler(self, handler_class, packet):
-        handler = handler_class(self, packet)
-        next_state, response = handler.process()
-
-        if response:
-            self.socket.sendall(response)
-
-        if next_state is not None:
-            self.state = next_state
-
-    def is_opcode_legal(self, opcode):
-        """ Check if that opcode is legal for the current connection state. """
-        return opcode in CharSelectionConnection.LEGAL_OPS[self.state]
+    def _actions_before_main_loop(self):
+        LOG.debug("Entering the char selection process")
+        self._send_auth_challenge()
 
     def _send_auth_challenge(self):
         packet = CharSelectionConnection.AUTH_CHALLENGE_BIN.pack(
