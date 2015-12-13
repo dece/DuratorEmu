@@ -94,7 +94,7 @@ class LoginServer(object):
     def _handle_client_connection(self, connection, address):
         """ Start another thread to securely handle the client connection. """
         LOG.info("Accepting client connection from " + str(address))
-        login_connection = LoginConnection(self, connection, address)
+        login_connection = LoginConnection(self, connection)
         simple_thread(login_connection.handle_connection)
 
     def _accept_realm_connections(self):

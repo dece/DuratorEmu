@@ -6,10 +6,11 @@ from durator.auth.realmlist_request import RealmlistRequest
 from durator.auth.recon_challenge import ReconChallenge
 from durator.auth.recon_proof import ReconProof
 from durator.auth.srp import Srp
+from durator.common.connection_automaton import ConnectionAutomaton
 from pyshgck.logger import LOG
 
 
-class LoginConnection(object):
+class LoginConnection(ConnectionAutomaton):
     """ Handle the login process of a client with a SRP challenge. """
 
     LEGAL_OPS = {
@@ -30,11 +31,13 @@ class LoginConnection(object):
         LoginOpCode.REALMLIST:   RealmlistRequest
     }
 
-    def __init__(self, server, connection, address):
+    INIT_STATE       = LoginConnectionState.INIT
+    END_STATES       = [ LoginConnectionState.CLOSED ]
+    MAIN_ERROR_STATE = LoginConnectionState.CLOSED
+
+    def __init__(self, server, connection):
         self.server = server
-        self.socket = connection
-        self.address = address
-        self.state = LoginConnectionState.INIT
+        super().__init__(connection)
         self.account = None
         self.srp = Srp()
         self.recon_challenge = b""
@@ -42,68 +45,22 @@ class LoginConnection(object):
     def __del__(self):
         self.socket.close()
 
-    def handle_connection(self):
-        """ Handle received packets.
+    def _send_packet(self, packet):
+        self.socket.sendall(packet)
 
-        TODO this assumes that all packets are received in one piece which is
-        a wrong way to look at networking, so clean that later.
-        """
-        while self.state != LoginConnectionState.CLOSED:
-            data = self.socket.recv(1024)
-            if not data:
-                LOG.debug("Client closed the connection.")
-                break
+    def _recv_packet(self):
+        # TODO this assumes that all packets are received in no more or less
+        # than one piece which is a wrong way to look at networking,
+        # so clean that later.
+        data = self.socket.recv(1024)
+        return data or None
 
-            self._try_handle_packet(data)
-            if self.state == LoginConnectionState.CLOSED:
-                self.close_connection()
+    def _parse_packet(self, packet):
+        return LoginOpCode(packet[0]), packet[1:]
 
-    def _try_handle_packet(self, data):
-        try:
-            self._handle_packet(data)
-        except Exception:
-            LOG.error("Uncaught exception in LoginConnection._handle_packet")
-            raise
-
-    def _handle_packet(self, data):
-        """ Handle packet and update connection state.
-
-        If the packet has a legal opcode for that state, the appropriate handler
-        class is grabbed and instantiated.
-        """
-        opcode, packet = LoginOpCode(data[0]), data[1:]
-        if not self.is_opcode_legal(opcode):
-            LOG.error( "Connection: received illegal opcode " + str(opcode)
-                     + " in state " + str(self.state) )
-            self.state = LoginConnectionState.CLOSED
-            return
-
-        handler_class = LoginConnection.OP_HANDLERS.get(opcode)
-        if handler_class is None:
-            LOG.warning("Connection: unknown operation: " + str(opcode))
-            self.state = LoginConnectionState.CLOSED
-            return
-
-        self._call_handler(handler_class, packet)
-
-    def is_opcode_legal(self, opcode):
-        """ Check if that opcode is legal for the current connection state. """
-        return opcode in LoginConnection.LEGAL_OPS[self.state]
-
-    def _call_handler(self, handler_class, packet):
-        """ Instantiate a handle with that packet and process its result.
-
-        The handler returns the next state of the connection (or None if state
-        should stay the same) and bytes that should be sent back to the client
-        (if not empty).
-        """
-        handler = handler_class(self, packet)
-        next_state, response = handler.process()
-
-        if response:
-            self.socket.sendall(response)
-        if next_state is not None:
-            self.state = next_state
+    def _actions_after_handle_packet(self):
+        if self.state == self.MAIN_ERROR_STATE:
+            self.close_connection()
 
     def close_connection(self):
         """ Close connection with client. """
@@ -111,5 +68,6 @@ class LoginConnection(object):
         LOG.debug("Server closed the connection.")
 
     def accept_login(self):
+        """ Ask the login server to validate this account session. """
         session_key = self.srp.session_key
         self.server.accept_account_login(self.account, session_key)
