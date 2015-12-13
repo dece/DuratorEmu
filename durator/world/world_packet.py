@@ -10,8 +10,7 @@ class WorldPacket(object):
     _PACKET_BUF = b""
 
     def __init__(self, data = None):
-    def __init__(self):
-        self.length = 0
+        # self.length = 0
         self.opcode = None
         self.data = data or b""
 
@@ -51,9 +50,11 @@ class WorldPacket(object):
             break
 
         print(dump_data(data), end = "")
-        packet.length = packet_size
+        # packet.length = packet_size
         opcode_bytes, data = data[0:4], data[4:]
         opcode_value = int.from_bytes(opcode_bytes, "little")
         packet.opcode = OpCode(opcode_value)
         packet.data = data
         return packet
+    # def compute_length(self):
+    #     self.length = self.OUTGOING_OPCODE_BIN.size + len(self.data)
