@@ -83,7 +83,7 @@ class AuthSessionHandler(object):
             return self.conn.MAIN_ERROR_STATE, response
 
         response = self._get_success_packet()
-        return CharSelectionState.SENT_AUTH_RESP, response
+        return CharSelectionState.AUTH_OK, response
 
     def _parse_packet(self, packet):
         packet_io = io.BytesIO(packet)
