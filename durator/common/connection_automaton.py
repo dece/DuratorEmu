@@ -37,7 +37,8 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
     @abstractmethod
     def _send_packet(self, data):
-        """ Prepend necessary infos to data and send it through the socket. """
+        """ Prepend necessary infos to data and send it through the socket.
+        Data has the format returned by the packet handlers' response. """
         pass
 
     @abstractmethod
@@ -75,7 +76,8 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
     @abstractmethod
     def _parse_packet(self, packet):
-        """ Return opcode and packet content. """
+        """ Return opcode and packet content. Packet has the format returned by
+        the _recv_packet method. """
         pass
 
     def _call_handler(self, handler_class, packet_data):
