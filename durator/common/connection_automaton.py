@@ -57,6 +57,12 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
     def _handle_packet(self, packet):
         opcode, packet_data = self._parse_packet(packet)
+        if opcode is None:
+            LOG.warning("{}: unknown opcode, ignoring packet.".format(
+                type(self).__name__
+            ))
+            return
+
         if not self.opcode_is_legal(opcode):
             LOG.error("{}: received illegal opcode {} in state {}".format(
                 type(self).__name__, str(opcode), str(self.state)
@@ -66,7 +72,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
         handler_class = self.OP_HANDLERS.get(opcode)
         if handler_class is None:
-            LOG.warning("{}: unknown operation {}".format(
+            LOG.warning("{}: known opcode without handler: {}".format(
                 type(self).__name__, str(opcode)
             ))
             self.state = self.MAIN_ERROR_STATE

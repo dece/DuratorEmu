@@ -3,6 +3,7 @@ from struct import Struct
 from durator.common.crypto.session_cipher import SessionCipher
 from durator.world.opcodes import OpCode
 from pyshgck.format import dump_data
+from pyshgck.logger import LOG
 
 
 class WorldPacket(object):
@@ -56,10 +57,14 @@ class WorldPacket(object):
 
         print("<<<")
         print(dump_data(data), end = "")
+
         # packet.length = packet_size
         opcode_bytes, data = data[:4], data[4:]
         opcode_value = int.from_bytes(opcode_bytes, "little")
-        packet.opcode = OpCode(opcode_value)
+        try:
+            packet.opcode = OpCode(opcode_value)
+        except ValueError:
+            LOG.warning("Unknown opcode {}".format(hex(opcode_value)))
         packet.data = data
         return packet
 
