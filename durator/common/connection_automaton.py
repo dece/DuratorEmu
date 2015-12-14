@@ -5,17 +5,20 @@ from pyshgck.logger import LOG
 
 class ConnectionAutomaton(metaclass = ABCMeta):
     """ This base class handle an active connection, handle incoming & outgoing
-    packets, change state in consequence.
+    packets, change state in consequence. Some opcodes are considered legal only
+    if the automaton is in a determined state, to ensure protocol integrity.
 
     * The LEGAL_OPS dict takes a state as key and a list of possible opcodes.
+    * UNMANAGED_OPS is a list of opcodes that do not require a special state.
     * The OP_HANDLERS dict takes opcodes and a handler class.
     * INIT_STATE is the entry state of the automaton
     * END_STATES is a list of states that means this automaton can stop.
     * MAIN_ERROR_STATE is a general end state when something went wrong.
     """
 
-    LEGAL_OPS   = {}
-    OP_HANDLERS = {}
+    LEGAL_OPS     = {}
+    UNMANAGED_OPS = []
+    OP_HANDLERS   = {}
 
     INIT_STATE       = None
     END_STATES       = []
@@ -65,7 +68,8 @@ class ConnectionAutomaton(metaclass = ABCMeta):
             ))
             return
 
-        if not self.opcode_is_legal(opcode):
+        if ( opcode not in self.UNMANAGED_OPS
+             and not self.opcode_is_legal(opcode) ):
             LOG.error("{}: received illegal opcode {} in state {}".format(
                 type(self).__name__, str(opcode), str(self.state)
             ))
@@ -74,7 +78,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
         handler_class = self.OP_HANDLERS.get(opcode)
         if handler_class is None:
-            LOG.warning("{}: known opcode without handler: {}".format(
+            LOG.error("{}: known opcode without handler: {}".format(
                 type(self).__name__, str(opcode)
             ))
             self.state = self.MAIN_ERROR_STATE
