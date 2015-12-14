@@ -27,7 +27,8 @@ class CharSelectionConnection(ConnectionAutomaton):
     LEGAL_OPS = {
         CharSelectionState.INIT:    [ OpCode.CMSG_AUTH_SESSION ],
         CharSelectionState.ERROR:   [ ],
-        CharSelectionState.AUTH_OK: [ OpCode.CMSG_CHAR_ENUM ]
+        CharSelectionState.AUTH_OK: [ OpCode.CMSG_CHAR_ENUM
+                                    , OpCode.CMSG_CHAR_CREATE ]
     }
 
     UNMANAGED_OPS = [
@@ -36,7 +37,7 @@ class CharSelectionConnection(ConnectionAutomaton):
 
     OP_HANDLERS = {
         OpCode.CMSG_AUTH_SESSION: AuthSessionHandler,
-        OpCode.CMSG_CHAR_ENUM:    CharEnumHandler
+        OpCode.CMSG_CHAR_ENUM:    CharEnumHandler,
         OpCode.CMSG_PING:         PingHandler
     }
 
