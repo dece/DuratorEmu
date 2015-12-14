@@ -17,7 +17,9 @@ class CharSelectionConnection(ConnectionAutomaton):
 
     During this step, the server and the client communicate about character
     listing, character creation, etc. The server has to start the dialog with
-    an auth challenge.
+    an auth challenge. If the authentication goes well, this connection then
+    holds the client account and the session cipher needed to communicate with
+    the client.
     """
 
     AUTH_CHALLENGE_BIN = Struct("<I")
@@ -46,6 +48,7 @@ class CharSelectionConnection(ConnectionAutomaton):
         self.world_conn = world_connection
         super().__init__(socket)
         self.auth_seed = int.from_bytes(os.urandom(4), "little")
+        self.account = None
         self.session_cipher = None
 
     def _send_packet(self, world_packet):

@@ -9,6 +9,7 @@ from durator.world.char_selection.connection_state import CharSelectionState
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring, read_struct
+from pyshgck.logger import LOG
 
 
 class AuthSessionResponseCode(Enum):
@@ -66,22 +67,28 @@ class AuthSessionHandler(object):
         # expects an encrypted response.
         self._load_session_key()
         if not self.session_key:
+            LOG.warning("A client not logged in tried to join world server.")
             return self.conn.MAIN_ERROR_STATE, None
 
         self._setup_encryption()
 
         # TODO hardcoded value, change that
         if self.build != 4125:
+            LOG.warning("Wrong build tried to auth to world server: {}".format(
+                str(self.build)
+            ))
             error_code = AuthSessionResponseCode.AUTH_VERSION_MISMATCH
             response = self._get_failure_packet(error_code)
             return self.conn.MAIN_ERROR_STATE, response
 
         self._generate_server_hash()
         if self.server_hash != self.client_hash:
+            LOG.warning("Wrong client hash in world server auth.")
             error_code = AuthSessionResponseCode.AUTH_REJECT
             response = self._get_failure_packet(error_code)
             return self.conn.MAIN_ERROR_STATE, response
 
+        LOG.debug("World server auth OK.")
         response = self._get_success_packet()
         return CharSelectionState.AUTH_OK, response
 
@@ -101,6 +108,7 @@ class AuthSessionHandler(object):
     def _load_session_key(self):
         session = AccountSessionManager.get_session(self.account_name)
         if session is not None:
+            self.conn.account = session.account
             self.session_key = session.session_key_as_bytes
 
     def _generate_server_hash(self):

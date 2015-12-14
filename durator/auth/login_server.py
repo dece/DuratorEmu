@@ -45,7 +45,6 @@ class LoginServer(object):
 
     def start(self):
         LOG.info("Starting login server")
-        self._clean_db()
         self._start_listening()
 
         simple_thread(self._accept_realm_connections)

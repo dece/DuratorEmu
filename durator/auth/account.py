@@ -139,5 +139,4 @@ class AccountSessionManager(object):
     @staticmethod
     @db_connection
     def delete_all_sessions():
-        delete_sessions_q = AccountSession.delete()
-        delete_sessions_q.execute()
+        AccountSession.delete().execute()
