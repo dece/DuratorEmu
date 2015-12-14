@@ -6,6 +6,7 @@ from durator.world.char_selection.auth_session import AuthSessionHandler
 from durator.world.char_selection.char_enum import CharEnumHandler
 from durator.world.char_selection.connection_state import CharSelectionState
 from durator.world.opcodes import OpCode
+from durator.world.ping import PingHandler
 from durator.world.world_packet import WorldPacket
 from pyshgck.format import dump_data
 from pyshgck.logger import LOG
@@ -27,9 +28,14 @@ class CharSelectionConnection(ConnectionAutomaton):
         CharSelectionState.AUTH_OK: [ OpCode.CMSG_CHAR_ENUM ]
     }
 
+    UNMANAGED_OPS = [
+        OpCode.CMSG_PING
+    ]
+
     OP_HANDLERS = {
         OpCode.CMSG_AUTH_SESSION: AuthSessionHandler,
         OpCode.CMSG_CHAR_ENUM:    CharEnumHandler
+        OpCode.CMSG_PING:         PingHandler
     }
 
     INIT_STATE       = CharSelectionState.INIT
