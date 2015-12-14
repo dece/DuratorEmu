@@ -3,6 +3,7 @@ from struct import Struct
 
 from durator.common.connection_automaton import ConnectionAutomaton
 from durator.world.char_selection.auth_session import AuthSessionHandler
+from durator.world.char_selection.char_create import CharCreateHandler
 from durator.world.char_selection.char_enum import CharEnumHandler
 from durator.world.char_selection.connection_state import CharSelectionState
 from durator.world.opcodes import OpCode
@@ -28,7 +29,8 @@ class CharSelectionConnection(ConnectionAutomaton):
         CharSelectionState.INIT:    [ OpCode.CMSG_AUTH_SESSION ],
         CharSelectionState.ERROR:   [ ],
         CharSelectionState.AUTH_OK: [ OpCode.CMSG_CHAR_ENUM
-                                    , OpCode.CMSG_CHAR_CREATE ]
+                                    , OpCode.CMSG_CHAR_CREATE
+                                    , OpCode.CMSG_CHAR_DELETE ]
     }
 
     UNMANAGED_OPS = [
@@ -38,6 +40,7 @@ class CharSelectionConnection(ConnectionAutomaton):
     OP_HANDLERS = {
         OpCode.CMSG_AUTH_SESSION: AuthSessionHandler,
         OpCode.CMSG_CHAR_ENUM:    CharEnumHandler,
+        OpCode.CMSG_CHAR_CREATE:  CharCreateHandler,
         OpCode.CMSG_PING:         PingHandler
     }
 
