@@ -4,6 +4,7 @@ from struct import Struct
 from durator.common.connection_automaton import ConnectionAutomaton
 from durator.world.char_selection.auth_session import AuthSessionHandler
 from durator.world.char_selection.char_create import CharCreateHandler
+from durator.world.char_selection.char_delete import CharDeleteHandler
 from durator.world.char_selection.char_enum import CharEnumHandler
 from durator.world.char_selection.connection_state import CharSelectionState
 from durator.world.opcodes import OpCode
@@ -41,6 +42,7 @@ class CharSelectionConnection(ConnectionAutomaton):
         OpCode.CMSG_AUTH_SESSION: AuthSessionHandler,
         OpCode.CMSG_CHAR_ENUM:    CharEnumHandler,
         OpCode.CMSG_CHAR_CREATE:  CharCreateHandler,
+        OpCode.CMSG_CHAR_DELETE:  CharDeleteHandler,
         OpCode.CMSG_PING:         PingHandler
     }
 
