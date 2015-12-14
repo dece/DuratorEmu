@@ -66,7 +66,7 @@ class CharEnumHandler(object):
 
         char_equipments = []
         for _ in range( CharacterEquipSlot.HEAD.value
-                      , CharacterEquipSlot.TABARD + 1 ):
+                      , CharacterEquipSlot.TABARD.value + 1 ):
             equipment_data = self.CHAR_EQUIPMENT_BIN.pack(0, 0)
             char_equipments.append(equipment_data)
         first_bag_data = self.CHAR_EQUIPMENT_BIN.pack(0, 0)
