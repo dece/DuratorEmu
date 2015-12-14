@@ -19,13 +19,6 @@ class CharacterRace(Enum):
     TAUREN = 6
     GNOME = 7
     TROLL = 8
-    GOBLIN = 9
-    BLOOD_ELF = 10
-    DRAENEI = 11
-    FEL_ORC = 12
-    NAGA = 13
-    BROKEN = 14
-    SKELETON = 15
 
 
 class CharacterClass(Enum):
@@ -36,7 +29,6 @@ class CharacterClass(Enum):
     HUNTER = 3
     ROGUE = 4
     PRIEST = 5
-    DEATH_KNIGHT = 6
     SHAMAN = 7
     MAGE = 8
     WARLOCK = 9
