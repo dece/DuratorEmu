@@ -39,6 +39,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
             self._try_handle_packet(packet)
             self._actions_after_handle_packet()
+        self._actions_after_main_loop()
 
     @abstractmethod
     def _send_packet(self, data):
@@ -111,4 +112,8 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
     def _actions_after_handle_packet(self):
         """ Perform possible required actions after packet handling. """
+        pass
+
+    def _actions_after_main_loop(self):
+        """ Perform possible required actions after looping over packets. """
         pass
