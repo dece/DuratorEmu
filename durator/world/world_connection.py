@@ -2,7 +2,7 @@ import os
 from struct import Struct
 
 from durator.common.connection_automaton import ConnectionAutomaton
-from durator.world.char_selection.auth_session import AuthSessionHandler
+from durator.world.auth_session import AuthSessionHandler
 from durator.world.char_selection.char_create import CharCreateHandler
 from durator.world.char_selection.char_delete import CharDeleteHandler
 from durator.world.char_selection.char_enum import CharEnumHandler
