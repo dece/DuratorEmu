@@ -5,7 +5,7 @@ from struct import Struct
 from durator.auth.account import AccountSessionManager
 from durator.common.crypto.session_cipher import SessionCipher
 from durator.common.crypto.sha1 import sha1
-from durator.world.char_selection.connection_state import CharSelectionState
+from durator.world.world_connection_state import WorldConnectionState
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring, read_struct
@@ -90,7 +90,7 @@ class AuthSessionHandler(object):
 
         LOG.debug("World server auth OK.")
         response = self._get_success_packet()
-        return CharSelectionState.AUTH_OK, response
+        return WorldConnectionState.AUTH_OK, response
 
     def _parse_packet(self, packet):
         packet_io = io.BytesIO(packet)
