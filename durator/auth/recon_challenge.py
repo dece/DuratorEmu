@@ -32,17 +32,17 @@ class ReconChallenge(object):
         self._parse_packet_content(packet)
 
     def _parse_packet_header(self, packet):
-        end_offset = ReconChallenge.HEADER_BIN.size
+        end_offset = self.HEADER_BIN.size
         header = packet[ 0 : end_offset ]
-        header_data = ReconChallenge.HEADER_BIN.unpack(header)
+        header_data = self.HEADER_BIN.unpack(header)
         self.unk_code = header_data[0]
         self.size = header_data[1]
 
     def _parse_packet_content(self, packet):
-        offset = ReconChallenge.HEADER_BIN.size
-        end_offset = offset + ReconChallenge.CONTENT_BIN.size
+        offset = self.HEADER_BIN.size
+        end_offset = offset + self.CONTENT_BIN.size
         content = packet[ offset : end_offset ]
-        content_data = ReconChallenge.CONTENT_BIN.unpack(content)
+        content_data = self.CONTENT_BIN.unpack(content)
 
         self.account_name_size = content_data[13]
 
@@ -63,7 +63,7 @@ class ReconChallenge(object):
             return LoginConnectionState.CLOSED, response
 
     def _get_success_response(self):
-        response = ReconChallenge.RESPONSE_SUCC_BIN.pack(
+        response = self.RESPONSE_SUCC_BIN.pack(
             LoginOpCode.RECON_CHALL.value,
             LoginResult.SUCCESS.value,
             self.conn.recon_challenge,
@@ -73,7 +73,7 @@ class ReconChallenge(object):
         return response
 
     def _get_failure_response(self):
-        response = ReconChallenge.RESPONSE_FAIL_BIN.pack(
+        response = self.RESPONSE_FAIL_BIN.pack(
             LoginOpCode.RECON_CHALL.value,
             LoginResult.FAIL_1.value
         )

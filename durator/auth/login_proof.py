@@ -42,14 +42,14 @@ class LoginProof(object):
             return LoginConnectionState.CLOSED, response
 
     def _parse_packet(self, packet):
-        data = LoginProof.PROOF_BIN.unpack(packet)
+        data = self.PROOF_BIN.unpack(packet)
         self.client_ephemeral = int.from_bytes(data[0], "little")
         self.client_proof = data[1]
         self.checksum = data[2]
         self.unk = data[3]
 
     def _get_success_response(self):
-        response = LoginProof.RESPONSE_SUCC_BIN.pack(
+        response = self.RESPONSE_SUCC_BIN.pack(
             LoginOpCode.LOGIN_PROOF.value,
             LoginResult.SUCCESS.value,
             self.conn.srp.server_proof,
@@ -58,7 +58,7 @@ class LoginProof(object):
         return response
 
     def _get_failure_response(self):
-        response = LoginProof.RESPONSE_FAIL_BIN.pack(
+        response = self.RESPONSE_FAIL_BIN.pack(
             LoginOpCode.LOGIN_PROOF.value,
             LoginResult.FAIL_1.value
         )

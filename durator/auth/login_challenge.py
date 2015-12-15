@@ -48,17 +48,17 @@ class LoginChallenge(object):
         self._parse_packet_content(packet)
 
     def _parse_packet_header(self, packet):
-        end_offset = LoginChallenge.HEADER_BIN.size
+        end_offset = self.HEADER_BIN.size
         header = packet[ 0 : end_offset ]
-        header_data = LoginChallenge.HEADER_BIN.unpack(header)
+        header_data = self.HEADER_BIN.unpack(header)
         self.unk_code = header_data[0]
         self.size = header_data[1]
 
     def _parse_packet_content(self, packet):
-        offset = LoginChallenge.HEADER_BIN.size
-        end_offset = offset + LoginChallenge.CONTENT_BIN.size
+        offset = self.HEADER_BIN.size
+        end_offset = offset + self.CONTENT_BIN.size
         content = packet[ offset : end_offset ]
-        content_data = LoginChallenge.CONTENT_BIN.unpack(content)
+        content_data = self.CONTENT_BIN.unpack(content)
 
         self.game_name = netstr_to_str(content_data[0])
         self.version_major = content_data[1]
@@ -97,7 +97,7 @@ class LoginChallenge(object):
         generator = int.to_bytes(Srp.GENERATOR, 1, "little")
         modulus = int.to_bytes(Srp.MODULUS, 32, "little")
 
-        response = LoginChallenge.RESPONSE_SUCC_BIN.pack(
+        response = self.RESPONSE_SUCC_BIN.pack(
             LoginOpCode.LOGIN_CHALL.value,
             0,
             LoginResult.SUCCESS.value,
@@ -122,9 +122,9 @@ class LoginChallenge(object):
             fail_code = LoginResult.FAIL_1
         else:
             account_status = AccountStatus(account.status)
-            fail_code = ( LoginChallenge.ERROR_CODES.get(account_status)
+            fail_code = ( self.ERROR_CODES.get(account_status)
                           or LoginResult.FAIL_1 )
-        response = LoginChallenge.RESPONSE_FAIL_BIN.pack(
+        response = self.RESPONSE_FAIL_BIN.pack(
             LoginOpCode.LOGIN_CHALL.value,
             0,
             fail_code.value

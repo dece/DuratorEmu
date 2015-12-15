@@ -64,15 +64,15 @@ class LoginServer(object):
         Windows signals. """
         self.realms_socket = socket.socket()
         self.realms_socket.settimeout(1)
-        address = (LoginServer.REALMS_HOST, LoginServer.REALMS_PORT)
+        address = (self.REALMS_HOST, self.REALMS_PORT)
         self.realms_socket.bind(address)
-        self.realms_socket.listen(LoginServer.BACKLOG_SIZE)
+        self.realms_socket.listen(self.BACKLOG_SIZE)
 
         self.clients_socket = socket.socket()
         self.clients_socket.settimeout(1)
-        address = (LoginServer.CLIENTS_HOST, LoginServer.CLIENTS_PORT)
+        address = (self.CLIENTS_HOST, self.CLIENTS_PORT)
         self.clients_socket.bind(address)
-        self.clients_socket.listen(LoginServer.BACKLOG_SIZE)
+        self.clients_socket.listen(self.BACKLOG_SIZE)
 
     def _accept_client_connections(self):
         """ Accept incoming clients connections until manual interruption. """
@@ -145,7 +145,7 @@ class LoginServer(object):
             to_remove = []
             for realm in self.realms:
                 update_delay = time.time() - self.realms[realm]["last_update"]
-                if update_delay > LoginServer.REALM_MAX_UPDATE_TIME:
+                if update_delay > self.REALM_MAX_UPDATE_TIME:
                     to_remove.append(realm)
                     LOG.debug("Realm " + realm + " down, removed from list.")
             for realm_to_remove in to_remove:

@@ -37,7 +37,7 @@ class ReconProof(object):
             return LoginConnectionState.CLOSED, response
 
     def _parse_packet(self, packet):
-        data = ReconProof.CONTENT_BIN.unpack(packet)
+        data = self.CONTENT_BIN.unpack(packet)
         self.proof_data = data[0]
         self.client_proof = data[1]
         self.unk_data = data[2]
@@ -52,14 +52,14 @@ class ReconProof(object):
         self.local_proof = sha1(to_hash)
 
     def _get_success_response(self):
-        response = ReconProof.RESPONSE_SUCC_BIN.pack(
+        response = self.RESPONSE_SUCC_BIN.pack(
             LoginOpCode.RECON_PROOF.value,
             LoginResult.SUCCESS.value
         )
         return response
 
     def _get_failure_response(self):
-        response = ReconProof.RESPONSE_FAIL_BIN.pack(
+        response = self.RESPONSE_FAIL_BIN.pack(
             LoginOpCode.RECON_PROOF.value,
             LoginResult.FAIL_1.value
         )

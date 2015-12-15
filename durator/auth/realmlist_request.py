@@ -30,14 +30,14 @@ class RealmlistRequest(object):
         return b"".join(packets)
 
     def _get_realmlist_packet(self, realminfos, num_realms):
-        full_packet_size = RealmlistRequest.MIN_RESPONSE_SIZE + len(realminfos)
-        header = RealmlistRequest.RESPONSE_HEADER_BIN.pack(
+        full_packet_size = self.MIN_RESPONSE_SIZE + len(realminfos)
+        header = self.RESPONSE_HEADER_BIN.pack(
             LoginOpCode.REALMLIST.value,
             full_packet_size,
             0,  # unknown
             num_realms
         )
-        footer = RealmlistRequest.RESPONSE_FOOTER_BIN.pack(
+        footer = self.RESPONSE_FOOTER_BIN.pack(
             0  # unknown
         )
         return header + realminfos + footer
