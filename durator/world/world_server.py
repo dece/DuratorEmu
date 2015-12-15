@@ -78,7 +78,7 @@ class WorldServer(object):
 
     def _handle_client_connection(self, connection, address):
         LOG.info("Accepting client connection from " + str(address))
-        world_connection = WorldConnection(self, connection, address)
+        world_connection = WorldConnection(self, connection)
         simple_thread(world_connection.handle_connection)
 
     def _handle_login_server_connection(self):

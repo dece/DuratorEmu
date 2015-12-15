@@ -36,8 +36,8 @@ class LoginConnection(ConnectionAutomaton):
     MAIN_ERROR_STATE = LoginConnectionState.CLOSED
 
     def __init__(self, server, connection):
-        self.server = server
         super().__init__(connection)
+        self.server = server
         self.account = None
         self.srp = Srp()
         self.recon_challenge = b""
