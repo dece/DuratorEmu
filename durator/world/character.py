@@ -166,8 +166,8 @@ class CharacterManager(Model):
     @staticmethod
     @db_connection
     def _get_unused_guid():
-        guid = 0
-        while ( guid == 0
+        guid = -1
+        while ( guid == -1
                 or Character.select().where(Character.guid == guid).exists() ):
             guid = random.randrange(2**20)
         return guid

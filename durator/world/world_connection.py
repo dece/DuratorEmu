@@ -49,6 +49,7 @@ class WorldConnection(ConnectionAutomaton):
         self.auth_seed = int.from_bytes(os.urandom(4), "little")
         self.account = None
         self.session_cipher = None
+        self.guid = -1
 
     def send_packet(self, world_packet):
         print(">>>")
