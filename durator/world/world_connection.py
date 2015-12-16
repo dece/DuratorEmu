@@ -50,7 +50,7 @@ class WorldConnection(ConnectionAutomaton):
         self.account = None
         self.session_cipher = None
 
-    def _send_packet(self, world_packet):
+    def send_packet(self, world_packet):
         print(">>>")
         print(dump_data(world_packet.data), end = "")
         ready_packet = world_packet.to_socket(self.session_cipher)
@@ -70,7 +70,7 @@ class WorldConnection(ConnectionAutomaton):
         packet_data = self.AUTH_CHALLENGE_BIN.pack(self.auth_seed)
         packet = WorldPacket(packet_data)
         packet.opcode = OpCode.SMSG_AUTH_CHALLENGE
-        self._send_packet(packet)
+        self.send_packet(packet)
 
     def _actions_after_main_loop(self):
         # Placeholder

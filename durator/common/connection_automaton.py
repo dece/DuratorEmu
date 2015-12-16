@@ -42,7 +42,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         self._actions_after_main_loop()
 
     @abstractmethod
-    def _send_packet(self, data):
+    def send_packet(self, data):
         """ Prepend necessary infos to data and send it through the socket.
         Data has the format returned by the packet handlers' response. """
         pass
@@ -98,7 +98,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         next_state, response = handler.process()
 
         if response:
-            self._send_packet(response)
+            self.send_packet(response)
         if next_state is not None:
             self.state = next_state
 

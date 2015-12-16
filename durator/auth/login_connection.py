@@ -45,7 +45,7 @@ class LoginConnection(ConnectionAutomaton):
     def __del__(self):
         self.socket.close()
 
-    def _send_packet(self, packet):
+    def send_packet(self, packet):
         self.socket.sendall(packet)
 
     def _recv_packet(self):
