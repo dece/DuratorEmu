@@ -64,7 +64,7 @@ class WorldPacket(object):
         try:
             packet.opcode = OpCode(opcode_value)
         except ValueError:
-            LOG.warning("Unknown opcode {}".format(hex(opcode_value)))
+            LOG.warning("Unknown opcode {:X}".format(opcode_value))
         packet.data = data
         return packet
 
