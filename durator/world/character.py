@@ -91,11 +91,12 @@ class CharacterStats(Model):
 
 class CharacterPosition(Model):
 
-    map_id  = IntegerField(default = 0)
-    zone_id = IntegerField(default = 1)
-    pos_x   = FloatField(default = 0.0)
-    pos_y   = FloatField(default = 0.0)
-    pos_z   = FloatField(default = 0.0)
+    map_id      = IntegerField(default = 0)
+    zone_id     = IntegerField(default = 1)
+    pos_x       = FloatField(default = 0.0)
+    pos_y       = FloatField(default = 0.0)
+    pos_z       = FloatField(default = 0.0)
+    orientation = FloatField(default = 0.0)
 
     class Meta(object):
         database = DB
