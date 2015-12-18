@@ -50,7 +50,7 @@ class WorldConnection(ConnectionAutomaton):
     def __init__(self, server, connection):
         super().__init__(connection)
         self.server = server
-        self.auth_seed = int.from_bytes(os.urandom(4), "little")
+        self.temp_data = {}
         self.account = None
         self.session_cipher = None
         self.guid = -1
@@ -72,7 +72,8 @@ class WorldConnection(ConnectionAutomaton):
         self._send_auth_challenge()
 
     def _send_auth_challenge(self):
-        packet_data = self.AUTH_CHALLENGE_BIN.pack(self.auth_seed)
+        self.temp_data["auth_seed"] = int.from_bytes(os.urandom(4), "little")
+        packet_data = self.AUTH_CHALLENGE_BIN.pack(self.temp_data["auth_seed"])
         packet = WorldPacket(packet_data)
         packet.opcode = OpCode.SMSG_AUTH_CHALLENGE
         self.send_packet(packet)

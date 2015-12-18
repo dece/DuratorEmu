@@ -112,10 +112,12 @@ class AuthSessionHandler(object):
             self.session_key = session.session_key_as_bytes
 
     def _generate_server_hash(self):
+        auth_seed = self.conn.temp_data["auth_seed"]
+        del self.conn.temp_data["auth_seed"]
         to_hash = ( self.account_name.encode("ascii") +
                     bytes(4) +
                     int.to_bytes(self.client_seed, 4, "little") +
-                    int.to_bytes(self.conn.auth_seed, 4, "little") +
+                    int.to_bytes(auth_seed, 4, "little") +
                     self.session_key )
         self.server_hash = sha1(to_hash)
 
