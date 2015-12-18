@@ -7,6 +7,7 @@ from durator.world.char_selection.char_create import CharCreateHandler
 from durator.world.char_selection.char_delete import CharDeleteHandler
 from durator.world.char_selection.char_enum import CharEnumHandler
 from durator.world.game.player_login import PlayerLoginHandler
+from durator.world.game.move_worldport_ack import MoveWorldportAckHandler
 from durator.world.opcodes import OpCode
 from durator.world.ping import PingHandler
 from durator.world.world_connection_state import WorldConnectionState
@@ -31,7 +32,8 @@ class WorldConnection(ConnectionAutomaton):
     }
 
     UNMANAGED_OPS = [
-        OpCode.CMSG_PING
+        OpCode.CMSG_PING,
+        OpCode.MSG_MOVE_WORLDPORT_ACK,
     ]
 
     OP_HANDLERS = {
@@ -41,6 +43,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_CHAR_ENUM:         CharEnumHandler,
         OpCode.CMSG_PING:              PingHandler,
         OpCode.CMSG_PLAYER_LOGIN:      PlayerLoginHandler,
+        OpCode.MSG_MOVE_WORLDPORT_ACK: MoveWorldportAckHandler
     }
 
     INIT_STATE       = WorldConnectionState.INIT
