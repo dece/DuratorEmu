@@ -57,6 +57,7 @@ class WorldConnection(ConnectionAutomaton):
         self.account = None
         self.session_cipher = None
         self.guid = -1
+        self.character = None
 
     def send_packet(self, world_packet):
         print(">>>")
