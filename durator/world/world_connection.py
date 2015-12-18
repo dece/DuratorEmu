@@ -6,6 +6,7 @@ from durator.world.auth_session import AuthSessionHandler
 from durator.world.char_selection.char_create import CharCreateHandler
 from durator.world.char_selection.char_delete import CharDeleteHandler
 from durator.world.char_selection.char_enum import CharEnumHandler
+from durator.world.game.player_login import PlayerLoginHandler
 from durator.world.opcodes import OpCode
 from durator.world.ping import PingHandler
 from durator.world.world_connection_state import WorldConnectionState
@@ -20,11 +21,13 @@ class WorldConnection(ConnectionAutomaton):
     AUTH_CHALLENGE_BIN = Struct("<I")
 
     LEGAL_OPS = {
-        WorldConnectionState.INIT:    [ OpCode.CMSG_AUTH_SESSION ],
-        WorldConnectionState.ERROR:   [ ],
-        WorldConnectionState.AUTH_OK: [ OpCode.CMSG_CHAR_ENUM
-                                      , OpCode.CMSG_CHAR_CREATE
-                                      , OpCode.CMSG_CHAR_DELETE ]
+        WorldConnectionState.INIT:     [ OpCode.CMSG_AUTH_SESSION ],
+        WorldConnectionState.ERROR:    [ ],
+        WorldConnectionState.AUTH_OK:  [ OpCode.CMSG_CHAR_ENUM
+                                       , OpCode.CMSG_CHAR_CREATE
+                                       , OpCode.CMSG_CHAR_DELETE
+                                       , OpCode.CMSG_PLAYER_LOGIN ],
+        WorldConnectionState.IN_WORLD: [ ]
     }
 
     UNMANAGED_OPS = [
@@ -32,11 +35,12 @@ class WorldConnection(ConnectionAutomaton):
     ]
 
     OP_HANDLERS = {
-        OpCode.CMSG_AUTH_SESSION: AuthSessionHandler,
-        OpCode.CMSG_CHAR_ENUM:    CharEnumHandler,
-        OpCode.CMSG_CHAR_CREATE:  CharCreateHandler,
-        OpCode.CMSG_CHAR_DELETE:  CharDeleteHandler,
-        OpCode.CMSG_PING:         PingHandler
+        OpCode.CMSG_AUTH_SESSION:      AuthSessionHandler,
+        OpCode.CMSG_CHAR_CREATE:       CharCreateHandler,
+        OpCode.CMSG_CHAR_DELETE:       CharDeleteHandler,
+        OpCode.CMSG_CHAR_ENUM:         CharEnumHandler,
+        OpCode.CMSG_PING:              PingHandler,
+        OpCode.CMSG_PLAYER_LOGIN:      PlayerLoginHandler,
     }
 
     INIT_STATE       = WorldConnectionState.INIT
