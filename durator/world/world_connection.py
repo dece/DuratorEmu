@@ -66,7 +66,11 @@ class WorldConnection(ConnectionAutomaton):
         self.socket.sendall(ready_packet)
 
     def _recv_packet(self):
-        return WorldPacket.from_socket(self.socket, self.session_cipher)
+        try:
+            return WorldPacket.from_socket(self.socket, self.session_cipher)
+        except ConnectionResetError:
+            LOG.info("Lost connection with " + self.account.name + ".")
+            return None
 
     def _parse_packet(self, packet):
         return packet.opcode, packet.data
@@ -85,6 +89,9 @@ class WorldConnection(ConnectionAutomaton):
     def _actions_after_main_loop(self):
         # Placeholder
         LOG.debug("World connection stopped handling packets.")
-        while True:
-            data = self.socket.recv(1024)
-            print(dump_data(data), end = "")
+        try:
+            while True:
+                data = self.socket.recv(1024)
+                print(dump_data(data), end = "")
+        except ConnectionResetError:
+            LOG.debug("Lost connection with.")
