@@ -60,14 +60,14 @@ class LoginChallenge(object):
         content = packet[ offset : end_offset ]
         content_data = self.CONTENT_BIN.unpack(content)
 
-        self.game_name = netstr_to_str(content_data[0])
+        self.game_name = _decode_chall_cstring(content_data[0])
         self.version_major = content_data[1]
         self.version_minor = content_data[2]
         self.version_patch = content_data[3]
         self.version_build = content_data[4]
-        self.arch = netstr_to_str(content_data[5])
-        self.platform = netstr_to_str(content_data[6])
-        self.locale = netstr_to_str(content_data[7])
+        self.arch = _decode_chall_cstring(content_data[5])
+        self.platform = _decode_chall_cstring(content_data[6])
+        self.locale = _decode_chall_cstring(content_data[7])
         self.timezone = content_data[8]
         self.ip_address = content_data[9:13]
         self.account_name_size = content_data[13]
@@ -130,3 +130,7 @@ class LoginChallenge(object):
             fail_code.value
         )
         return response
+
+
+def _decode_chall_cstring(cstring, encoding = "ascii"):
+    return cstring.decode(encoding).strip("\x00")[::-1]
