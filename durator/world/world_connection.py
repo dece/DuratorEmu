@@ -2,14 +2,14 @@ import os
 from struct import Struct
 
 from durator.common.connection_automaton import ConnectionAutomaton
-from durator.world.auth_session import AuthSessionHandler
-from durator.world.char_selection.char_create import CharCreateHandler
-from durator.world.char_selection.char_delete import CharDeleteHandler
-from durator.world.char_selection.char_enum import CharEnumHandler
-from durator.world.game.player_login import PlayerLoginHandler
-from durator.world.game.move_worldport_ack import MoveWorldportAckHandler
+from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
+from durator.world.handlers.auth_session import AuthSessionHandler
+from durator.world.handlers.char_selection.char_create import CharCreateHandler
+from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
+from durator.world.handlers.char_selection.char_enum import CharEnumHandler
+from durator.world.handlers.game.player_login import PlayerLoginHandler
+from durator.world.handlers.ping import PingHandler
 from durator.world.opcodes import OpCode
-from durator.world.ping import PingHandler
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket
 from pyshgck.format import dump_data
