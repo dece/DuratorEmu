@@ -21,18 +21,6 @@ class TestUpdateObject(unittest.TestCase):
         self.assertEquals(update.mask_blocks, [0b10111])
         self.assertEquals(len(update.update_blocks), 3)
 
-    def test_add_2(self):
-        """ add, with a longer mask. """
-        update = ObjectUpdate()
-
-        update.add(UpdateFieldObject.GUID, 0xDEAD)
-        self.assertEquals(update.mask_blocks, [0b11])
-        self.assertEquals(len(update.update_blocks), 1)
-
-        update.add(UpdateFieldUnit.HEALTH, 100)
-        self.assertEquals(update.mask_blocks, [0b11, 0b0, 0b01000000])
-        self.assertEquals(len(update.update_blocks), 2)
-
     def test_to_bytes(self):
         """ to_bytes, with a few simple fields """
         update = ObjectUpdate()

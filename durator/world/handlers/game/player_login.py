@@ -97,17 +97,17 @@ class UpdateFieldUnit(Enum):
     PERSUADED                 = 18
     CHANNEL_OBJECT            = 20
     HEALTH                    = 22
-    POWER1                    = 23
-    POWER2                    = 24
-    POWER3                    = 25
-    POWER4                    = 26
-    POWER5                    = 27
+    POWER_1                   = 23
+    POWER_2                   = 24
+    POWER_3                   = 25
+    POWER_4                   = 26
+    POWER_5                   = 27
     MAX_HEALTH                = 28
-    MAX_POWER1                = 29
-    MAX_POWER2                = 30
-    MAX_POWER3                = 31
-    MAX_POWER4                = 32
-    MAX_POWER5                = 33
+    MAX_POWER_1               = 29
+    MAX_POWER_2               = 30
+    MAX_POWER_3               = 31
+    MAX_POWER_4               = 32
+    MAX_POWER_5               = 33
     LEVEL                     = 34
     FACTION_TEMPLATE          = 35
     BYTES_0                   = 36
@@ -177,7 +177,7 @@ class UpdateFieldPlayer(Enum):
     FLAGS                        = 190
     GUILD_ID                     = 191
     GUILD_RANK                   = 192
-    BYTES_1                      = 193
+    BYTES_1                      = 193  # originally "BYTES"
     BYTES_2                      = 194
     BYTES_3                      = 195
     DUEL_TEAM                    = 196
@@ -336,7 +336,7 @@ class UpdateFieldPlayer(Enum):
     MOD_DAMAGE_DONE_POS          = 1201
     MOD_DAMAGE_DONE_NEG          = 1208
     MOD_DAMAGE_DONE_PCT          = 1215
-    BYTES_1                      = 1222
+    BYTES_4                      = 1222  # originally "BYTES"
     AMMO_ID                      = 1223
     SELF_RES_SPELL               = 1224
     PVP_MEDALS                   = 1225
@@ -352,7 +352,7 @@ class UpdateFieldPlayer(Enum):
     YESTERDAY_CONTRIBUTION       = 1257
     LAST_WEEK_CONTRIBUTION       = 1258
     LAST_WEEK_RANK               = 1259
-    BYTES_2                      = 1260
+    BYTES_5                      = 1260  # originally "BYTES2"
     WATCHED_FACTION_INDEX        = 1261
     COMBAT_RATING_1              = 1262
 
@@ -428,18 +428,17 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldUnit.PERSUADED:                UpdateFieldsType.INT64,
     UpdateFieldUnit.CHANNEL_OBJECT:           UpdateFieldsType.INT64,
     UpdateFieldUnit.HEALTH:                   UpdateFieldsType.INT32,
-    UpdateFieldUnit.HEALTH:                   UpdateFieldsType.INT32,
-    UpdateFieldUnit.POWER1:                   UpdateFieldsType.INT32,
-    UpdateFieldUnit.POWER2:                   UpdateFieldsType.INT32,
-    UpdateFieldUnit.POWER3:                   UpdateFieldsType.INT32,
-    UpdateFieldUnit.POWER4:                   UpdateFieldsType.INT32,
-    UpdateFieldUnit.POWER5:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER_1:                  UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER_2:                  UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER_3:                  UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER_4:                  UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER_5:                  UpdateFieldsType.INT32,
     UpdateFieldUnit.MAX_HEALTH:               UpdateFieldsType.INT32,
-    UpdateFieldUnit.MAX_POWER1:               UpdateFieldsType.INT32,
-    UpdateFieldUnit.MAX_POWER2:               UpdateFieldsType.INT32,
-    UpdateFieldUnit.MAX_POWER3:               UpdateFieldsType.INT32,
-    UpdateFieldUnit.MAX_POWER4:               UpdateFieldsType.INT32,
-    UpdateFieldUnit.MAX_POWER5:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER_1:              UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER_2:              UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER_3:              UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER_4:              UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER_5:              UpdateFieldsType.INT32,
     UpdateFieldUnit.LEVEL:                    UpdateFieldsType.INT32,
     UpdateFieldUnit.FACTION_TEMPLATE:         UpdateFieldsType.INT32,
     UpdateFieldUnit.BYTES_0:                  UpdateFieldsType.INT32,
@@ -507,6 +506,8 @@ class ObjectUpdate(object):
         self._set_field_mask_bits(field, field_struct)
 
         update_block = field_struct.pack(value)
+        import binascii
+        print(str(field) + " - " + binascii.hexlify(update_block).decode("ascii"))
         self.update_blocks.append(update_block)
 
     def _set_field_mask_bits(self, field, field_struct):
@@ -515,8 +516,8 @@ class ObjectUpdate(object):
             self._set_field_mask_bit(field_value)
 
     def _set_field_mask_bit(self, field_value):
-        mask_block_index = field_value // 8
-        bit_index = field_value % 8
+        mask_block_index = field_value // 32
+        bit_index = field_value % 32
         while len(self.mask_blocks) < mask_block_index+1:
             self.mask_blocks.append(0)
         self.mask_blocks[mask_block_index] |= 1 << bit_index
@@ -618,11 +619,14 @@ class PlayerLoginHandler(object):
 
     UPDATE_PART1_BIN    = Struct("<I2BQB")
     UPDATE_MOVEMENT_BIN = Struct("<2I4f6f")
-    UPDATE_PART2_BIN    = Struct("<3IQB")
-    UPDATE_UPDATE_MASK_BIN    = Struct("<IQIf")
+    UPDATE_PART2_BIN    = Struct("<3IQ")
 
     def _get_update_object_packet(self):
         position = self.conn.character.position
+        race = self.conn.character.race
+        class_id = self.conn.character.class_id
+        gender = self.conn.character.gender
+
 
         # guid_mask, guid_bytes = _pack_guid(self.conn.guid)
         # packed_guid = int.to_bytes(guid_mask, 1, "little") + guid_bytes
@@ -653,18 +657,91 @@ class PlayerLoginHandler(object):
             1,  # is player?
             1,  # attack cycle
             0,  # timer id
-            0,  # victim GUID
-            0,  # update mask block count, hard limit at 1C
-        )
-        data += self.UPDATE_UPDATE_MASK_BIN.pack(
-            0x15,  # mask, 00010101
-            self.conn.guid,
-            ( ObjectDescFlags.OBJECT.value |
-              ObjectDescFlags.UNIT.value |
-              ObjectDescFlags.PLAYER.value ),
-            1.0
+            0   # victim GUID
         )
 
+        update = ObjectUpdate()
+        update.add(UpdateFieldObject.GUID, self.conn.guid)
+        update.add(UpdateFieldObject.TYPE, ( ObjectDescFlags.OBJECT.value |
+                                             ObjectDescFlags.UNIT.value |
+                                             ObjectDescFlags.PLAYER.value ) )
+        update.add(UpdateFieldObject.SCALE_X, 1.0)
+
+        update.add(UpdateFieldUnit.HEALTH, 100)
+        update.add(UpdateFieldUnit.POWER_1, 100)
+        update.add(UpdateFieldUnit.POWER_2, 100)
+        update.add(UpdateFieldUnit.POWER_3, 100)
+        update.add(UpdateFieldUnit.POWER_4, 100)
+        update.add(UpdateFieldUnit.POWER_5, 100)
+        update.add(UpdateFieldUnit.MAX_HEALTH, 100)
+        update.add(UpdateFieldUnit.MAX_POWER_1, 100)
+        update.add(UpdateFieldUnit.MAX_POWER_2, 100)
+        update.add(UpdateFieldUnit.MAX_POWER_3, 100)
+        update.add(UpdateFieldUnit.MAX_POWER_4, 100)
+        update.add(UpdateFieldUnit.MAX_POWER_5, 100)
+
+        update.add(UpdateFieldUnit.LEVEL, 1)
+        update.add(UpdateFieldUnit.FACTION_TEMPLATE, 35)
+        update.add(UpdateFieldUnit.BYTES_0, ( race | (class_id << 8) |
+                                              (gender << 16) | (1 << 24) ) )
+        update.add(UpdateFieldUnit.FLAGS, 0)
+
+        update.add(UpdateFieldUnit.BASE_ATTACK_TIME, 2000)
+        update.add(UpdateFieldUnit.OFFHAND_ATTACK_TIME, 2000)
+
+        update.add(UpdateFieldUnit.BOUNDING_RADIUS, 1.0)
+        update.add(UpdateFieldUnit.COMBAT_REACH, 1.0)
+
+        update.add(UpdateFieldUnit.DISPLAY_ID, 1)
+        update.add(UpdateFieldUnit.NATIVE_DISPLAY_ID, 1)
+        update.add(UpdateFieldUnit.MOUNT_DISPLAY_ID, 1)
+
+        update.add(UpdateFieldUnit.MIN_DAMAGE, 0)
+        update.add(UpdateFieldUnit.MAX_DAMAGE, 0)
+        update.add(UpdateFieldUnit.MIN_OFFHAND_DAMAGE, 0)
+        update.add(UpdateFieldUnit.MAX_OFFHAND_DAMAGE, 0)
+
+        update.add(UpdateFieldUnit.BYTES_1, 0)  # stand state and stuff
+
+        update.add(UpdateFieldUnit.MOD_CAST_SPEED, 1.0)
+
+        update.add(UpdateFieldUnit.STAT_0, 0)
+        update.add(UpdateFieldUnit.STAT_1, 1)
+        update.add(UpdateFieldUnit.STAT_2, 2)
+        update.add(UpdateFieldUnit.STAT_3, 3)
+        update.add(UpdateFieldUnit.STAT_4, 4)
+
+        update.add(UpdateFieldUnit.RESISTANCE_0, 0)
+        update.add(UpdateFieldUnit.RESISTANCE_1, 1)
+        update.add(UpdateFieldUnit.RESISTANCE_2, 2)
+        update.add(UpdateFieldUnit.RESISTANCE_3, 3)
+        update.add(UpdateFieldUnit.RESISTANCE_4, 4)
+        update.add(UpdateFieldUnit.RESISTANCE_5, 5)
+
+        update.add(UpdateFieldUnit.BASE_MANA, 1)
+        update.add(UpdateFieldUnit.BASE_HEALTH, 1)
+
+        update.add(UpdateFieldUnit.BYTES_2, 0)
+
+        update.add(UpdateFieldUnit.ATTACK_POWER, 0)
+        update.add(UpdateFieldUnit.ATTACK_POWER_MODS, 0)
+        update.add(UpdateFieldUnit.RANGED_ATTACK_POWER, 0)
+        update.add(UpdateFieldUnit.RANGED_ATTACK_POWER_MODS, 0)
+
+        update.add(UpdateFieldUnit.MIN_RANGED_DAMAGE, 0)
+        update.add(UpdateFieldUnit.MAX_RANGED_DAMAGE, 0)
+
+
+
+
+        # update mask block count, hard limit at 1C
+        num_mask_blocks = len(update.mask_blocks)
+        if num_mask_blocks >= 0x1C:
+            LOG.critical("Too much update mask blocks, you fucked up something")
+            raise Exception()
+        data += int.to_bytes(num_mask_blocks, 1, "little")
+
+        data += update.to_bytes()
 
         packet = WorldPacket(data)
         packet.opcode = OpCode.SMSG_UPDATE_OBJECT
