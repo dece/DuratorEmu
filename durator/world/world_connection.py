@@ -28,7 +28,7 @@ class WorldConnection(ConnectionAutomaton):
                                        , OpCode.CMSG_CHAR_CREATE
                                        , OpCode.CMSG_CHAR_DELETE
                                        , OpCode.CMSG_PLAYER_LOGIN ],
-        WorldConnectionState.IN_WORLD: [ ]
+        WorldConnectionState.IN_WORLD: [ OpCode.CMSG_NAME_QUERY ]
     }
 
     UNMANAGED_OPS = [
