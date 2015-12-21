@@ -1,4 +1,5 @@
 from enum import Enum
+import math
 from struct import Struct
 
 from durator.db.database import db_connection
@@ -43,6 +44,189 @@ class ObjectDescFlags(Enum):
     GAME_OBJECT    = 1 << 5
     DYNAMIC_OBJECT = 1 << 6
     CORPSE         = 1 << 7
+
+
+
+
+
+
+
+
+class UpdateFieldObject(Enum):
+
+    GUID    = 0
+    TYPE    = 2
+    ENTRY   = 3
+    SCALE_X = 4
+    PADDING = 5
+
+
+class UpdateFieldItem(Enum):
+
+    OWNER                = 6
+    CONTAINED            = 8
+    CREATOR              = 10
+    GIFTCREATOR          = 12
+    STACK_COUNT          = 14
+    DURATION             = 15
+    SPELL_CHARGES        = 16
+    FLAGS                = 21
+    ENCHANTMENT          = 22
+    PROPERTY_SEED        = 43
+    RANDOM_PROPERTIES_ID = 44
+    ITEM_TEXT_ID         = 45
+    DURABILITY           = 46
+    MAXDURABILITY        = 47
+
+
+class UpdateFieldContainer(Enum):
+
+    NUM_SLOTS = 48
+    PAD       = 49
+    SLOT_1    = 50
+
+
+class UpdateFieldUnit(Enum):
+
+    CHARM                     = 6
+    SUMMON                    = 8
+    CHARMED_BY                = 10
+    SUMMONED_BY               = 12
+    CREATED_BY                = 14
+    TARGET                    = 16
+    PERSUADED                 = 18
+    CHANNEL_OBJECT            = 20
+    HEALTH                    = 22
+    POWER1                    = 23
+    POWER2                    = 24
+    POWER3                    = 25
+    POWER4                    = 26
+    POWER5                    = 27
+    MAX_HEALTH                = 28
+    MAX_POWER1                = 29
+    MAX_POWER2                = 30
+    MAX_POWER3                = 31
+    MAX_POWER4                = 32
+    MAX_POWER5                = 33
+    LEVEL                     = 34
+    FACTION_TEMPLATE          = 35
+    BYTES_0                   = 36
+    VIRTUAL_ITEM_SLOT_DISPLAY = 37
+    VIRTUAL_ITEM_INFO         = 40
+    FLAGS                     = 46
+    AURA                      = 47
+    AURA_FLAGS                = 95
+    AURA_LEVELS               = 101
+    AURA_APPLICATIONS         = 113
+    AURA_STATE                = 125
+    BASE_ATTACK_TIME          = 126
+    RANGED_ATTACK_TIME        = 128
+    BOUNDING_RADIUS           = 129
+    COMBAT_REACH              = 130
+    DISPLAY_ID                = 131
+    NATIVE_DISPLAY_ID         = 132
+    MOUNT_DISPLAY_ID          = 133
+    MIN_DAMAGE                = 134
+    MAX_DAMAGE                = 135
+    MIN_OFFHAND_DAMAGE        = 136
+    MAX_OFFHAND_DAMAGE        = 137
+    BYTES_1                   = 138
+    PET_NUMBER                = 139
+    PET_NAME_TIMESTAMP        = 140
+    PET_EXPERIENCE            = 141
+    PET_NEXT_LEVEL_EXP        = 142
+    DYNAMIC_FLAGS             = 143
+    CHANNEL_SPELL             = 144
+    MOD_CAST_SPEED            = 145
+    CREATED_BY_SPELL          = 146
+    NPC_FLAGS                 = 147
+    NPC_EMOTESTATE            = 148
+    TRAINING_POINTS           = 149
+    STAT0                     = 150
+    STAT1                     = 151
+    STAT2                     = 152
+    STAT3                     = 153
+    STAT4                     = 154
+    RESISTANCES               = 155
+    BASE_MANA                 = 162
+    BASE_HEALTH               = 163
+    BYTES_2                   = 164
+    ATTACK_POWER              = 165
+    ATTACK_POWER_MODS         = 166
+    ATTACK_POWER_MULT         = 167
+    RANGED_ATTACK_POWER       = 168
+    RANGED_ATTACK_POWER_MODS  = 169
+    RANGED_ATTACK_POWER_MULT  = 170
+    MIN_RANGED_DAMAGE         = 171
+    MAX_RANGED_DAMAGE         = 172
+    POWER_COST_MODIFIER       = 173
+    POWER_COST_MULTIPLIER     = 180
+    PADDING                   = 187
+
+
+class UpdateFieldsType(Enum):
+
+    INT32 = 1  # 4
+    INT64 = 2  # 8
+    FLOAT = 3  # 4
+
+
+UPDATE_FIELD_TYPE_MAP = {
+    UpdateFieldObject.GUID:    UpdateFieldsType.INT64,
+    UpdateFieldObject.TYPE:    UpdateFieldsType.INT32,
+    UpdateFieldObject.SCALE_X: UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.HEALTH:    UpdateFieldsType.INT32
+}
+
+
+class ObjectUpdate(object):
+
+    FIELD_BIN_MAP = {
+        UpdateFieldsType.INT32: Struct("<I"),
+        UpdateFieldsType.INT64: Struct("<Q"),
+        UpdateFieldsType.FLOAT: Struct("<f")
+    }
+
+    def __init__(self):
+        self.mask_blocks = []
+        self.update_blocks = []
+
+    def add(self, field, value):
+        try:
+            field_type = UPDATE_FIELD_TYPE_MAP[field]
+        except KeyError as exc:
+            LOG.error("No type associated with " + str(field) + ": " + str(exc))
+            LOG.error("Object not updated.")
+            return
+
+        field_struct = self.FIELD_BIN_MAP[field_type]
+        self._set_field_mask_bits(field, field_struct)
+
+        update_block = field_struct.pack(value)
+        self.update_blocks.append(update_block)
+
+    def _set_field_mask_bits(self, field, field_struct):
+        num_mask_blocks = math.ceil(field_struct.size / 4)
+        for field_value in range(field.value, field.value + num_mask_blocks):
+            self._set_field_mask_bit(field_value)
+
+    def _set_field_mask_bit(self, field_value):
+        mask_block_index = field_value // 8
+        bit_index = field_value % 8
+        while len(self.mask_blocks) < mask_block_index+1:
+            self.mask_blocks.append(0)
+        self.mask_blocks[mask_block_index] |= 1 << bit_index
+
+    def to_bytes(self):
+        mask = b"".join(
+            [int.to_bytes(block, 4, "little") for block in self.mask_blocks]
+        )
+        update_data = b"".join(
+            self.update_blocks
+        )
+        return mask + update_data
+
+
 
 
 class PlayerLoginHandler(object):
@@ -165,7 +349,7 @@ class PlayerLoginHandler(object):
             1,  # attack cycle
             0,  # timer id
             0,  # victim GUID
-            3,  # update mask block count
+            0,  # update mask block count, hard limit at 1C
         )
         data += self.UPDATE_UPDATE_MASK_BIN.pack(
             0x15,  # mask, 00010101
@@ -180,15 +364,3 @@ class PlayerLoginHandler(object):
         packet = WorldPacket(data)
         packet.opcode = OpCode.SMSG_UPDATE_OBJECT
         return packet
-
-
-
-def _pack_guid(guid):
-    guid_all_bytes = int.to_bytes(guid, 8, "little")
-    guid_mask = 0
-    guid_bytes = b""
-    for index, byte in enumerate(guid_all_bytes):
-        if byte:
-            guid_mask |= 1 << index
-            guid_bytes += guid_all_bytes[index:index+1]
-    return guid_mask, guid_bytes
