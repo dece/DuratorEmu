@@ -475,6 +475,10 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldUnit.ATTACK_POWER_MODS:        UpdateFieldsType.INT32,
     UpdateFieldUnit.RANGED_ATTACK_POWER:      UpdateFieldsType.INT32,
     UpdateFieldUnit.RANGED_ATTACK_POWER_MODS: UpdateFieldsType.INT32,
+    UpdateFieldUnit.MIN_RANGED_DAMAGE:        UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.MAX_RANGED_DAMAGE:        UpdateFieldsType.FLOAT,
+
+    UpdateFieldPlayer.FLAGS:    UpdateFieldsType.INT32
 }
 
 
