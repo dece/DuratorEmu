@@ -94,4 +94,4 @@ class WorldConnection(ConnectionAutomaton):
                 data = self.socket.recv(1024)
                 print(dump_data(data), end = "")
         except ConnectionResetError:
-            LOG.debug("Lost connection with.")
+            LOG.debug("Lost connection.")

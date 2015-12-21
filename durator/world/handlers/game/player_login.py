@@ -1,3 +1,4 @@
+from enum import Enum
 from struct import Struct
 
 from durator.db.database import db_connection
@@ -6,6 +7,26 @@ from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
+
+
+class UpdateType(Enum):
+
+    PARTIAL       = 0  # to be confirmed
+    MOVEMENT      = 1
+    CREATE_OBJECT = 2
+    FAR_OBJECTS   = 3
+    NEAR_OBJECTS  = 4
+
+
+class ObjectType(Enum):
+
+    ITEM           = 1
+    CONTAINER      = 2
+    UNIT           = 3
+    PLAYER         = 4
+    GAME_OBJECT    = 5
+    DYNAMIC_OBJECT = 6
+    CORPSE         = 7
 
 
 class PlayerLoginHandler(object):
@@ -45,6 +66,7 @@ class PlayerLoginHandler(object):
         self.conn.send_packet(self._get_verify_login_packet())
         self.conn.send_packet(self._get_new_world_packet())
         self.conn.temp_data["worldport_ack_pending"] = True
+        self.conn.send_packet(self._get_update_object_packet())
 
         return WorldConnectionState.IN_WORLD, None
 
@@ -87,3 +109,60 @@ class PlayerLoginHandler(object):
         packet = WorldPacket(response_data)
         packet.opcode = OpCode.SMSG_NEW_WORLD
         return packet
+
+
+    UPDATE_PART1_BIN    = Struct("<I2BQB")
+    UPDATE_MOVEMENT_BIN = Struct("<2I4f6f")
+    UPDATE_PART2_BIN    = Struct("<3IQI")
+
+    def _get_update_object_packet(self):
+        position = self.conn.character.position
+
+        # guid_mask, guid_bytes = _pack_guid(self.conn.guid)
+        # packed_guid = int.to_bytes(guid_mask, 1, "little") + guid_bytes
+
+        data = b""
+        data += self.UPDATE_PART1_BIN.pack(
+            1,  # count
+            0,  # has transport?
+            UpdateType.CREATE_OBJECT.value,  # update type
+            self.conn.guid,
+            ObjectType.PLAYER.value  # object type
+        )
+        data += self.UPDATE_MOVEMENT_BIN.pack(
+            0,  # movement flags
+            0,  # unk?
+            position.pos_x,
+            position.pos_y,
+            position.pos_z,
+            position.orientation,
+            2.5,  # walkspeed
+            7.0,  # runningspeed
+            2.5,  # runbackspeed
+            4.7222223,  # swimspeed
+            4.0,  # swimbackspeed
+            3.141593  # turnrate
+        )
+        data += self.UPDATE_PART2_BIN.pack(
+            1,  # is player?
+            1,  # attack cycle
+            0,  # timer id
+            0,  # victim GUID
+            0,  # update mask block count
+        )
+
+        packet = WorldPacket(data)
+        packet.opcode = OpCode.SMSG_UPDATE_OBJECT
+        return packet
+
+
+
+def _pack_guid(guid):
+    guid_all_bytes = int.to_bytes(guid, 8, "little")
+    guid_mask = 0
+    guid_bytes = b""
+    for index, byte in enumerate(guid_all_bytes):
+        if byte:
+            guid_mask |= 1 << index
+            guid_bytes += guid_all_bytes[index:index+1]
+    return guid_mask, guid_bytes
