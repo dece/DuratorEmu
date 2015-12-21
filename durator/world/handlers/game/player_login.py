@@ -142,12 +142,18 @@ class UpdateFieldUnit(Enum):
     NPC_FLAGS                 = 147
     NPC_EMOTESTATE            = 148
     TRAINING_POINTS           = 149
-    STAT0                     = 150
-    STAT1                     = 151
-    STAT2                     = 152
-    STAT3                     = 153
-    STAT4                     = 154
-    RESISTANCES               = 155
+    STAT_0                    = 150
+    STAT_1                    = 151
+    STAT_2                    = 152
+    STAT_3                    = 153
+    STAT_4                    = 154
+    RESISTANCE_0              = 155
+    RESISTANCE_1              = 156
+    RESISTANCE_2              = 157
+    RESISTANCE_3              = 158
+    RESISTANCE_4              = 159
+    RESISTANCE_5              = 160
+    RESISTANCE_6              = 161
     BASE_MANA                 = 162
     BASE_HEALTH               = 163
     BYTES_2                   = 164
@@ -410,8 +416,65 @@ class UpdateFieldsType(Enum):
 UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldObject.GUID:    UpdateFieldsType.INT64,
     UpdateFieldObject.TYPE:    UpdateFieldsType.INT32,
+    UpdateFieldObject.ENTRY:   UpdateFieldsType.INT32,
     UpdateFieldObject.SCALE_X: UpdateFieldsType.FLOAT,
-    UpdateFieldUnit.HEALTH:    UpdateFieldsType.INT32
+
+    UpdateFieldUnit.SUMMON:                   UpdateFieldsType.INT64,
+    UpdateFieldUnit.CHARMED_BY:               UpdateFieldsType.INT64,
+    UpdateFieldUnit.SUMMONED_BY:              UpdateFieldsType.INT64,
+    UpdateFieldUnit.CREATED_BY:               UpdateFieldsType.INT64,
+    UpdateFieldUnit.TARGET:                   UpdateFieldsType.INT64,
+    UpdateFieldUnit.PERSUADED:                UpdateFieldsType.INT64,
+    UpdateFieldUnit.CHANNEL_OBJECT:           UpdateFieldsType.INT64,
+    UpdateFieldUnit.HEALTH:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.HEALTH:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER1:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER2:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER3:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER4:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.POWER5:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_HEALTH:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER1:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER2:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER3:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER4:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.MAX_POWER5:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.LEVEL:                    UpdateFieldsType.INT32,
+    UpdateFieldUnit.FACTION_TEMPLATE:         UpdateFieldsType.INT32,
+    UpdateFieldUnit.BYTES_0:                  UpdateFieldsType.INT32,
+    UpdateFieldUnit.FLAGS:                    UpdateFieldsType.INT32,
+    UpdateFieldUnit.BASE_ATTACK_TIME:         UpdateFieldsType.INT32,
+    UpdateFieldUnit.OFFHAND_ATTACK_TIME:      UpdateFieldsType.INT32,
+    UpdateFieldUnit.BOUNDING_RADIUS:          UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.COMBAT_REACH:             UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.DISPLAY_ID:               UpdateFieldsType.INT32,
+    UpdateFieldUnit.NATIVE_DISPLAY_ID:        UpdateFieldsType.INT32,
+    UpdateFieldUnit.MOUNT_DISPLAY_ID:         UpdateFieldsType.INT32,
+    UpdateFieldUnit.MIN_DAMAGE:               UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.MAX_DAMAGE:               UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.MIN_OFFHAND_DAMAGE:       UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.MAX_OFFHAND_DAMAGE:       UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.BYTES_1:                  UpdateFieldsType.INT32,
+    UpdateFieldUnit.MOD_CAST_SPEED:           UpdateFieldsType.FLOAT,
+    UpdateFieldUnit.STAT_0:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.STAT_1:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.STAT_2:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.STAT_3:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.STAT_4:                   UpdateFieldsType.INT32,
+    UpdateFieldUnit.RESISTANCE_0:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.RESISTANCE_1:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.RESISTANCE_2:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.RESISTANCE_3:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.RESISTANCE_4:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.RESISTANCE_5:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.RESISTANCE_6:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.BASE_MANA:                UpdateFieldsType.INT32,
+    UpdateFieldUnit.BASE_HEALTH:              UpdateFieldsType.INT32,
+    UpdateFieldUnit.BYTES_2:                  UpdateFieldsType.INT32,
+    UpdateFieldUnit.ATTACK_POWER:             UpdateFieldsType.INT32,
+    UpdateFieldUnit.ATTACK_POWER_MODS:        UpdateFieldsType.INT32,
+    UpdateFieldUnit.RANGED_ATTACK_POWER:      UpdateFieldsType.INT32,
+    UpdateFieldUnit.RANGED_ATTACK_POWER_MODS: UpdateFieldsType.INT32,
 }
 
 
