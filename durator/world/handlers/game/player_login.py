@@ -76,7 +76,7 @@ class UpdateFieldItem(Enum):
     RANDOM_PROPERTIES_ID = 44
     ITEM_TEXT_ID         = 45
     DURABILITY           = 46
-    MAXDURABILITY        = 47
+    MAX_DURABILITY       = 47
 
 
 class UpdateFieldContainer(Enum):
@@ -120,6 +120,7 @@ class UpdateFieldUnit(Enum):
     AURA_APPLICATIONS         = 113
     AURA_STATE                = 125
     BASE_ATTACK_TIME          = 126
+    OFFHAND_ATTACK_TIME       = 127
     RANGED_ATTACK_TIME        = 128
     BOUNDING_RADIUS           = 129
     COMBAT_REACH              = 130
@@ -497,8 +498,8 @@ class ObjectUpdate(object):
     def add(self, field, value):
         try:
             field_type = UPDATE_FIELD_TYPE_MAP[field]
-        except KeyError as exc:
-            LOG.error("No type associated with " + str(field) + ": " + str(exc))
+        except KeyError:
+            LOG.error("No type associated with " + str(field))
             LOG.error("Object not updated.")
             return
 
@@ -519,6 +520,7 @@ class ObjectUpdate(object):
         while len(self.mask_blocks) < mask_block_index+1:
             self.mask_blocks.append(0)
         self.mask_blocks[mask_block_index] |= 1 << bit_index
+        # Is that in this order? Do it with a reversed index if it doesn't work
 
     def to_bytes(self):
         mask = b"".join(
