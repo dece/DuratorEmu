@@ -23,7 +23,7 @@ class UpdateType(Enum):
 class ObjectType(Enum):
     """ Object type sent in UpdateObject packets, with associated flags. """
 
-    UNK            = 0  # 0x01 (object)
+    OBJECT         = 0  # 0x01 (object)
     ITEM           = 1  # 0x03 (object, item)
     CONTAINER      = 2  # 0x07 (object, item, container)
     UNIT           = 3  # 0x09 (object, unit)
@@ -53,6 +53,7 @@ class ObjectDescFlags(Enum):
 
 
 class UpdateFieldObject(Enum):
+    """ Hard limit: 0x6 """
 
     GUID    = 0
     TYPE    = 2
@@ -62,6 +63,7 @@ class UpdateFieldObject(Enum):
 
 
 class UpdateFieldItem(Enum):
+    """ Hard limit: 0x30 """
 
     OWNER                = 6
     CONTAINED            = 8
@@ -80,6 +82,7 @@ class UpdateFieldItem(Enum):
 
 
 class UpdateFieldContainer(Enum):
+    """ Hard limit: 0x5A """
 
     NUM_SLOTS = 48
     PAD       = 49
@@ -87,6 +90,7 @@ class UpdateFieldContainer(Enum):
 
 
 class UpdateFieldUnit(Enum):
+    """ Hard limit: 0xB0 """
 
     CHARM                     = 6
     SUMMON                    = 8
@@ -172,6 +176,7 @@ class UpdateFieldUnit(Enum):
 
 
 class UpdateFieldPlayer(Enum):
+    """ Hard limit: 0x36C """
 
     DUEL_ARBITER                 = 188
     FLAGS                        = 190
@@ -358,6 +363,7 @@ class UpdateFieldPlayer(Enum):
 
 
 class UpdateFieldGameObject(Enum):
+    """ Hard limit: 0x16 """
 
     CREATED_BY       = 6
     DISPLAY_ID       = 8
@@ -378,6 +384,7 @@ class UpdateFieldGameObject(Enum):
 
 
 class UpdateFieldDynamicObject(Enum):
+    """ Hard limit: 0x10 """
 
     CASTER   = 6
     BYTES    = 8
@@ -391,6 +398,7 @@ class UpdateFieldDynamicObject(Enum):
 
 
 class UpdateFieldCorpse(Enum):
+    """ Hard limit: 0x24 """
 
     OWNER         = 6
     FACING        = 8
