@@ -11,7 +11,6 @@ class PingHandler(object):
     def __init__(self, connection, packet):
         self.conn = connection
         self.packet = packet
-        self.ping_value = 0
 
     def process(self):
         pong_packet = WorldPacket(self.packet)
