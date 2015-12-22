@@ -82,13 +82,11 @@ class DatabaseClient(object):
         drop_tables = input("Do you want to drop existing tables? [y/N]") == "y"
 
         try:
-            self._install_db_tables(drop_tables = drop_tables)
-            print("Database installation OK")
+            result = self._install_db_tables(drop_tables = drop_tables)
+            if result:
+                print("Database installation OK")
         except OperationalError as exc:
-            print("A problem occured while accessing the database!")
-            print("Is the MySQL server started?")
-            print("Is the Durator user created? (see database credentials)")
-            print("Does it have full access to the durator database?")
+            print("An exception occured during tables creation:")
             print(str(exc))
 
     @db_connection
@@ -96,17 +94,24 @@ class DatabaseClient(object):
         if drop_tables:
             DB.drop_tables(MODELS, safe = True)
         DB.create_tables(MODELS, safe = True)
+        return True
 
     def _test_db(self):
+
         @db_connection
-        def nop():
-            pass
+        def get_test_value():
+            return 1325  # misc value, the decorator will return None on failure
+
+        test_value = None
         try:
-            nop()
-            print("Database access test OK")
+            test_value = get_test_value()
         except OperationalError as exc:
+            print("Exception caught: " + str(exc))
+
+        if test_value is not None:
+            print("Database access test OK")
+        else:
             print("Database access test failed :(")
-            print(str(exc))
 
     def _new_account(self):
         name = input("Name: ")
