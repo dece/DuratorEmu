@@ -100,53 +100,67 @@ class UpdateFieldUnit(Enum):
     TARGET                    = 16
     PERSUADED                 = 18
     CHANNEL_OBJECT            = 20
+
     HEALTH                    = 22
     POWER_1                   = 23
     POWER_2                   = 24
     POWER_3                   = 25
     POWER_4                   = 26
     POWER_5                   = 27
+
     MAX_HEALTH                = 28
     MAX_POWER_1               = 29
     MAX_POWER_2               = 30
     MAX_POWER_3               = 31
     MAX_POWER_4               = 32
     MAX_POWER_5               = 33
+
     LEVEL                     = 34
     FACTION_TEMPLATE          = 35
     BYTES_0                   = 36
     VIRTUAL_ITEM_SLOT_DISPLAY = 37
     VIRTUAL_ITEM_INFO         = 40
     FLAGS                     = 46
+
     AURA                      = 47
     AURA_FLAGS                = 95
     AURA_LEVELS               = 101
     AURA_APPLICATIONS         = 113
     AURA_STATE                = 125
+
     BASE_ATTACK_TIME          = 126
     OFFHAND_ATTACK_TIME       = 127
     RANGED_ATTACK_TIME        = 128
+
     BOUNDING_RADIUS           = 129
     COMBAT_REACH              = 130
+
     DISPLAY_ID                = 131
     NATIVE_DISPLAY_ID         = 132
     MOUNT_DISPLAY_ID          = 133
+
     MIN_DAMAGE                = 134
     MAX_DAMAGE                = 135
     MIN_OFFHAND_DAMAGE        = 136
     MAX_OFFHAND_DAMAGE        = 137
+
     BYTES_1                   = 138
+
     PET_NUMBER                = 139
     PET_NAME_TIMESTAMP        = 140
     PET_EXPERIENCE            = 141
     PET_NEXT_LEVEL_EXP        = 142
+
     DYNAMIC_FLAGS             = 143
     CHANNEL_SPELL             = 144
     MOD_CAST_SPEED            = 145
     CREATED_BY_SPELL          = 146
+
     NPC_FLAGS                 = 147
     NPC_EMOTESTATE            = 148
+
     TRAINING_POINTS           = 149
+
     STAT_0                    = 150
     STAT_1                    = 151
     STAT_2                    = 152
@@ -159,9 +173,12 @@ class UpdateFieldUnit(Enum):
     RESISTANCE_4              = 159
     RESISTANCE_5              = 160
     RESISTANCE_6              = 161
+
     BASE_MANA                 = 162
     BASE_HEALTH               = 163
+
     BYTES_2                   = 164
+
     ATTACK_POWER              = 165
     ATTACK_POWER_MODS         = 166
     ATTACK_POWER_MULT         = 167
@@ -172,194 +189,287 @@ class UpdateFieldUnit(Enum):
     MAX_RANGED_DAMAGE         = 172
     POWER_COST_MODIFIER       = 173
     POWER_COST_MULTIPLIER     = 180
+
     PADDING                   = 187
 
 
 class UpdateFieldPlayer(Enum):
     """ Hard limit: 0x36C """
 
-    DUEL_ARBITER                 = 188
-    FLAGS                        = 190
-    GUILD_ID                     = 191
-    GUILD_RANK                   = 192
-    BYTES_1                      = 193  # originally "BYTES"
-    BYTES_2                      = 194
-    BYTES_3                      = 195
-    DUEL_TEAM                    = 196
-    GUILD_TIMESTAMP              = 197
-    QUEST_LOG_1_1                = 198
-    QUEST_LOG_1_2                = 199
-    QUEST_LOG_2_1                = 201
-    QUEST_LOG_2_2                = 202
-    QUEST_LOG_3_1                = 204
-    QUEST_LOG_3_2                = 205
-    QUEST_LOG_4_1                = 207
-    QUEST_LOG_4_2                = 208
-    QUEST_LOG_5_1                = 210
-    QUEST_LOG_5_2                = 211
-    QUEST_LOG_6_1                = 213
-    QUEST_LOG_6_2                = 214
-    QUEST_LOG_7_1                = 216
-    QUEST_LOG_7_2                = 217
-    QUEST_LOG_8_1                = 219
-    QUEST_LOG_8_2                = 220
-    QUEST_LOG_9_1                = 222
-    QUEST_LOG_9_2                = 223
-    QUEST_LOG_10_1               = 225
-    QUEST_LOG_10_2               = 226
-    QUEST_LOG_11_1               = 228
-    QUEST_LOG_11_2               = 229
-    QUEST_LOG_12_1               = 231
-    QUEST_LOG_12_2               = 232
-    QUEST_LOG_13_1               = 234
-    QUEST_LOG_13_2               = 235
-    QUEST_LOG_14_1               = 237
-    QUEST_LOG_14_2               = 238
-    QUEST_LOG_15_1               = 240
-    QUEST_LOG_15_2               = 241
-    QUEST_LOG_16_1               = 243
-    QUEST_LOG_16_2               = 244
-    QUEST_LOG_17_1               = 246
-    QUEST_LOG_17_2               = 247
-    QUEST_LOG_18_1               = 249
-    QUEST_LOG_18_2               = 250
-    QUEST_LOG_19_1               = 252
-    QUEST_LOG_19_2               = 253
-    QUEST_LOG_20_1               = 255
-    QUEST_LOG_20_2               = 256
-    VISIBLE_ITEM_1_CREATOR       = 258
-    VISIBLE_ITEM_1_0             = 260
-    VISIBLE_ITEM_1_PROPERTIES    = 268
-    VISIBLE_ITEM_1_PAD           = 269
-    VISIBLE_ITEM_2_CREATOR       = 270
-    VISIBLE_ITEM_2_0             = 272
-    VISIBLE_ITEM_2_PROPERTIES    = 280
-    VISIBLE_ITEM_2_PAD           = 281
-    VISIBLE_ITEM_3_CREATOR       = 282
-    VISIBLE_ITEM_3_0             = 284
-    VISIBLE_ITEM_3_PROPERTIES    = 292
-    VISIBLE_ITEM_3_PAD           = 293
-    VISIBLE_ITEM_4_CREATOR       = 294
-    VISIBLE_ITEM_4_0             = 296
-    VISIBLE_ITEM_4_PROPERTIES    = 304
-    VISIBLE_ITEM_4_PAD           = 305
-    VISIBLE_ITEM_5_CREATOR       = 306
-    VISIBLE_ITEM_5_0             = 308
-    VISIBLE_ITEM_5_PROPERTIES    = 316
-    VISIBLE_ITEM_5_PAD           = 317
-    VISIBLE_ITEM_6_CREATOR       = 318
-    VISIBLE_ITEM_6_0             = 320
-    VISIBLE_ITEM_6_PROPERTIES    = 328
-    VISIBLE_ITEM_6_PAD           = 329
-    VISIBLE_ITEM_7_CREATOR       = 330
-    VISIBLE_ITEM_7_0             = 332
-    VISIBLE_ITEM_7_PROPERTIES    = 340
-    VISIBLE_ITEM_7_PAD           = 341
-    VISIBLE_ITEM_8_CREATOR       = 342
-    VISIBLE_ITEM_8_0             = 344
-    VISIBLE_ITEM_8_PROPERTIES    = 352
-    VISIBLE_ITEM_8_PAD           = 353
-    VISIBLE_ITEM_9_CREATOR       = 354
-    VISIBLE_ITEM_9_0             = 356
-    VISIBLE_ITEM_9_PROPERTIES    = 364
-    VISIBLE_ITEM_9_PAD           = 365
-    VISIBLE_ITEM_10_CREATOR      = 366
-    VISIBLE_ITEM_10_0            = 368
-    VISIBLE_ITEM_10_PROPERTIES   = 376
-    VISIBLE_ITEM_10_PAD          = 377
-    VISIBLE_ITEM_11_CREATOR      = 378
-    VISIBLE_ITEM_11_0            = 380
-    VISIBLE_ITEM_11_PROPERTIES   = 388
-    VISIBLE_ITEM_11_PAD          = 389
-    VISIBLE_ITEM_12_CREATOR      = 390
-    VISIBLE_ITEM_12_0            = 392
-    VISIBLE_ITEM_12_PROPERTIES   = 400
-    VISIBLE_ITEM_12_PAD          = 401
-    VISIBLE_ITEM_13_CREATOR      = 402
-    VISIBLE_ITEM_13_0            = 404
-    VISIBLE_ITEM_13_PROPERTIES   = 412
-    VISIBLE_ITEM_13_PAD          = 413
-    VISIBLE_ITEM_14_CREATOR      = 414
-    VISIBLE_ITEM_14_0            = 416
-    VISIBLE_ITEM_14_PROPERTIES   = 424
-    VISIBLE_ITEM_14_PAD          = 425
-    VISIBLE_ITEM_15_CREATOR      = 426
-    VISIBLE_ITEM_15_0            = 428
-    VISIBLE_ITEM_15_PROPERTIES   = 436
-    VISIBLE_ITEM_15_PAD          = 437
-    VISIBLE_ITEM_16_CREATOR      = 438
-    VISIBLE_ITEM_16_0            = 440
-    VISIBLE_ITEM_16_PROPERTIES   = 448
-    VISIBLE_ITEM_16_PAD          = 449
-    VISIBLE_ITEM_17_CREATOR      = 450
-    VISIBLE_ITEM_17_0            = 452
-    VISIBLE_ITEM_17_PROPERTIES   = 460
-    VISIBLE_ITEM_17_PAD          = 461
-    VISIBLE_ITEM_18_CREATOR      = 462
-    VISIBLE_ITEM_18_0            = 464
-    VISIBLE_ITEM_18_PROPERTIES   = 472
-    VISIBLE_ITEM_18_PAD          = 473
-    VISIBLE_ITEM_19_CREATOR      = 474
-    VISIBLE_ITEM_19_0            = 476
-    VISIBLE_ITEM_19_PROPERTIES   = 484
-    VISIBLE_ITEM_19_PAD          = 485
-    FIELD_INV_SLOT_HEAD          = 486
-    FIELD_PACK_SLOT_1            = 532
-    FIELD_BANK_SLOT_1            = 564
-    FIELD_BANKBAG_SLOT_1         = 612
-    FIELD_VENDORBUYBACK_SLOT_1   = 624
-    FIELD_KEYRING_SLOT_1         = 648
-    FAR_SIGHT                    = 712
-    COMBO_TARGET                 = 714
-    EXP                          = 716
-    NEXT_LEVEL_XP                = 717
-    SKILL_INFO_1_1               = 718
-    CHARACTER_POINTS_1           = 1102
-    CHARACTER_POINTS_2           = 1103
-    TRACK_CREATURES              = 1104
-    TRACK_RESOURCES              = 1105
-    BLOCK_PERCENTAGE             = 1106
-    DODGE_PERCENTAGE             = 1107
-    PARRY_PERCENTAGE             = 1108
-    CRIT_PERCENTAGE              = 1109
-    RANGED_CRIT_PERCENTAGE       = 1110
-    EXPLORED_ZONES_1             = 1111
-    REST_STATE_EXPERIENCE        = 1175
-    COINAGE                      = 1176
-    POS_STAT_0                   = 1177
-    POS_STAT_1                   = 1178
-    POS_STAT_2                   = 1179
-    POS_STAT_3                   = 1180
-    POS_STAT_4                   = 1181
-    NEG_STAT_0                   = 1182
-    NEG_STAT_1                   = 1183
-    NEG_STAT_2                   = 1184
-    NEG_STAT_3                   = 1185
-    NEG_STAT_4                   = 1186
-    RESISTANCE_BUFF_MOD_POSITIVE = 1187
-    RESISTANCE_BUFF_MOD_NEGATIVE = 1194
-    MOD_DAMAGE_DONE_POS          = 1201
-    MOD_DAMAGE_DONE_NEG          = 1208
-    MOD_DAMAGE_DONE_PCT          = 1215
-    BYTES_4                      = 1222  # originally "BYTES"
-    AMMO_ID                      = 1223
-    SELF_RES_SPELL               = 1224
-    PVP_MEDALS                   = 1225
-    BUYBACK_PRICE_1              = 1226
-    BUYBACK_TIMESTAMP_1          = 1238
-    SESSION_KILLS                = 1250
-    YESTERDAY_KILLS              = 1251
-    LAST_WEEK_KILLS              = 1252
-    THIS_WEEK_KILLS              = 1253
-    THIS_WEEK_CONTRIBUTION       = 1254
-    LIFETIME_HONORBALE_KILLS     = 1255
-    LIFETIME_DISHONORBALE_KILLS  = 1256
-    YESTERDAY_CONTRIBUTION       = 1257
-    LAST_WEEK_CONTRIBUTION       = 1258
-    LAST_WEEK_RANK               = 1259
-    BYTES_5                      = 1260  # originally "BYTES2"
-    WATCHED_FACTION_INDEX        = 1261
-    COMBAT_RATING_1              = 1262
+    DUEL_ARBITER                = 188
+    FLAGS                       = 190
+
+    GUILD_ID                    = 191
+    GUILD_RANK                  = 192
+
+    BYTES_1                     = 193  # originally "BYTES"
+    BYTES_2                     = 194
+    BYTES_3                     = 195
+
+    DUEL_TEAM                   = 196
+    GUILD_TIMESTAMP             = 197
+
+    QUEST_LOG_1_1               = 198
+    QUEST_LOG_1_2               = 199
+    QUEST_LOG_2_1               = 201
+    QUEST_LOG_2_2               = 202
+    QUEST_LOG_3_1               = 204
+    QUEST_LOG_3_2               = 205
+    QUEST_LOG_4_1               = 207
+    QUEST_LOG_4_2               = 208
+    QUEST_LOG_5_1               = 210
+    QUEST_LOG_5_2               = 211
+    QUEST_LOG_6_1               = 213
+    QUEST_LOG_6_2               = 214
+    QUEST_LOG_7_1               = 216
+    QUEST_LOG_7_2               = 217
+    QUEST_LOG_8_1               = 219
+    QUEST_LOG_8_2               = 220
+    QUEST_LOG_9_1               = 222
+    QUEST_LOG_9_2               = 223
+    QUEST_LOG_10_1              = 225
+    QUEST_LOG_10_2              = 226
+    QUEST_LOG_11_1              = 228
+    QUEST_LOG_11_2              = 229
+    QUEST_LOG_12_1              = 231
+    QUEST_LOG_12_2              = 232
+    QUEST_LOG_13_1              = 234
+    QUEST_LOG_13_2              = 235
+    QUEST_LOG_14_1              = 237
+    QUEST_LOG_14_2              = 238
+    QUEST_LOG_15_1              = 240
+    QUEST_LOG_15_2              = 241
+    QUEST_LOG_16_1              = 243
+    QUEST_LOG_16_2              = 244
+    QUEST_LOG_17_1              = 246
+    QUEST_LOG_17_2              = 247
+    QUEST_LOG_18_1              = 249
+    QUEST_LOG_18_2              = 250
+    QUEST_LOG_19_1              = 252
+    QUEST_LOG_19_2              = 253
+    QUEST_LOG_20_1              = 255
+    QUEST_LOG_20_2              = 256
+
+    VISIBLE_ITEM_1_CREATOR      = 258
+    VISIBLE_ITEM_1_ID           = 260
+    VISIBLE_ITEM_1_PROPERTIES   = 268
+    VISIBLE_ITEM_1_PAD          = 269
+    VISIBLE_ITEM_2_CREATOR      = 270
+    VISIBLE_ITEM_2_ID           = 272
+    VISIBLE_ITEM_2_PROPERTIES   = 280
+    VISIBLE_ITEM_2_PAD          = 281
+    VISIBLE_ITEM_3_CREATOR      = 282
+    VISIBLE_ITEM_3_ID           = 284
+    VISIBLE_ITEM_3_PROPERTIES   = 292
+    VISIBLE_ITEM_3_PAD          = 293
+    VISIBLE_ITEM_4_CREATOR      = 294
+    VISIBLE_ITEM_4_ID           = 296
+    VISIBLE_ITEM_4_PROPERTIES   = 304
+    VISIBLE_ITEM_4_PAD          = 305
+    VISIBLE_ITEM_5_CREATOR      = 306
+    VISIBLE_ITEM_5_ID           = 308
+    VISIBLE_ITEM_5_PROPERTIES   = 316
+    VISIBLE_ITEM_5_PAD          = 317
+    VISIBLE_ITEM_6_CREATOR      = 318
+    VISIBLE_ITEM_6_ID           = 320
+    VISIBLE_ITEM_6_PROPERTIES   = 328
+    VISIBLE_ITEM_6_PAD          = 329
+    VISIBLE_ITEM_7_CREATOR      = 330
+    VISIBLE_ITEM_7_ID           = 332
+    VISIBLE_ITEM_7_PROPERTIES   = 340
+    VISIBLE_ITEM_7_PAD          = 341
+    VISIBLE_ITEM_8_CREATOR      = 342
+    VISIBLE_ITEM_8_ID           = 344
+    VISIBLE_ITEM_8_PROPERTIES   = 352
+    VISIBLE_ITEM_8_PAD          = 353
+    VISIBLE_ITEM_9_CREATOR      = 354
+    VISIBLE_ITEM_9_ID           = 356
+    VISIBLE_ITEM_9_PROPERTIES   = 364
+    VISIBLE_ITEM_9_PAD          = 365
+    VISIBLE_ITEM_10_CREATOR     = 366
+    VISIBLE_ITEM_10_ID          = 368
+    VISIBLE_ITEM_10_PROPERTIES  = 376
+    VISIBLE_ITEM_10_PAD         = 377
+    VISIBLE_ITEM_11_CREATOR     = 378
+    VISIBLE_ITEM_11_ID          = 380
+    VISIBLE_ITEM_11_PROPERTIES  = 388
+    VISIBLE_ITEM_11_PAD         = 389
+    VISIBLE_ITEM_12_CREATOR     = 390
+    VISIBLE_ITEM_12_ID          = 392
+    VISIBLE_ITEM_12_PROPERTIES  = 400
+    VISIBLE_ITEM_12_PAD         = 401
+    VISIBLE_ITEM_13_CREATOR     = 402
+    VISIBLE_ITEM_13_ID          = 404
+    VISIBLE_ITEM_13_PROPERTIES  = 412
+    VISIBLE_ITEM_13_PAD         = 413
+    VISIBLE_ITEM_14_CREATOR     = 414
+    VISIBLE_ITEM_14_ID          = 416
+    VISIBLE_ITEM_14_PROPERTIES  = 424
+    VISIBLE_ITEM_14_PAD         = 425
+    VISIBLE_ITEM_15_CREATOR     = 426
+    VISIBLE_ITEM_15_ID          = 428
+    VISIBLE_ITEM_15_PROPERTIES  = 436
+    VISIBLE_ITEM_15_PAD         = 437
+    VISIBLE_ITEM_16_CREATOR     = 438
+    VISIBLE_ITEM_16_ID          = 440
+    VISIBLE_ITEM_16_PROPERTIES  = 448
+    VISIBLE_ITEM_16_PAD         = 449
+    VISIBLE_ITEM_17_CREATOR     = 450
+    VISIBLE_ITEM_17_ID          = 452
+    VISIBLE_ITEM_17_PROPERTIES  = 460
+    VISIBLE_ITEM_17_PAD         = 461
+    VISIBLE_ITEM_18_CREATOR     = 462
+    VISIBLE_ITEM_18_ID          = 464
+    VISIBLE_ITEM_18_PROPERTIES  = 472
+    VISIBLE_ITEM_18_PAD         = 473
+    VISIBLE_ITEM_19_CREATOR     = 474
+    VISIBLE_ITEM_19_ID          = 476
+    VISIBLE_ITEM_19_PROPERTIES  = 484
+    VISIBLE_ITEM_19_PAD         = 485
+
+    INV_SLOT_HEAD               = 486
+
+    PACK_SLOT_1                 = 532
+
+    BANK_SLOT_1                 = 564
+
+    BANK_BAG_SLOT_1             = 612
+
+    VENDOR_BUY_BACK_SLOT_1      = 624
+
+    KEYRING_SLOT_1              = 648
+
+    FAR_SIGHT                   = 712
+    COMBO_TARGET                = 714
+
+    EXP                         = 716
+    NEXT_LEVEL_XP               = 717
+
+    SKILL_INFO_1_1              = 718
+
+    CHARACTER_POINTS_1          = 1102
+    CHARACTER_POINTS_2          = 1103
+
+    TRACK_CREATURES             = 1104
+    TRACK_RESOURCES             = 1105
+
+    BLOCK_PERCENTAGE            = 1106
+    DODGE_PERCENTAGE            = 1107
+    PARRY_PERCENTAGE            = 1108
+    CRIT_PERCENTAGE             = 1109
+    RANGED_CRIT_PERCENTAGE      = 1110
+
+    EXPLORED_ZONES_1            = 1111
+    EXPLORED_ZONES_2            = 1112
+    EXPLORED_ZONES_3            = 1113
+    EXPLORED_ZONES_4            = 1114
+    EXPLORED_ZONES_5            = 1115
+    EXPLORED_ZONES_6            = 1116
+    EXPLORED_ZONES_7            = 1117
+    EXPLORED_ZONES_8            = 1118
+    EXPLORED_ZONES_9            = 1119
+    EXPLORED_ZONES_10           = 1120
+    EXPLORED_ZONES_11           = 1121
+    EXPLORED_ZONES_12           = 1122
+    EXPLORED_ZONES_13           = 1123
+    EXPLORED_ZONES_14           = 1124
+    EXPLORED_ZONES_15           = 1125
+    EXPLORED_ZONES_16           = 1126
+    EXPLORED_ZONES_17           = 1127
+    EXPLORED_ZONES_18           = 1128
+    EXPLORED_ZONES_19           = 1129
+    EXPLORED_ZONES_20           = 1130
+    EXPLORED_ZONES_21           = 1131
+    EXPLORED_ZONES_22           = 1132
+    EXPLORED_ZONES_23           = 1133
+    EXPLORED_ZONES_24           = 1134
+    EXPLORED_ZONES_25           = 1135
+    EXPLORED_ZONES_26           = 1136
+    EXPLORED_ZONES_27           = 1137
+    EXPLORED_ZONES_28           = 1138
+    EXPLORED_ZONES_29           = 1139
+    EXPLORED_ZONES_30           = 1140
+    EXPLORED_ZONES_31           = 1141
+    EXPLORED_ZONES_32           = 1142
+    EXPLORED_ZONES_33           = 1143
+    EXPLORED_ZONES_34           = 1144
+    EXPLORED_ZONES_35           = 1145
+    EXPLORED_ZONES_36           = 1146
+    EXPLORED_ZONES_37           = 1147
+    EXPLORED_ZONES_38           = 1148
+    EXPLORED_ZONES_39           = 1149
+    EXPLORED_ZONES_40           = 1150
+    EXPLORED_ZONES_41           = 1151
+    EXPLORED_ZONES_42           = 1152
+    EXPLORED_ZONES_43           = 1153
+    EXPLORED_ZONES_44           = 1154
+    EXPLORED_ZONES_45           = 1155
+    EXPLORED_ZONES_46           = 1156
+    EXPLORED_ZONES_47           = 1157
+    EXPLORED_ZONES_48           = 1158
+    EXPLORED_ZONES_49           = 1159
+    EXPLORED_ZONES_50           = 1160
+    EXPLORED_ZONES_51           = 1161
+    EXPLORED_ZONES_52           = 1162
+    EXPLORED_ZONES_53           = 1163
+    EXPLORED_ZONES_54           = 1164
+    EXPLORED_ZONES_55           = 1165
+    EXPLORED_ZONES_56           = 1166
+    EXPLORED_ZONES_57           = 1167
+    EXPLORED_ZONES_58           = 1168
+    EXPLORED_ZONES_59           = 1169
+    EXPLORED_ZONES_60           = 1170
+    EXPLORED_ZONES_61           = 1171
+    EXPLORED_ZONES_62           = 1172
+    EXPLORED_ZONES_63           = 1173
+    EXPLORED_ZONES_64           = 1174
+
+    REST_STATE_EXPERIENCE       = 1175
+    COINAGE                     = 1176
+
+    POS_STAT_0                  = 1177
+    POS_STAT_1                  = 1178
+    POS_STAT_2                  = 1179
+    POS_STAT_3                  = 1180
+    POS_STAT_4                  = 1181
+    NEG_STAT_0                  = 1182
+    NEG_STAT_1                  = 1183
+    NEG_STAT_2                  = 1184
+    NEG_STAT_3                  = 1185
+    NEG_STAT_4                  = 1186
+
+    RESISTANCE_BUFF_MOD_POS     = 1187
+    RESISTANCE_BUFF_MOD_NEG     = 1194
+
+    MOD_DAMAGE_DONE_POS         = 1201
+    MOD_DAMAGE_DONE_NEG         = 1208
+    MOD_DAMAGE_DONE_PCT         = 1215
+
+    BYTES_4                     = 1222  # originally "BYTES"
+
+    AMMO_ID                     = 1223
+    SELF_RES_SPELL              = 1224
+    PVP_MEDALS                  = 1225
+
+    BUYBACK_PRICE_1             = 1226
+    BUYBACK_TIMESTAMP_1         = 1238
+
+    SESSION_KILLS               = 1250
+    YESTERDAY_KILLS             = 1251
+    LAST_WEEK_KILLS             = 1252
+    THIS_WEEK_KILLS             = 1253
+
+    THIS_WEEK_CONTRIBUTION      = 1254
+    LIFETIME_HONORABLE_KILLS    = 1255
+    LIFETIME_DISHONORBALE_KILLS = 1256
+    YESTERDAY_CONTRIBUTION      = 1257
+    LAST_WEEK_CONTRIBUTION      = 1258
+    LAST_WEEK_RANK              = 1259
+
+    BYTES_5                     = 1260  # originally "BYTES2"
+
+    WATCHED_FACTION_ID          = 1261
+    COMBAT_RATING_1             = 1262
 
 
 class UpdateFieldGameObject(Enum):
@@ -423,10 +533,19 @@ class UpdateFieldsType(Enum):
 
 
 UPDATE_FIELD_TYPE_MAP = {
+
+    # --------------------
+    # Object fields
+    # --------------------
+
     UpdateFieldObject.GUID:    UpdateFieldsType.INT64,
     UpdateFieldObject.TYPE:    UpdateFieldsType.INT32,
     UpdateFieldObject.ENTRY:   UpdateFieldsType.INT32,
     UpdateFieldObject.SCALE_X: UpdateFieldsType.FLOAT,
+
+    # --------------------
+    # Unit fields
+    # --------------------
 
     UpdateFieldUnit.SUMMON:                   UpdateFieldsType.INT64,
     UpdateFieldUnit.CHARMED_BY:               UpdateFieldsType.INT64,
@@ -435,35 +554,45 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldUnit.TARGET:                   UpdateFieldsType.INT64,
     UpdateFieldUnit.PERSUADED:                UpdateFieldsType.INT64,
     UpdateFieldUnit.CHANNEL_OBJECT:           UpdateFieldsType.INT64,
+
     UpdateFieldUnit.HEALTH:                   UpdateFieldsType.INT32,
     UpdateFieldUnit.POWER_1:                  UpdateFieldsType.INT32,
     UpdateFieldUnit.POWER_2:                  UpdateFieldsType.INT32,
     UpdateFieldUnit.POWER_3:                  UpdateFieldsType.INT32,
     UpdateFieldUnit.POWER_4:                  UpdateFieldsType.INT32,
     UpdateFieldUnit.POWER_5:                  UpdateFieldsType.INT32,
+
     UpdateFieldUnit.MAX_HEALTH:               UpdateFieldsType.INT32,
     UpdateFieldUnit.MAX_POWER_1:              UpdateFieldsType.INT32,
     UpdateFieldUnit.MAX_POWER_2:              UpdateFieldsType.INT32,
     UpdateFieldUnit.MAX_POWER_3:              UpdateFieldsType.INT32,
     UpdateFieldUnit.MAX_POWER_4:              UpdateFieldsType.INT32,
     UpdateFieldUnit.MAX_POWER_5:              UpdateFieldsType.INT32,
+
     UpdateFieldUnit.LEVEL:                    UpdateFieldsType.INT32,
     UpdateFieldUnit.FACTION_TEMPLATE:         UpdateFieldsType.INT32,
     UpdateFieldUnit.BYTES_0:                  UpdateFieldsType.INT32,
     UpdateFieldUnit.FLAGS:                    UpdateFieldsType.INT32,
+
     UpdateFieldUnit.BASE_ATTACK_TIME:         UpdateFieldsType.INT32,
     UpdateFieldUnit.OFFHAND_ATTACK_TIME:      UpdateFieldsType.INT32,
+
     UpdateFieldUnit.BOUNDING_RADIUS:          UpdateFieldsType.FLOAT,
     UpdateFieldUnit.COMBAT_REACH:             UpdateFieldsType.FLOAT,
+
     UpdateFieldUnit.DISPLAY_ID:               UpdateFieldsType.INT32,
     UpdateFieldUnit.NATIVE_DISPLAY_ID:        UpdateFieldsType.INT32,
     UpdateFieldUnit.MOUNT_DISPLAY_ID:         UpdateFieldsType.INT32,
+
     UpdateFieldUnit.MIN_DAMAGE:               UpdateFieldsType.FLOAT,
     UpdateFieldUnit.MAX_DAMAGE:               UpdateFieldsType.FLOAT,
     UpdateFieldUnit.MIN_OFFHAND_DAMAGE:       UpdateFieldsType.FLOAT,
     UpdateFieldUnit.MAX_OFFHAND_DAMAGE:       UpdateFieldsType.FLOAT,
+
     UpdateFieldUnit.BYTES_1:                  UpdateFieldsType.INT32,
+
     UpdateFieldUnit.MOD_CAST_SPEED:           UpdateFieldsType.FLOAT,
+
     UpdateFieldUnit.STAT_0:                   UpdateFieldsType.INT32,
     UpdateFieldUnit.STAT_1:                   UpdateFieldsType.INT32,
     UpdateFieldUnit.STAT_2:                   UpdateFieldsType.INT32,
@@ -476,9 +605,12 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldUnit.RESISTANCE_4:             UpdateFieldsType.INT32,
     UpdateFieldUnit.RESISTANCE_5:             UpdateFieldsType.INT32,
     UpdateFieldUnit.RESISTANCE_6:             UpdateFieldsType.INT32,
+
     UpdateFieldUnit.BASE_MANA:                UpdateFieldsType.INT32,
     UpdateFieldUnit.BASE_HEALTH:              UpdateFieldsType.INT32,
+
     UpdateFieldUnit.BYTES_2:                  UpdateFieldsType.INT32,
+
     UpdateFieldUnit.ATTACK_POWER:             UpdateFieldsType.INT32,
     UpdateFieldUnit.ATTACK_POWER_MODS:        UpdateFieldsType.INT32,
     UpdateFieldUnit.RANGED_ATTACK_POWER:      UpdateFieldsType.INT32,
@@ -486,7 +618,113 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldUnit.MIN_RANGED_DAMAGE:        UpdateFieldsType.FLOAT,
     UpdateFieldUnit.MAX_RANGED_DAMAGE:        UpdateFieldsType.FLOAT,
 
-    UpdateFieldPlayer.FLAGS:    UpdateFieldsType.INT32
+    # --------------------
+    # Player fields
+    # --------------------
+
+    UpdateFieldPlayer.FLAGS:                  UpdateFieldsType.INT32,
+
+    UpdateFieldPlayer.BYTES_1:                UpdateFieldsType.INT32,  # skin 1
+    UpdateFieldPlayer.BYTES_2:                UpdateFieldsType.INT32,  # skin 2
+    UpdateFieldPlayer.BYTES_3:                UpdateFieldsType.INT32,  # gender
+
+    UpdateFieldPlayer.VISIBLE_ITEM_1_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_2_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_3_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_4_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_5_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_6_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_7_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_8_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_9_ID:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_10_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_11_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_12_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_13_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_14_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_15_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_16_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_17_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_18_ID:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.VISIBLE_ITEM_19_ID:     UpdateFieldsType.INT32,
+
+    UpdateFieldPlayer.EXP:                    UpdateFieldsType.INT32,
+    UpdateFieldPlayer.NEXT_LEVEL_XP:          UpdateFieldsType.INT32,
+
+    UpdateFieldPlayer.CHARACTER_POINTS_1:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.CHARACTER_POINTS_2:     UpdateFieldsType.INT32,
+
+    UpdateFieldPlayer.BLOCK_PERCENTAGE:       UpdateFieldsType.FLOAT,
+    UpdateFieldPlayer.DODGE_PERCENTAGE:       UpdateFieldsType.FLOAT,
+    UpdateFieldPlayer.PARRY_PERCENTAGE:       UpdateFieldsType.FLOAT,
+    UpdateFieldPlayer.CRIT_PERCENTAGE:        UpdateFieldsType.FLOAT,
+    UpdateFieldPlayer.RANGED_CRIT_PERCENTAGE: UpdateFieldsType.FLOAT,
+
+    UpdateFieldPlayer.EXPLORED_ZONES_1:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_2:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_3:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_4:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_5:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_6:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_7:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_8:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_9:       UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_10:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_11:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_12:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_13:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_14:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_15:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_16:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_17:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_18:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_19:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_20:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_21:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_22:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_23:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_24:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_25:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_26:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_27:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_28:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_29:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_30:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_31:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_32:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_33:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_34:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_35:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_36:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_37:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_38:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_39:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_40:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_41:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_42:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_43:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_44:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_45:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_46:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_47:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_48:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_49:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_50:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_51:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_52:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_53:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_54:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_55:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_56:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_57:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_58:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_59:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_60:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_61:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_62:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_63:      UpdateFieldsType.INT32,
+    UpdateFieldPlayer.EXPLORED_ZONES_64:      UpdateFieldsType.INT32,
+
 }
 
 
@@ -689,7 +927,7 @@ class PlayerLoginHandler(object):
         update.add(UpdateFieldUnit.MAX_POWER_5, 100)
 
         update.add(UpdateFieldUnit.LEVEL, 1)
-        update.add(UpdateFieldUnit.FACTION_TEMPLATE, 35)
+        update.add(UpdateFieldUnit.FACTION_TEMPLATE, 35)  # or 5 for undead?
         update.add(UpdateFieldUnit.BYTES_0, ( race | (class_id << 8) |
                                               (gender << 16) | (1 << 24) ) )
         update.add(UpdateFieldUnit.FLAGS, 0)
@@ -697,12 +935,12 @@ class PlayerLoginHandler(object):
         update.add(UpdateFieldUnit.BASE_ATTACK_TIME, 2000)
         update.add(UpdateFieldUnit.OFFHAND_ATTACK_TIME, 2000)
 
-        update.add(UpdateFieldUnit.BOUNDING_RADIUS, 1.0)
-        update.add(UpdateFieldUnit.COMBAT_REACH, 1.0)
+        update.add(UpdateFieldUnit.BOUNDING_RADIUS, 0.382999)  # undead values
+        update.add(UpdateFieldUnit.COMBAT_REACH, 1.500000)
 
-        update.add(UpdateFieldUnit.DISPLAY_ID, 1)
-        update.add(UpdateFieldUnit.NATIVE_DISPLAY_ID, 1)
-        update.add(UpdateFieldUnit.MOUNT_DISPLAY_ID, 1)
+        update.add(UpdateFieldUnit.DISPLAY_ID, 57)
+        update.add(UpdateFieldUnit.NATIVE_DISPLAY_ID, 0)
+        update.add(UpdateFieldUnit.MOUNT_DISPLAY_ID, 0)
 
         update.add(UpdateFieldUnit.MIN_DAMAGE, 0)
         update.add(UpdateFieldUnit.MAX_DAMAGE, 0)
@@ -729,7 +967,7 @@ class PlayerLoginHandler(object):
         update.add(UpdateFieldUnit.BASE_MANA, 1)
         update.add(UpdateFieldUnit.BASE_HEALTH, 1)
 
-        update.add(UpdateFieldUnit.BYTES_2, 0)
+        update.add(UpdateFieldUnit.BYTES_2, 0)  # weapons sheathed and stuff
 
         update.add(UpdateFieldUnit.ATTACK_POWER, 0)
         update.add(UpdateFieldUnit.ATTACK_POWER_MODS, 0)
