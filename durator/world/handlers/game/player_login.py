@@ -777,7 +777,85 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldPlayer.BUYBACK_ITEM_ID:           UpdateFieldsType.INT32,
     UpdateFieldPlayer.BUYBACK_RANDOM_PROP_ID:    UpdateFieldsType.INT32,
     UpdateFieldPlayer.BUYBACK_SEED:              UpdateFieldsType.INT32,
-    UpdateFieldPlayer.BUYBACK_PRICE:             UpdateFieldsType.INT32
+    UpdateFieldPlayer.BUYBACK_PRICE:             UpdateFieldsType.INT32,
+
+    # --------------------
+    # Game object fields
+    # --------------------
+
+    UpdateFieldGameObject.DISPLAY_ID: UpdateFieldsType.INT32,
+    UpdateFieldGameObject.FLAGS:      UpdateFieldsType.INT32,
+
+    UpdateFieldGameObject.ROTATION_1: UpdateFieldsType.FLOAT,
+    UpdateFieldGameObject.ROTATION_2: UpdateFieldsType.FLOAT,
+    UpdateFieldGameObject.ROTATION_3: UpdateFieldsType.FLOAT,
+    UpdateFieldGameObject.ROTATION_4: UpdateFieldsType.FLOAT,
+
+    UpdateFieldGameObject.STATE:      UpdateFieldsType.INT32,
+    UpdateFieldGameObject.TIMESTAMP:  UpdateFieldsType.INT32,
+
+    UpdateFieldGameObject.POS_X:      UpdateFieldsType.FLOAT,
+    UpdateFieldGameObject.POS_Y:      UpdateFieldsType.FLOAT,
+    UpdateFieldGameObject.POS_Z:      UpdateFieldsType.FLOAT,
+    UpdateFieldGameObject.FACING:     UpdateFieldsType.FLOAT,
+
+    UpdateFieldGameObject.DYN_FLAGS:  UpdateFieldsType.INT32,
+    UpdateFieldGameObject.FACTION:    UpdateFieldsType.INT32,
+    UpdateFieldGameObject.TYPE_ID:    UpdateFieldsType.INT32,
+    UpdateFieldGameObject.LEVEL:      UpdateFieldsType.INT32,
+
+    # --------------------
+    # Dynamic object fields
+    # --------------------
+
+    UpdateFieldDynamicObject.CASTER:   UpdateFieldsType.INT64,
+    UpdateFieldDynamicObject.BYTES:    UpdateFieldsType.FOUR_BYTES,
+    UpdateFieldDynamicObject.SPELL_ID: UpdateFieldsType.INT32,
+    UpdateFieldDynamicObject.RADIUS:   UpdateFieldsType.FLOAT,
+
+    UpdateFieldDynamicObject.POS_X:    UpdateFieldsType.FLOAT,
+    UpdateFieldDynamicObject.POS_Y:    UpdateFieldsType.FLOAT,
+    UpdateFieldDynamicObject.POS_Z:    UpdateFieldsType.FLOAT,
+    UpdateFieldDynamicObject.FACING:   UpdateFieldsType.FLOAT,
+
+    # --------------------
+    # Corpse fields
+    # --------------------
+
+    UpdateFieldCorpse.OWNER:      UpdateFieldsType.INT64,
+
+    UpdateFieldCorpse.FACING:     UpdateFieldsType.FLOAT,
+    UpdateFieldCorpse.POS_X:      UpdateFieldsType.FLOAT,
+    UpdateFieldCorpse.POS_Y:      UpdateFieldsType.FLOAT,
+    UpdateFieldCorpse.POS_Z:      UpdateFieldsType.FLOAT,
+
+    UpdateFieldCorpse.DISPLAY_ID: UpdateFieldsType.INT32,
+
+    UpdateFieldCorpse.ITEM_1:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_2:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_3:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_4:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_5:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_6:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_7:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_8:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_9:     UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_10:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_11:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_12:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_13:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_14:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_15:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_16:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_17:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_18:    UpdateFieldsType.INT32,
+    UpdateFieldCorpse.ITEM_19:    UpdateFieldsType.INT32,
+
+    UpdateFieldCorpse.BYTES_1:    UpdateFieldsType.FOUR_BYTES,
+    UpdateFieldCorpse.BYTES_2:    UpdateFieldsType.FOUR_BYTES,
+
+    UpdateFieldCorpse.GUILD:      UpdateFieldsType.INT32,
+    UpdateFieldCorpse.FLAGS:      UpdateFieldsType.INT32
 }
 
 
@@ -1006,7 +1084,7 @@ class PlayerLoginHandler(object):
 
         update.add(UpdateFieldUnit.BYTES_1, 0)  # stand state and stuff
 
-        update.add(UpdateFieldUnit.MOD_CAST_SPEED, 1.0)
+        update.add(UpdateFieldUnit.MOD_CAST_SPEED, 1)
 
         update.add(UpdateFieldUnit.STAT_0, 0)
         update.add(UpdateFieldUnit.STAT_1, 1)
@@ -1022,7 +1100,6 @@ class PlayerLoginHandler(object):
         update.add(UpdateFieldUnit.RESISTANCE_5, 5)
 
         update.add(UpdateFieldUnit.BASE_MANA, 1)
-        update.add(UpdateFieldUnit.BASE_HEALTH, 1)
 
         update.add(UpdateFieldUnit.BYTES_2, 0)  # weapons sheathed and stuff
 
@@ -1053,19 +1130,17 @@ class PlayerLoginHandler(object):
         update.add(UpdateFieldPlayer.EXP, 100)
         update.add(UpdateFieldPlayer.NEXT_LEVEL_XP, 2500)
 
-        # update.add(UpdateFieldPlayer.CHARACTER_POINTS_1, 0)
-        # update.add(UpdateFieldPlayer.CHARACTER_POINTS_2, 2)
+        update.add(UpdateFieldPlayer.CHARACTER_POINTS_1, 0)
+        update.add(UpdateFieldPlayer.CHARACTER_POINTS_2, 2)
 
-        # update.add(UpdateFieldPlayer.BLOCK_PERCENTAGE, 4.0)
-        # update.add(UpdateFieldPlayer.DODGE_PERCENTAGE, 4.0)
-        # update.add(UpdateFieldPlayer.PARRY_PERCENTAGE, 4.0)
-        # update.add(UpdateFieldPlayer.CRIT_PERCENTAGE, 4.0)
-        # update.add(UpdateFieldPlayer.RANGED_CRIT_PERCENTAGE, 4.0)
+        update.add(UpdateFieldPlayer.BLOCK_PERCENTAGE, 4.0)
+        update.add(UpdateFieldPlayer.DODGE_PERCENTAGE, 4.0)
+        update.add(UpdateFieldPlayer.PARRY_PERCENTAGE, 4.0)
+        update.add(UpdateFieldPlayer.CRIT_PERCENTAGE, 4.0)
 
-        # update.add(UpdateFieldPlayer.REST_STATE_EXPERIENCE, 200)
-        # update.add(UpdateFieldPlayer.COINAGE, 1230000)
+        update.add(UpdateFieldPlayer.REST_STATE_EXPERIENCE, 200)
+        update.add(UpdateFieldPlayer.COINAGE, 1230000)
 
-        # update.add(UpdateFieldPlayer.WATCHED_FACTION_ID, -1)
 
 
 
