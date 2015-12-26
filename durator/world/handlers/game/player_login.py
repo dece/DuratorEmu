@@ -885,8 +885,6 @@ class ObjectUpdate(object):
         self._set_field_mask_bits(field, field_struct)
 
         update_block = field_struct.pack(value)
-        import binascii
-        print(str(field) + " - " + binascii.hexlify(update_block).decode("ascii"))
         self.update_blocks.append(update_block)
 
     def _set_field_mask_bits(self, field, field_struct):
@@ -900,7 +898,6 @@ class ObjectUpdate(object):
         while len(self.mask_blocks) < mask_block_index+1:
             self.mask_blocks.append(0)
         self.mask_blocks[mask_block_index] |= 1 << bit_index
-        # Is that in this order? Do it with a reversed index if it doesn't work
 
     def to_bytes(self):
         mask = b"".join(
