@@ -119,7 +119,7 @@ class UpdateFieldUnit(Enum):
     MAX_POWER_2               = 0x6 + 0x18
     MAX_POWER_3               = 0x6 + 0x19
     MAX_POWER_4               = 0x6 + 0x1A
-    MAX_POWER_5               = 0x6 + 0xAB
+    MAX_POWER_5               = 0x6 + 0x1B
 
     LEVEL                     = 0x6 + 0x1C
     FACTION_TEMPLATE          = 0x6 + 0x1D
@@ -1003,7 +1003,7 @@ class PlayerLoginHandler(object):
         race = char.race
         class_id = char.class_id
         gender = char.gender
-        
+
         position = char.position
 
         # guid_mask, guid_bytes = _pack_guid(self.conn.guid)
