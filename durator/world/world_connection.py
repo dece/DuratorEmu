@@ -8,6 +8,7 @@ from durator.world.handlers.char_selection.char_create import CharCreateHandler
 from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
 from durator.world.handlers.char_selection.char_enum import CharEnumHandler
 from durator.world.handlers.game.player_login import PlayerLoginHandler
+from durator.world.handlers.nop import NopHandler
 from durator.world.handlers.ping import PingHandler
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
@@ -41,6 +42,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_CHAR_CREATE:       CharCreateHandler,
         OpCode.CMSG_CHAR_DELETE:       CharDeleteHandler,
         OpCode.CMSG_CHAR_ENUM:         CharEnumHandler,
+        OpCode.CMSG_NAME_QUERY:        NopHandler,
         OpCode.CMSG_PING:              PingHandler,
         OpCode.CMSG_PLAYER_LOGIN:      PlayerLoginHandler,
         OpCode.MSG_MOVE_WORLDPORT_ACK: MoveWorldportAckHandler

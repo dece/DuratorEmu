@@ -5,6 +5,7 @@ from durator.world.world_packet import WorldPacket
 
 
 class PingHandler(object):
+    """ Answer to a ping from client. """
 
     PACKET_BIN = Struct("<I")
 
