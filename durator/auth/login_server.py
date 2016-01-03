@@ -18,7 +18,7 @@ class LoginServer(object):
     As the intern containers for logged in accounts and realms are accessed and
     updated from other thread, the server contains a lock for each shared
     object, including the sockets used by other thread, e.g. by the realm
-    listener function.
+    listener function. This may suck as this packet contains user specific data.
 
     self.realms is dict mapping realm names to realm_state dicts. These dicts
     contains a ready RealmInfo_S "packet" to be send to clients, and a timestamp
@@ -36,12 +36,11 @@ class LoginServer(object):
     def __init__(self):
         self.clients_socket = None
         self.realms_socket = None
-        self.logged_in = {}
         self.realms = {}
         self.shutdown_flag = threading.Event()
 
         self.locks = { attr: threading.Lock() for attr in
-                       ["realms_socket", "realms", "logged_in"] }
+                       ["realms_socket", "realms"] }
 
     def start(self):
         LOG.info("Starting login server")
