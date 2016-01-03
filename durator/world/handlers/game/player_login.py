@@ -12,6 +12,14 @@ from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
 
 
+WALK_SPEED         = 2.5
+RUNNING_SPEED      = 7.0
+RUNNING_BACK_SPEED = 2.5
+SWIM_SPEED         = 4.7222223
+SWIM_BACK_SPEED    = 4.0
+TURN_SPEED         = 3.141593
+
+
 class PlayerLoginHandler(object):
     """ Handle the player entering in world. """
 
@@ -107,9 +115,6 @@ class PlayerLoginHandler(object):
 
         position = char.position
 
-        # guid_mask, guid_bytes = _pack_guid(self.conn.guid)
-        # packed_guid = int.to_bytes(guid_mask, 1, "little") + guid_bytes
-
         data = b""
         data += self.UPDATE_PART1_BIN.pack(
             1,  # count
@@ -125,12 +130,12 @@ class PlayerLoginHandler(object):
             position.pos_y,
             position.pos_z,
             position.orientation,
-            2.5,  # walkspeed
-            7.0,  # runningspeed
-            2.5,  # runbackspeed
-            4.7222223,  # swimspeed
-            4.0,  # swimbackspeed
-            3.141593  # turnrate
+            WALK_SPEED,
+            RUNNING_SPEED,
+            RUNNING_BACK_SPEED,
+            SWIM_SPEED,
+            SWIM_BACK_SPEED,
+            TURN_SPEED
         )
         data += self.UPDATE_PART2_BIN.pack(
             1,  # is player?
