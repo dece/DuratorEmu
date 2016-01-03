@@ -4,6 +4,7 @@ from struct import Struct
 
 from durator.db.database import db_connection
 from durator.world.character import Character
+from durator.world.game.object import ObjectType, ObjectDescFlags
 from durator.world.game.update_fields import (
     UpdateFieldObject, UpdateFieldUnit, UpdateFieldPlayer )
 from durator.world.game.update_fields_type import (
@@ -22,40 +23,6 @@ class UpdateType(Enum):
     CREATE_OBJECT = 2
     FAR_OBJECTS   = 3
     NEAR_OBJECTS  = 4
-
-
-class ObjectType(Enum):
-    """ Object type sent in UpdateObject packets, with associated flags. """
-
-    OBJECT         = 0  # 0x01 (object)
-    ITEM           = 1  # 0x03 (object, item)
-    CONTAINER      = 2  # 0x07 (object, item, container)
-    UNIT           = 3  # 0x09 (object, unit)
-    PLAYER         = 4  # 0x19 (object, unit, player)
-    GAME_OBJECT    = 5  # 0x21 (object, game_object)
-    DYNAMIC_OBJECT = 6  # 0x41 (object, dynamic_object)
-    CORPSE         = 7  # 0x81 (object, corpse)
-
-
-class ObjectDescFlags(Enum):
-    """ BaseObject descriptors "flags" (field 0x8). """
-
-    OBJECT         = 1 << 0
-    ITEM           = 1 << 1
-    CONTAINER      = 1 << 2
-    UNIT           = 1 << 3
-    PLAYER         = 1 << 4
-    GAME_OBJECT    = 1 << 5
-    DYNAMIC_OBJECT = 1 << 6
-    CORPSE         = 1 << 7
-
-
-
-
-
-
-
-
 
 
 class ObjectUpdate(object):
@@ -341,7 +308,7 @@ class PlayerLoginHandler(object):
         # update mask block count, hard limit at 1C
         num_mask_blocks = len(update.mask_blocks)
         if num_mask_blocks >= 0x1C:
-            LOG.critical( "Too much update mask blocks ({:X}), "
+            LOG.critical( "Too much update mask blocks ({} > 0x1C), "
                           "you probably fucked up something".format(
                 num_mask_blocks
             ))
