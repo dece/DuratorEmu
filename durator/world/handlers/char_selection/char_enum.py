@@ -34,7 +34,7 @@ class CharEnumHandler(object):
 
     def _get_character_data(self, character):
         """ Return the character data needed for this character. It includes a
-        lot of general information, one equipment entry per not-bag item, and 
+        lot of general information, one equipment entry per not-bag item, and
         add the first 16-slot bag after that, because why not. """
         name_bytes = character.name.encode("utf8") + b"\x00"
         char_struct_fmt = self.CHAR_FMT.format(name_len = len(name_bytes))

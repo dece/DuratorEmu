@@ -1,11 +1,9 @@
 from enum import Enum
-import io
 from struct import Struct
 
 from durator.world.character import CharacterManager
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
-from pyshgck.bin import read_cstring, read_struct
 
 
 class CharDeleteResponseCode(Enum):
