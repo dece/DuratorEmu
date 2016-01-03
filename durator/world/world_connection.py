@@ -55,7 +55,7 @@ class WorldConnection(ConnectionAutomaton):
     def __init__(self, server, connection):
         super().__init__(connection)
         self.server = server
-        self.temp_data = {}
+        self.shared_data = {}
         self.account = None
         self.session_cipher = None
         self.guid = -1

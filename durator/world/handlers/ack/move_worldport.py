@@ -9,10 +9,10 @@ class MoveWorldportAckHandler(object):
         self.conn = connection
 
     def process(self):
-        if "worldport_ack_pending" in self.conn.temp_data:
+        if "worldport_ack_pending" in self.conn.shared_data:
             LOG.debug( "Received expected " +
                        str(OpCode.MSG_MOVE_WORLDPORT_ACK) )
-            del self.conn.temp_data["worldport_ack_pending"]
+            del self.conn.shared_data["worldport_ack_pending"]
             return None, None
         else:
             LOG.error( "Received unexpected " +

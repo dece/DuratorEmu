@@ -947,7 +947,7 @@ class PlayerLoginHandler(object):
 
         self.conn.send_packet(self._get_verify_login_packet())
         self.conn.send_packet(self._get_new_world_packet())
-        self.conn.temp_data["worldport_ack_pending"] = True
+        self.conn.shared_data["worldport_ack_pending"] = True
         self.conn.send_packet(self._get_update_object_packet())
 
         return WorldConnectionState.IN_WORLD, None
