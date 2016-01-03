@@ -112,8 +112,8 @@ class AuthSessionHandler(object):
             self.session_key = session.session_key_as_bytes
 
     def _generate_server_hash(self):
-        auth_seed = self.conn.temp_data["auth_seed"]
-        del self.conn.temp_data["auth_seed"]
+        auth_seed = self.conn.shared_data["auth_seed"]
+        del self.conn.shared_data["auth_seed"]
         to_hash = ( self.account_name.encode("ascii") +
                     bytes(4) +
                     int.to_bytes(self.client_seed, 4, "little") +
