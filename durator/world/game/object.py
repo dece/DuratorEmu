@@ -1,3 +1,5 @@
+""" An Object is the base type for all things spawned in world. """
+
 from enum import Enum
 
 
