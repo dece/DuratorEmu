@@ -82,8 +82,10 @@ class WorldConnection(ConnectionAutomaton):
         self._send_auth_challenge()
 
     def _send_auth_challenge(self):
-        self.temp_data["auth_seed"] = int.from_bytes(os.urandom(4), "little")
-        packet_data = self.AUTH_CHALLENGE_BIN.pack(self.temp_data["auth_seed"])
+        auth_seed = int.from_bytes(os.urandom(4), "little")
+        self.shared_data["auth_seed"] = auth_seed
+
+        packet_data = self.AUTH_CHALLENGE_BIN.pack(auth_seed)
         packet = WorldPacket(packet_data)
         packet.opcode = OpCode.SMSG_AUTH_CHALLENGE
         self.send_packet(packet)
