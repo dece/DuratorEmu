@@ -5,6 +5,7 @@ import time
 from durator.auth.account import AccountManager, AccountSessionManager
 from durator.auth.login_connection import LoginConnection
 from durator.auth.realm_connection import RealmConnection
+from durator.config import CONFIG
 from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG
 
@@ -14,6 +15,10 @@ class LoginServer(object):
 
     The LoginServer listens for clients (main socket) but also listens for realm
     servers in another thread to keep an up to date list of available servers.
+
+    Note that the config contains information for only one realm so several
+    realms should be installed on different machines with different config
+    files. This sucks and should be fixed later.
 
     As the intern containers for logged in accounts and realms are accessed and
     updated from other thread, the server contains a lock for each shared
@@ -25,13 +30,12 @@ class LoginServer(object):
     "last_update" of the last time it got updated by the remote world server.
     """
 
-    # Hardcoded values, change that TODO
-    CLIENTS_HOST          = "0.0.0.0"
-    CLIENTS_PORT          = 3724
-    REALMS_HOST           = "127.0.0.1"
-    REALMS_PORT           = 3725
+    CLIENTS_HOST          = CONFIG["login"]["clients_conn_hostname"]
+    CLIENTS_PORT          = int(CONFIG["login"]["clients_conn_port"])
+    REALMS_HOST           = CONFIG["login"]["realm_conn_hostname"]
+    REALMS_PORT           = int(CONFIG["login"]["realm_conn_port"])
     BACKLOG_SIZE          = 64
-    REALM_MAX_UPDATE_TIME = 120
+    REALM_MAX_UPDATE_TIME = int(CONFIG["login"]["realm_max_update_time"])
 
     def __init__(self):
         self.clients_socket = None

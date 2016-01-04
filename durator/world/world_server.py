@@ -2,6 +2,7 @@ import socket
 import threading
 import time
 
+from durator.config import CONFIG
 from durator.world.realm import Realm, RealmId, RealmFlags, RealmPopulation
 from durator.world.world_connection import WorldConnection
 from pyshgck.concurrency import simple_thread
@@ -17,14 +18,11 @@ class WorldServer(object):
     initialized with an already existing realm.
     """
 
-    # Hardcoded values, change that TODO
-    DEFAULT_HOST = "127.0.0.1"
-    DEFAULT_PORT = 13250
     BACKLOG_SIZE = 64
 
     def __init__(self):
-        self.host = WorldServer.DEFAULT_HOST
-        self.port = WorldServer.DEFAULT_PORT
+        self.hostname = CONFIG["realm"]["hostname"]
+        self.port = CONFIG["realm"]["port"]
         self.realm = None
         self._create_realm()
         self.population = RealmPopulation.LOW
@@ -45,16 +43,15 @@ class WorldServer(object):
         LOG.info("World server stopped.")
 
     def _create_realm(self):
-        self.realm = Realm(
-            "Bob Ross",  # TODO change that
-            self.host + ":" + str(self.port),
-            RealmId.SERVER8
-        )
+        realm_name = CONFIG["realm"]["name"]
+        realm_address = self.hostname + ":" + self.port
+        realm_id = RealmId(int(CONFIG["realm"]["id"]))
+        self.realm = Realm(realm_name, realm_address, realm_id)
 
     def _start_listening_for_clients(self):
         self.clients_socket = socket.socket()
         self.clients_socket.settimeout(1)
-        address = (self.host, self.port)
+        address = (self.hostname, self.port)
         self.clients_socket.bind(address)
         self.clients_socket.listen(WorldServer.BACKLOG_SIZE)
 
@@ -101,8 +98,8 @@ class WorldServer(object):
         """ Open the login server socket, or set it to None if it couldn't
         connect properly. """
         self.login_server_socket = socket.socket()
-        # Hardcoded login server address, change that TODO
-        address = ("127.0.0.1", 3725)
+        address = ( CONFIG["login"]["realm_conn_hostname"]
+                  , int(CONFIG["login"]["realm_conn_port"]) )
         try:
             self.login_server_socket.connect(address)
         except ConnectionError as exc:
