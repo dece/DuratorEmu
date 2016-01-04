@@ -6,7 +6,7 @@ from durator.auth.realmlist_request import RealmlistRequest
 from durator.auth.recon_challenge import ReconChallenge
 from durator.auth.recon_proof import ReconProof
 from durator.auth.srp import Srp
-from durator.common.connection_automaton import ConnectionAutomaton
+from durator.common.networking.connection_automaton import ConnectionAutomaton
 from pyshgck.logger import LOG
 
 

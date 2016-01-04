@@ -1,7 +1,7 @@
 import os
 from struct import Struct
 
-from durator.common.connection_automaton import ConnectionAutomaton
+from durator.common.networking.connection_automaton import ConnectionAutomaton
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.char_selection.char_create import CharCreateHandler
