@@ -4,9 +4,10 @@ from pyshgck.logger import LOG
 
 
 class ConnectionAutomaton(metaclass = ABCMeta):
-    """ This base class handle an active connection, handle incoming & outgoing
-    packets, change state in consequence. Some opcodes are considered legal only
-    if the automaton is in a determined state, to ensure protocol integrity.
+    """ This base class handles an active connection, handles incoming and
+    outgoing packets, change state in consequence. Some opcodes are considered
+    legal only if the automaton is in a determined state, to ensure protocol
+    integrity.
 
     * The LEGAL_OPS dict takes a state as key and a list of possible opcodes.
     * UNMANAGED_OPS is a list of opcodes that do not require a special state.
@@ -49,7 +50,9 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
     @abstractmethod
     def _recv_packet(self):
-        """ Receive a message from the socket and return the packet or None. """
+        """ Receive a message from the socket and return the packet or None.
+        It can be a bytes object, some class or whatever, as long as the other
+        parts of the class take the typ into account. """
         pass
 
     def _try_handle_packet(self, packet):

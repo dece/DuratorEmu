@@ -91,8 +91,9 @@ class WorldConnection(ConnectionAutomaton):
         self.send_packet(packet)
 
     def _actions_after_main_loop(self):
-        # Placeholder
+        # TODO placeholder, remove that later
         LOG.debug("World connection stopped handling packets.")
+        LOG.debug("PLACEHOLDER: looping over received data.")
         try:
             while True:
                 data = self.socket.recv(1024)

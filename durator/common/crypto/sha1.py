@@ -4,10 +4,13 @@ import hashlib
 
 
 def sha1(data):
+    """ Return the SHA1 of bytes data, as bytes. """
     hasher = hashlib.sha1(data)
     return hasher.digest()
 
 def sha1_interleave(big_int):
+    """ Return the interleaved SHA1 of big_int (max 2**128), as bytes.
+    See the SRP spec for more details on the implementation. """
     big_array = int.to_bytes(big_int, 128, "little")
     big_array = big_array.rstrip(b"\x00")
     if len(big_array) % 2 == 1:
