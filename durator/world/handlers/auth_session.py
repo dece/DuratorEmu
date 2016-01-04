@@ -5,6 +5,7 @@ from struct import Struct
 from durator.auth.account import AccountSessionManager
 from durator.common.crypto.session_cipher import SessionCipher
 from durator.common.crypto.sha1 import sha1
+from durator.config import CONFIG
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
@@ -72,8 +73,7 @@ class AuthSessionHandler(object):
 
         self._setup_encryption()
 
-        # TODO hardcoded value, change that
-        if self.build != 4125:
+        if self.build != int(CONFIG["general"]["build"]):
             LOG.warning("Wrong build tried to auth to world server: {}".format(
                 str(self.build)
             ))

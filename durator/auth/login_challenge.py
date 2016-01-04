@@ -75,7 +75,7 @@ class LoginChallenge(object):
         self.account_name = account_name.decode("ascii")
 
     def _process_account(self):
-        """ Check if the account received can log to the server. TODO checks """
+        """ Check if the account received can log to the server. """
         account = self.conn.server.get_account(self.account_name)
         if account is not None and account.is_valid():
             self.conn.account = account
