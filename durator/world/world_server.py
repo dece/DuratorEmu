@@ -46,7 +46,7 @@ class WorldServer(object):
 
     def _create_realm(self):
         self.realm = Realm(
-            "Bob Ross",
+            "Bob Ross",  # TODO change that
             self.host + ":" + str(self.port),
             RealmId.SERVER8
         )
