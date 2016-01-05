@@ -22,7 +22,7 @@ class WorldServer(object):
 
     def __init__(self):
         self.hostname = CONFIG["realm"]["hostname"]
-        self.port = CONFIG["realm"]["port"]
+        self.port = int(CONFIG["realm"]["port"])
         self.realm = None
         self._create_realm()
         self.population = RealmPopulation.LOW
@@ -44,15 +44,15 @@ class WorldServer(object):
 
     def _create_realm(self):
         realm_name = CONFIG["realm"]["name"]
-        realm_address = self.hostname + ":" + self.port
+        realm_address = "{}:{}".format(self.hostname, self.port)
         realm_id = RealmId(int(CONFIG["realm"]["id"]))
         self.realm = Realm(realm_name, realm_address, realm_id)
 
     def _start_listening_for_clients(self):
         self.clients_socket = socket.socket()
         self.clients_socket.settimeout(1)
-        address = (self.hostname, self.port)
-        self.clients_socket.bind(address)
+        clients_address = (self.hostname, self.port)
+        self.clients_socket.bind(clients_address)
         self.clients_socket.listen(WorldServer.BACKLOG_SIZE)
 
     def _stop_listening_for_clients(self):
@@ -98,10 +98,10 @@ class WorldServer(object):
         """ Open the login server socket, or set it to None if it couldn't
         connect properly. """
         self.login_server_socket = socket.socket()
-        address = ( CONFIG["login"]["realm_conn_hostname"]
-                  , int(CONFIG["login"]["realm_conn_port"]) )
+        login_server_address = ( CONFIG["login"]["realm_conn_hostname"]
+                               , int(CONFIG["login"]["realm_conn_port"]) )
         try:
-            self.login_server_socket.connect(address)
+            self.login_server_socket.connect(login_server_address)
         except ConnectionError as exc:
             LOG.error("Couldn't join login server! " + str(exc))
             self.login_server_socket = None
