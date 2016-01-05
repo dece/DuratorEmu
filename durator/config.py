@@ -1,15 +1,12 @@
 from configparser import ConfigParser
-import os
+from os.path import dirname, join, normpath
 
 
-# TODO is there a way to get the root directory from which the whole project is
-# started? without __file__ etc
-ROOT_DIR = os.path.abspath("../../../")
-CONFIG_DIR = os.path.join(ROOT_DIR, "config")
-DURATOR_CONFIG = os.path.join(CONFIG_DIR, "durator.ini")
+ROOT_DIR = normpath(join(dirname(__file__), "../"))
+CONFIG_DIR = join(ROOT_DIR, "config")
+DURATOR_CONFIG = join(CONFIG_DIR, "durator.ini")
 
 ALL_CONFIG_FILES = [DURATOR_CONFIG]
-
 
 def _load_config():
     global CONFIG
