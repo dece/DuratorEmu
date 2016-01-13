@@ -55,10 +55,8 @@ class PlayerLoginHandler(object):
             ))
             return self.conn.MAIN_ERROR_STATE, None
 
-        # self.conn.send_packet(self._get_verify_login_packet())
+        self.conn.send_packet(self._get_verify_login_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
-        # self.conn.send_packet(self._get_new_world_packet())
-        # self.conn.shared_data["worldport_ack_pending"] = True
         self.conn.send_packet(self._get_update_object_packet())
 
         return WorldConnectionState.IN_WORLD, None
@@ -75,40 +73,26 @@ class PlayerLoginHandler(object):
         except Character.DoesNotExist:
             return None
 
-    # def _get_verify_login_packet(self):
-    #     position = self.conn.character.position
-    #     response_data = self.WORLD_INFO_BIN.pack(
-    #         position.map_id,
-    #         position.pos_x,
-    #         position.pos_y,
-    #         position.pos_z,
-    #         position.orientation
-    #     )
+    def _get_verify_login_packet(self):
+        position = self.conn.character.position
+        response_data = self.WORLD_INFO_BIN.pack(
+            position.map_id,
+            position.pos_x,
+            position.pos_y,
+            position.pos_z,
+            position.orientation
+        )
 
-    #     packet = WorldPacket(response_data)
-    #     packet.opcode = OpCode.SMSG_LOGIN_VERIFY_WORLD
-    #     return packet
+        packet = WorldPacket(response_data)
+        packet.opcode = OpCode.SMSG_LOGIN_VERIFY_WORLD
+        return packet
 
     def _get_tutorial_flags_packet(self):
-        tutorial_data = int.to_bytes(0, 4, "little") * 8
+        tutorial_data = int.to_bytes(0xFFFFFFFF, 4, "little") * 8
 
         packet = WorldPacket(tutorial_data)
         packet.opcode = OpCode.SMSG_TUTORIAL_FLAGS
         return packet
-
-    # def _get_new_world_packet(self):
-    #     position = self.conn.character.position
-    #     response_data = self.WORLD_INFO_BIN.pack(
-    #         position.map_id,
-    #         position.pos_x,
-    #         position.pos_y,
-    #         position.pos_z,
-    #         position.orientation
-    #     )
-
-    #     packet = WorldPacket(response_data)
-    #     packet.opcode = OpCode.SMSG_NEW_WORLD
-    #     return packet
 
 
     UPDATE_PART1_BIN    = Struct("<I2BQB")
@@ -240,7 +224,7 @@ class PlayerLoginHandler(object):
         update.add(UpdateFieldPlayer.BYTES_3, player_bytes_3)
 
         update.add(UpdateFieldPlayer.EXP, 100)
-        update.add(UpdateFieldPlayer.NEXT_LEVEL_XP, 2500)
+        update.add(UpdateFieldPlayer.NEXT_LEVEL_EXP, 2500)
 
         update.add(UpdateFieldPlayer.CHARACTER_POINTS_1, 0)
         update.add(UpdateFieldPlayer.CHARACTER_POINTS_2, 2)
@@ -250,7 +234,7 @@ class PlayerLoginHandler(object):
         update.add(UpdateFieldPlayer.PARRY_PERCENTAGE, 4.0)
         update.add(UpdateFieldPlayer.CRIT_PERCENTAGE, 4.0)
 
-        update.add(UpdateFieldPlayer.REST_STATE_EXPERIENCE, 200)
+        update.add(UpdateFieldPlayer.REST_STATE_EXP, 200)
         update.add(UpdateFieldPlayer.COINAGE, 1230000)
 
 

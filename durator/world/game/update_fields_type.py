@@ -190,7 +190,7 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldPlayer.BUY_BACK_NPC:              UpdateFieldsType.INT64,
 
     UpdateFieldPlayer.EXP:                       UpdateFieldsType.INT32,
-    UpdateFieldPlayer.NEXT_LEVEL_XP:             UpdateFieldsType.INT32,
+    UpdateFieldPlayer.NEXT_LEVEL_EXP:            UpdateFieldsType.INT32,
 
     UpdateFieldPlayer.SKILL_INFO_1_1:            UpdateFieldsType.TWO_INT16,
 
@@ -242,7 +242,7 @@ UPDATE_FIELD_TYPE_MAP = {
     UpdateFieldPlayer.EXPLORED_ZONES_31:         UpdateFieldsType.FOUR_BYTES,
     UpdateFieldPlayer.EXPLORED_ZONES_32:         UpdateFieldsType.FOUR_BYTES,
 
-    UpdateFieldPlayer.REST_STATE_EXPERIENCE:     UpdateFieldsType.INT32,
+    UpdateFieldPlayer.REST_STATE_EXP:            UpdateFieldsType.INT32,
     UpdateFieldPlayer.COINAGE:                   UpdateFieldsType.INT32,
 
     UpdateFieldPlayer.POS_STAT_0:                UpdateFieldsType.INT32,

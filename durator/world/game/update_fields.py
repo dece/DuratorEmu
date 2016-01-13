@@ -178,7 +178,7 @@ class UpdateFieldPlayer(Enum):
     BUY_BACK_NPC                = 0xB0 + 0x9C
 
     EXP                         = 0xB0 + 0x9E
-    NEXT_LEVEL_XP               = 0xB0 + 0x9F
+    NEXT_LEVEL_EXP              = 0xB0 + 0x9F
 
     SKILL_INFO_1_1              = 0xB0 + 0xA0   # 0x180 blocks
 
@@ -289,7 +289,7 @@ class UpdateFieldPlayer(Enum):
     EXPLORED_ZONES_31           = 0xB0 + 0x283
     EXPLORED_ZONES_32           = 0xB0 + 0x284
 
-    REST_STATE_EXPERIENCE       = 0xB0 + 0x285
+    REST_STATE_EXP              = 0xB0 + 0x285
     COINAGE                     = 0xB0 + 0x286
 
     POS_STAT_0                  = 0xB0 + 0x287
