@@ -1,12 +1,12 @@
 import durator.auth.account
-import durator.world.character
+import durator.world.game.char.character
 
 
 MODELS = [
     durator.auth.account.Account,
     durator.auth.account.AccountSession,
-    durator.world.character.Character,
-    durator.world.character.CharacterFeatures,
-    durator.world.character.CharacterPosition,
-    durator.world.character.CharacterStats
+    durator.world.game.char.character.Character,
+    durator.world.game.char.character.CharacterFeatures,
+    durator.world.game.char.character.CharacterPosition,
+    durator.world.game.char.character.CharacterStats
 ]

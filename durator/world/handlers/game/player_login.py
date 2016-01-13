@@ -1,11 +1,12 @@
 from struct import Struct
 
 from durator.db.database import db_connection
-from durator.world.character import Character
+from durator.world.game.char.character import Character
 from durator.world.game.object import ObjectType, ObjectDescFlags
 from durator.world.game.update_fields import (
     UpdateFieldObject, UpdateFieldUnit, UpdateFieldPlayer )
-from durator.world.game.update_object import UpdateType, UpdateObjectBuilder
+from durator.world.game.update_object_builder import (
+    UpdateType, UpdateObjectBuilder )
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket

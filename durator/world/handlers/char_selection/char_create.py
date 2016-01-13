@@ -2,8 +2,8 @@ from enum import Enum
 import io
 from struct import Struct
 
-from durator.world.character import ( CharacterRace, CharacterClass
-                                    , CharacterGender, CharacterManager )
+from durator.world.game.char.character import (
+    CharacterRace, CharacterClass, CharacterGender, CharacterManager )
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring, read_struct
