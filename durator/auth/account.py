@@ -6,6 +6,7 @@ from peewee import Model, CharField, IntegerField, ForeignKeyField
 
 from durator.auth.srp import Srp
 from durator.db.database import DB, db_connection
+from pyshgck.logger import LOG
 
 
 _ACCOUNT_NAME_RE = re.compile(r"\w+")
@@ -83,6 +84,7 @@ class AccountManager(object):
         """ Create a valid account and add it to the database, or None if the
         arguments are invalid. """
         if not _ACCOUNT_NAME_RE.match(account_name):
+            LOG.debug("Invalid account name.")
             return None
 
         account = Account( name = account_name.upper()
@@ -105,6 +107,7 @@ class AccountManager(object):
         try:
             return Account.get(Account.name == account_name)
         except Account.DoesNotExist:
+            LOG.warning("No account with that name: " + account_name)
             return None
 
 
@@ -138,5 +141,16 @@ class AccountSessionManager(object):
 
     @staticmethod
     @db_connection
+    def delete_session(account):
+        """ Delete the session assiociated with that account. """
+        try:
+            session = AccountSession.get(AccountSession.account == account)
+            session.delete_instance()
+        except AccountSession.DoesNotExist:
+            LOG.warning("Tried to delete an non-existing session.")
+
+    @staticmethod
+    @db_connection
     def delete_all_sessions():
+        """ Delete all account sessions to clean up the database. """
         AccountSession.delete().execute()

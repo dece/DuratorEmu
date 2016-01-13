@@ -89,6 +89,7 @@ class AuthSessionHandler(object):
             return self.conn.MAIN_ERROR_STATE, response
 
         LOG.debug("World server auth OK.")
+        AccountSessionManager.delete_session(self.conn.account)
         response = self._get_success_packet()
         return WorldConnectionState.AUTH_OK, response
 
