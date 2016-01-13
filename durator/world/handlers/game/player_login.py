@@ -55,6 +55,7 @@ class PlayerLoginHandler(object):
             return self.conn.MAIN_ERROR_STATE, None
 
         # self.conn.send_packet(self._get_verify_login_packet())
+        self.conn.send_packet(self._get_tutorial_flags_packet())
         # self.conn.send_packet(self._get_new_world_packet())
         # self.conn.shared_data["worldport_ack_pending"] = True
         self.conn.send_packet(self._get_update_object_packet())
@@ -86,6 +87,13 @@ class PlayerLoginHandler(object):
     #     packet = WorldPacket(response_data)
     #     packet.opcode = OpCode.SMSG_LOGIN_VERIFY_WORLD
     #     return packet
+
+    def _get_tutorial_flags_packet(self):
+        tutorial_data = int.to_bytes(0, 4, "little") * 8
+
+        packet = WorldPacket(tutorial_data)
+        packet.opcode = OpCode.SMSG_TUTORIAL_FLAGS
+        return packet
 
     # def _get_new_world_packet(self):
     #     position = self.conn.character.position

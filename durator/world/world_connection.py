@@ -18,7 +18,15 @@ from pyshgck.logger import LOG
 
 
 class WorldConnection(ConnectionAutomaton):
-    """ Handle the communication between a client and the world server. """
+    """ Handle the communication between a client and the world server.
+
+    The shared_data dict holds misc temporary values that can be of use for
+    several handlers; anything living longer than a few seconds should probably
+    be stored somewhere else. The account and the session cipher attributes are
+    set only when the AuthSessionHandler succeeds (state AUTH_OK at least). The
+    guid and characters variables are set only when the PlayerLoginHandler
+    verifies them.
+    """
 
     AUTH_CHALLENGE_BIN = Struct("<I")
 
@@ -56,8 +64,10 @@ class WorldConnection(ConnectionAutomaton):
         super().__init__(connection)
         self.server = server
         self.shared_data = {}
+
         self.account = None
         self.session_cipher = None
+
         self.guid = -1
         self.character = None
 

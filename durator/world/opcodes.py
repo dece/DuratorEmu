@@ -23,6 +23,8 @@ class OpCode(Enum):
 
     MSG_MOVE_WORLDPORT_ACK = 0x0DC
 
+    SMSG_TUTORIAL_FLAGS = 0x0FD
+
     CMSG_PING = 0x1DC
     SMSG_PONG = 0x1DD
 
