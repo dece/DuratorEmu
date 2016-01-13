@@ -1,7 +1,10 @@
 DuratorEmu
 ==========
 
-World of Warcraft 1.1.2.4125 tiny emulator.
+This is a World of Warcraft 1.1.2.4125 tiny emulator, which tries to remain
+small, clean and understandable. The minimal goal is to get in world, then maybe
+handle several player and basic stuff like chat to have some fun with old school
+exploration techniques.
 
 
 
@@ -10,7 +13,7 @@ Installation
 
 Dependencies:
 
-- Python 3.4
+- Python 3.4+
 - MySQL, anything slightly recent should be fine
 - Peewee, the Python ORM used, available in PyPI
 - A Python MySQL driver, PyMySQL preferably (in PyPI), or maybe MySQLdb

@@ -54,9 +54,9 @@ class PlayerLoginHandler(object):
             ))
             return self.conn.MAIN_ERROR_STATE, None
 
-        self.conn.send_packet(self._get_verify_login_packet())
-        self.conn.send_packet(self._get_new_world_packet())
-        self.conn.shared_data["worldport_ack_pending"] = True
+        # self.conn.send_packet(self._get_verify_login_packet())
+        # self.conn.send_packet(self._get_new_world_packet())
+        # self.conn.shared_data["worldport_ack_pending"] = True
         self.conn.send_packet(self._get_update_object_packet())
 
         return WorldConnectionState.IN_WORLD, None
@@ -73,33 +73,33 @@ class PlayerLoginHandler(object):
         except Character.DoesNotExist:
             return None
 
-    def _get_verify_login_packet(self):
-        position = self.conn.character.position
-        response_data = self.WORLD_INFO_BIN.pack(
-            position.map_id,
-            position.pos_x,
-            position.pos_y,
-            position.pos_z,
-            position.orientation
-        )
+    # def _get_verify_login_packet(self):
+    #     position = self.conn.character.position
+    #     response_data = self.WORLD_INFO_BIN.pack(
+    #         position.map_id,
+    #         position.pos_x,
+    #         position.pos_y,
+    #         position.pos_z,
+    #         position.orientation
+    #     )
 
-        packet = WorldPacket(response_data)
-        packet.opcode = OpCode.SMSG_LOGIN_VERIFY_WORLD
-        return packet
+    #     packet = WorldPacket(response_data)
+    #     packet.opcode = OpCode.SMSG_LOGIN_VERIFY_WORLD
+    #     return packet
 
-    def _get_new_world_packet(self):
-        position = self.conn.character.position
-        response_data = self.WORLD_INFO_BIN.pack(
-            position.map_id,
-            position.pos_x,
-            position.pos_y,
-            position.pos_z,
-            position.orientation
-        )
+    # def _get_new_world_packet(self):
+    #     position = self.conn.character.position
+    #     response_data = self.WORLD_INFO_BIN.pack(
+    #         position.map_id,
+    #         position.pos_x,
+    #         position.pos_y,
+    #         position.pos_z,
+    #         position.orientation
+    #     )
 
-        packet = WorldPacket(response_data)
-        packet.opcode = OpCode.SMSG_NEW_WORLD
-        return packet
+    #     packet = WorldPacket(response_data)
+    #     packet.opcode = OpCode.SMSG_NEW_WORLD
+    #     return packet
 
 
     UPDATE_PART1_BIN    = Struct("<I2BQB")

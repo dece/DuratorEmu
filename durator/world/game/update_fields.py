@@ -1,4 +1,4 @@
-""" Update fields values used for build 4125. """
+""" Update fields values used for build 4125, directly from the binary. """
 
 from enum import Enum
 
