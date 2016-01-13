@@ -19,7 +19,8 @@ class UpdateType(Enum):
     NEAR_OBJECTS  = 4
 
 
-class UpdateObjectBuilder(object):
+class UpdateBlocksBuilder(object):
+    """ Create the UpdateBlocks part of an UpdateObject packet. """
 
     FIELD_BIN_MAP = {
         UpdateFieldsType.INT32:      Struct("<i"),
@@ -67,3 +68,16 @@ class UpdateObjectBuilder(object):
             self.update_blocks
         )
         return mask + update_data
+
+
+class PlayerSpawner(UpdateBlocksBuilder):
+    """ This builder is used to send the world-entering UpdateObject packet.
+    Probably a temporary solution until I have a better update object system.
+    """
+
+    def __init__(self, character):
+        super().__init__(self)
+        self.character = character
+
+        # self._prepare_player_values()
+

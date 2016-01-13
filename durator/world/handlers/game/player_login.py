@@ -6,7 +6,7 @@ from durator.world.game.object import ObjectType, ObjectDescFlags
 from durator.world.game.update_fields import (
     UpdateFieldObject, UpdateFieldUnit, UpdateFieldPlayer )
 from durator.world.game.update_object_builder import (
-    UpdateType, UpdateObjectBuilder )
+    UpdateType, UpdateBlocksBuilder )
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket
@@ -153,7 +153,7 @@ class PlayerLoginHandler(object):
             0   # victim GUID
         )
 
-        update = UpdateObjectBuilder()
+        update = UpdateBlocksBuilder()
         update.add(UpdateFieldObject.GUID, self.conn.guid)
         update.add(UpdateFieldObject.TYPE, ( ObjectDescFlags.OBJECT.value |
                                              ObjectDescFlags.UNIT.value |
