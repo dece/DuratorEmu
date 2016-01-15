@@ -3,8 +3,7 @@ from struct import Struct
 from durator.db.database import db_connection
 from durator.world.game.char.character import Character
 from durator.world.game.object import ObjectType, ObjectDescFlags
-from durator.world.game.update_fields import (
-    UpdateFieldObject, UpdateFieldUnit, UpdateFieldPlayer )
+from durator.world.game.object_fields import FieldObject, FieldUnit, FieldPlayer
 from durator.world.game.update_object_packet import (
     UpdateType, UpdateBlocksBuilder )
 from durator.world.opcodes import OpCode
@@ -138,78 +137,78 @@ class PlayerLoginHandler(object):
         )
 
         update = UpdateBlocksBuilder()
-        update.add(UpdateFieldObject.GUID, self.conn.guid)
-        update.add(UpdateFieldObject.TYPE, ( ObjectDescFlags.OBJECT.value |
+        update.add(FieldObject.GUID, self.conn.guid)
+        update.add(FieldObject.TYPE, ( ObjectDescFlags.OBJECT.value |
                                              ObjectDescFlags.UNIT.value |
                                              ObjectDescFlags.PLAYER.value ) )
-        update.add(UpdateFieldObject.SCALE_X, 1.0)
+        update.add(FieldObject.SCALE_X, 1.0)
 
-        update.add(UpdateFieldUnit.HEALTH, 100)
-        update.add(UpdateFieldUnit.POWER_1, 100)
-        update.add(UpdateFieldUnit.POWER_2, 100)
-        update.add(UpdateFieldUnit.POWER_3, 100)
-        update.add(UpdateFieldUnit.POWER_4, 100)
-        update.add(UpdateFieldUnit.POWER_5, 100)
-        update.add(UpdateFieldUnit.MAX_HEALTH, 100)
-        update.add(UpdateFieldUnit.MAX_POWER_1, 100)
-        update.add(UpdateFieldUnit.MAX_POWER_2, 100)
-        update.add(UpdateFieldUnit.MAX_POWER_3, 100)
-        update.add(UpdateFieldUnit.MAX_POWER_4, 100)
-        update.add(UpdateFieldUnit.MAX_POWER_5, 100)
+        update.add(FieldUnit.HEALTH, 100)
+        update.add(FieldUnit.POWER_1, 100)
+        update.add(FieldUnit.POWER_2, 100)
+        update.add(FieldUnit.POWER_3, 100)
+        update.add(FieldUnit.POWER_4, 100)
+        update.add(FieldUnit.POWER_5, 100)
+        update.add(FieldUnit.MAX_HEALTH, 100)
+        update.add(FieldUnit.MAX_POWER_1, 100)
+        update.add(FieldUnit.MAX_POWER_2, 100)
+        update.add(FieldUnit.MAX_POWER_3, 100)
+        update.add(FieldUnit.MAX_POWER_4, 100)
+        update.add(FieldUnit.MAX_POWER_5, 100)
 
-        update.add(UpdateFieldUnit.LEVEL, 1)
-        update.add(UpdateFieldUnit.FACTION_TEMPLATE, 35)  # or 5 for undead?
-        update.add(UpdateFieldUnit.BYTES_0, ( race | (class_id << 8) |
-                                              (gender << 16) | (1 << 24) ) )
-        update.add(UpdateFieldUnit.FLAGS, 0)
+        update.add(FieldUnit.LEVEL, 1)
+        update.add(FieldUnit.FACTION_TEMPLATE, 35)  # or 5 for undead?
+        update.add(FieldUnit.BYTES_0, ( race | (class_id << 8) |
+                                        (gender << 16) | (1 << 24) ) )
+        update.add(FieldUnit.FLAGS, 0)
 
-        update.add(UpdateFieldUnit.BASE_ATTACK_TIME, 2000)
-        update.add(UpdateFieldUnit.OFFHAND_ATTACK_TIME, 2000)
+        update.add(FieldUnit.BASE_ATTACK_TIME, 2000)
+        update.add(FieldUnit.OFFHAND_ATTACK_TIME, 2000)
 
-        update.add(UpdateFieldUnit.BOUNDING_RADIUS, 0.382999)  # undead values
-        update.add(UpdateFieldUnit.COMBAT_REACH, 1.500000)
+        update.add(FieldUnit.BOUNDING_RADIUS, 0.382999)  # undead values
+        update.add(FieldUnit.COMBAT_REACH, 1.500000)
 
-        update.add(UpdateFieldUnit.DISPLAY_ID, 57)
-        update.add(UpdateFieldUnit.NATIVE_DISPLAY_ID, 57)
-        update.add(UpdateFieldUnit.MOUNT_DISPLAY_ID, 0)
+        update.add(FieldUnit.DISPLAY_ID, 57)
+        update.add(FieldUnit.NATIVE_DISPLAY_ID, 57)
+        update.add(FieldUnit.MOUNT_DISPLAY_ID, 0)
 
-        update.add(UpdateFieldUnit.MIN_DAMAGE, 0)
-        update.add(UpdateFieldUnit.MAX_DAMAGE, 0)
-        update.add(UpdateFieldUnit.MIN_OFFHAND_DAMAGE, 0)
-        update.add(UpdateFieldUnit.MAX_OFFHAND_DAMAGE, 0)
+        update.add(FieldUnit.MIN_DAMAGE, 0)
+        update.add(FieldUnit.MAX_DAMAGE, 0)
+        update.add(FieldUnit.MIN_OFFHAND_DAMAGE, 0)
+        update.add(FieldUnit.MAX_OFFHAND_DAMAGE, 0)
 
-        update.add(UpdateFieldUnit.BYTES_1, 0)  # stand state and stuff
+        update.add(FieldUnit.BYTES_1, 0)  # stand state and stuff
 
-        update.add(UpdateFieldUnit.MOD_CAST_SPEED, 1)
+        update.add(FieldUnit.MOD_CAST_SPEED, 1)
 
-        update.add(UpdateFieldUnit.STAT_0, 0)
-        update.add(UpdateFieldUnit.STAT_1, 1)
-        update.add(UpdateFieldUnit.STAT_2, 2)
-        update.add(UpdateFieldUnit.STAT_3, 3)
-        update.add(UpdateFieldUnit.STAT_4, 4)
+        update.add(FieldUnit.STAT_0, 0)
+        update.add(FieldUnit.STAT_1, 1)
+        update.add(FieldUnit.STAT_2, 2)
+        update.add(FieldUnit.STAT_3, 3)
+        update.add(FieldUnit.STAT_4, 4)
 
-        update.add(UpdateFieldUnit.RESISTANCE_0, 0)
-        update.add(UpdateFieldUnit.RESISTANCE_1, 1)
-        update.add(UpdateFieldUnit.RESISTANCE_2, 2)
-        update.add(UpdateFieldUnit.RESISTANCE_3, 3)
-        update.add(UpdateFieldUnit.RESISTANCE_4, 4)
-        update.add(UpdateFieldUnit.RESISTANCE_5, 5)
+        update.add(FieldUnit.RESISTANCE_0, 0)
+        update.add(FieldUnit.RESISTANCE_1, 1)
+        update.add(FieldUnit.RESISTANCE_2, 2)
+        update.add(FieldUnit.RESISTANCE_3, 3)
+        update.add(FieldUnit.RESISTANCE_4, 4)
+        update.add(FieldUnit.RESISTANCE_5, 5)
 
-        update.add(UpdateFieldUnit.BASE_MANA, 1)
+        update.add(FieldUnit.BASE_MANA, 1)
 
-        update.add(UpdateFieldUnit.BYTES_2, 0)  # weapons sheathed and stuff
+        update.add(FieldUnit.BYTES_2, 0)  # weapons sheathed and stuff
 
-        update.add(UpdateFieldUnit.ATTACK_POWER, 0)
-        update.add(UpdateFieldUnit.ATTACK_POWER_MODS, 0)
-        update.add(UpdateFieldUnit.RANGED_ATTACK_POWER, 0)
-        update.add(UpdateFieldUnit.RANGED_ATTACK_POWER_MODS, 0)
+        update.add(FieldUnit.ATTACK_POWER, 0)
+        update.add(FieldUnit.ATTACK_POWER_MODS, 0)
+        update.add(FieldUnit.RANGED_ATTACK_POWER, 0)
+        update.add(FieldUnit.RANGED_ATTACK_POWER_MODS, 0)
 
-        update.add(UpdateFieldUnit.MIN_RANGED_DAMAGE, 0)
-        update.add(UpdateFieldUnit.MAX_RANGED_DAMAGE, 0)
+        update.add(FieldUnit.MIN_RANGED_DAMAGE, 0)
+        update.add(FieldUnit.MAX_RANGED_DAMAGE, 0)
 
         features = char.features
 
-        update.add(UpdateFieldPlayer.FLAGS, 0)
+        update.add(FieldPlayer.FLAGS, 0)
 
         player_bytes_1 = ( features.skin |
                            features.face << 8 |
@@ -219,26 +218,23 @@ class PlayerLoginHandler(object):
                            1 << 24 )  # restInfo
         player_bytes_3 = gender
 
-        update.add(UpdateFieldPlayer.BYTES_1, player_bytes_1)
-        update.add(UpdateFieldPlayer.BYTES_2, player_bytes_2)
-        update.add(UpdateFieldPlayer.BYTES_3, player_bytes_3)
+        update.add(FieldPlayer.BYTES_1, player_bytes_1)
+        update.add(FieldPlayer.BYTES_2, player_bytes_2)
+        update.add(FieldPlayer.BYTES_3, player_bytes_3)
 
-        update.add(UpdateFieldPlayer.EXP, 100)
-        update.add(UpdateFieldPlayer.NEXT_LEVEL_EXP, 2500)
+        update.add(FieldPlayer.EXP, 100)
+        update.add(FieldPlayer.NEXT_LEVEL_EXP, 2500)
 
-        update.add(UpdateFieldPlayer.CHARACTER_POINTS_1, 0)
-        update.add(UpdateFieldPlayer.CHARACTER_POINTS_2, 2)
+        update.add(FieldPlayer.CHARACTER_POINTS_1, 0)
+        update.add(FieldPlayer.CHARACTER_POINTS_2, 2)
 
-        update.add(UpdateFieldPlayer.BLOCK_PERCENTAGE, 4.0)
-        update.add(UpdateFieldPlayer.DODGE_PERCENTAGE, 4.0)
-        update.add(UpdateFieldPlayer.PARRY_PERCENTAGE, 4.0)
-        update.add(UpdateFieldPlayer.CRIT_PERCENTAGE, 4.0)
+        update.add(FieldPlayer.BLOCK_PERCENTAGE, 4.0)
+        update.add(FieldPlayer.DODGE_PERCENTAGE, 4.0)
+        update.add(FieldPlayer.PARRY_PERCENTAGE, 4.0)
+        update.add(FieldPlayer.CRIT_PERCENTAGE, 4.0)
 
-        update.add(UpdateFieldPlayer.REST_STATE_EXP, 200)
-        update.add(UpdateFieldPlayer.COINAGE, 1230000)
-
-
-
+        update.add(FieldPlayer.REST_STATE_EXP, 200)
+        update.add(FieldPlayer.COINAGE, 1230000)
 
         # update mask block count, hard limit at 1C
         num_mask_blocks = len(update.mask_blocks)

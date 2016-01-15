@@ -3,7 +3,7 @@
 from enum import Enum
 
 
-class UpdateFieldObject(Enum):
+class FieldObject(Enum):
     """ Hard limit: 0x6 """
 
     GUID    = 0x0
@@ -14,7 +14,7 @@ class UpdateFieldObject(Enum):
     PADDING = 0x5
 
 
-class UpdateFieldItem(Enum):
+class FieldItem(Enum):
     """ Hard limit: 0x30 """
 
     OWNER                = 0x6 + 0x0
@@ -38,7 +38,7 @@ class UpdateFieldItem(Enum):
     MAX_DURABILITY       = 0x6 + 0x29
 
 
-class UpdateFieldContainer(Enum):
+class FieldContainer(Enum):
     """ Hard limit: 0x5A """
 
     NUM_SLOTS = 0x30 + 0x0
@@ -46,7 +46,7 @@ class UpdateFieldContainer(Enum):
     SLOT_1    = 0x30 + 0x2  # 0x28 slots max, int64
 
 
-class UpdateFieldUnit(Enum):
+class FieldUnit(Enum):
     """ Hard limit: 0xB0 """
 
     CHARM                     = 0x6 + 0x0
@@ -145,7 +145,7 @@ class UpdateFieldUnit(Enum):
     PADDING                   = 0x6 + 0xA9
 
 
-class UpdateFieldPlayer(Enum):
+class FieldPlayer(Enum):
     """ Hard limit: 0x36C """
 
     SELECTION                   = 0xB0 + 0x0
@@ -354,7 +354,7 @@ class UpdateFieldPlayer(Enum):
     PADDING                     = 0xB0 + 0x2BB
 
 
-class UpdateFieldGameObject(Enum):
+class FieldGameObject(Enum):
     """ Hard limit: 0x16 """
 
     DISPLAY_ID       = 0x6 + 0x0
@@ -379,7 +379,7 @@ class UpdateFieldGameObject(Enum):
     LEVEL            = 0x6 + 0xF
 
 
-class UpdateFieldDynamicObject(Enum):
+class FieldDynamicObject(Enum):
     """ Hard limit: 0x10 """
 
     CASTER   = 0x6 + 0x0
@@ -395,7 +395,7 @@ class UpdateFieldDynamicObject(Enum):
     PADDING  = 0x6 + 0x9
 
 
-class UpdateFieldCorpse(Enum):
+class FieldCorpse(Enum):
     """ Hard limit: 0x24 """
 
     OWNER         = 0x6 + 0x0

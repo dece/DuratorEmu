@@ -1,4 +1,8 @@
-""" An Object is the base type for all things spawned in world. """
+""" A BaseObject is the base type for all things spawned in world.
+
+This module defines a class that can hold a value for each object field, and a
+set of subclasses specific to each type of object discerned by the game.
+"""
 
 from enum import Enum
 
@@ -27,3 +31,45 @@ class ObjectDescFlags(Enum):
     GAME_OBJECT    = 1 << 5
     DYNAMIC_OBJECT = 1 << 6
     CORPSE         = 1 << 7
+
+
+class BaseObject(object):
+
+    def __init__(self):
+        self.fields = {}
+
+    def get(self, field):
+        """ Return the object field value, or None if it hasn't been set. """
+        return self.fields.get(field)
+
+    def set(self, field, value):
+        """ Set a new object field value. """
+        self.fields[field] = value
+
+
+class ItemObject(BaseObject):
+    pass
+
+
+class ContainerObject(ItemObject):
+    pass
+
+
+class UnitObject(BaseObject):
+    pass
+
+
+class PlayerObject(UnitObject):
+    pass
+
+
+class GameObject(BaseObject):
+    pass
+
+
+class DynamicObject(BaseObject):
+    pass
+
+
+class CorpseObject(BaseObject):
+    pass

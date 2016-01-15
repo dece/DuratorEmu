@@ -4,8 +4,7 @@ from enum import Enum
 import math
 from struct import Struct
 
-from durator.world.game.update_fields_type import (
-    UpdateFieldsType, UPDATE_FIELD_TYPE_MAP )
+from durator.world.game.object_fields_type import FieldsType, FIELD_TYPE_MAP
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
@@ -64,11 +63,11 @@ class UpdateBlocksBuilder(object):
     """ Create the UpdateBlocks part of an UpdateObject packet. """
 
     FIELD_BIN_MAP = {
-        UpdateFieldsType.INT32:      Struct("<i"),
-        UpdateFieldsType.TWO_INT16:  Struct("<I"),
-        UpdateFieldsType.FLOAT:      Struct("<f"),
-        UpdateFieldsType.INT64:      Struct("<q"),
-        UpdateFieldsType.FOUR_BYTES: Struct("<I")
+        FieldsType.INT32:      Struct("<i"),
+        FieldsType.TWO_INT16:  Struct("<I"),
+        FieldsType.FLOAT:      Struct("<f"),
+        FieldsType.INT64:      Struct("<q"),
+        FieldsType.FOUR_BYTES: Struct("<I")
     }
 
     def __init__(self):
@@ -77,7 +76,7 @@ class UpdateBlocksBuilder(object):
 
     def add(self, field, value):
         try:
-            field_type = UPDATE_FIELD_TYPE_MAP[field]
+            field_type = FIELD_TYPE_MAP[field]
         except KeyError:
             LOG.error("No type associated with " + str(field))
             LOG.error("Object not updated.")
