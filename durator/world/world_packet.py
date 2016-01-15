@@ -16,7 +16,6 @@ class WorldPacket(object):
     _PACKET_BUF = b""
 
     def __init__(self, data = None):
-        # self.length = 0
         self.opcode = None
         self.data = data or b""
 
@@ -58,7 +57,6 @@ class WorldPacket(object):
         print("<<<")
         print(dump_data(data), end = "")
 
-        # packet.length = packet_size
         opcode_bytes, data = data[:4], data[4:]
         opcode_value = int.from_bytes(opcode_bytes, "little")
         try:
@@ -79,6 +77,3 @@ class WorldPacket(object):
             packet = session_cipher.encrypt(packet)
 
         return packet
-
-    # def compute_length(self):
-    #     self.length = self.OUTGOING_OPCODE_BIN.size + len(self.data)
