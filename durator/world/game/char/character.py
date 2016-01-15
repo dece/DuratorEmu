@@ -42,7 +42,7 @@ class CharacterPosition(Model):
         database = DB
 
 
-class Character(Model):
+class CharacterData(Model):
 
     guid     = IntegerField(unique = True)
     account  = ForeignKeyField(Account, related_name = "chars")
@@ -73,13 +73,13 @@ class CharacterManager(Model):
         This should check of other things like account char limit etc.
         """
         name = char_values[0]
-        name_exists = Character.select().where(Character.name == name).exists()
+        name_exists = CharacterManager.does_char_with_name_exist(name)
         if name_exists:
             LOG.debug("Name " + name + " already used.")
             return 2
 
         try:
-            character = Character(
+            character = CharacterData(
                 guid = CharacterManager._get_unused_guid(), account = account,
                 name = name, race = char_values[1].value,
                 class_id = char_values[2].value, gender = char_values[3].value
@@ -108,10 +108,25 @@ class CharacterManager(Model):
     @db_connection
     def _get_unused_guid():
         guid = -1
-        while ( guid == -1
-                or Character.select().where(Character.guid == guid).exists() ):
-            guid = random.randrange(2**20)
+        while guid == -1 or CharacterManager.does_char_with_guid_exist(guid):
+            guid = random.randrange(0xFFFFFFFF)
         return guid
+
+    @staticmethod
+    @db_connection
+    def does_char_with_guid_exist(guid):
+        return ( CharacterData
+                 .select()
+                 .where(CharacterData.guid == guid)
+                 .exists() )
+
+    @staticmethod
+    @db_connection
+    def does_char_with_name_exist(name):
+        return ( CharacterData
+                 .select()
+                 .where(CharacterData.name == name)
+                 .exists() )
 
     @staticmethod
     @db_connection
@@ -119,7 +134,7 @@ class CharacterManager(Model):
         """ Try to delete character and all associated data from the database.
         Return 0 on success, 1 on error. """
         try:
-            character = Character.get(Character.guid == guid)
+            character = CharacterData.get(CharacterData.guid == guid)
             features = character.features
             stats = character.stats
             position = character.position

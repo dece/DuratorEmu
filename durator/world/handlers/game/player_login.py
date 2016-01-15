@@ -1,7 +1,7 @@
 from struct import Struct
 
 from durator.db.database import db_connection
-from durator.world.game.char.character import Character
+from durator.world.game.char.character import CharacterData
 from durator.world.game.object import ObjectType, ObjectDescFlags
 from durator.world.game.object_fields import FieldObject, FieldUnit, FieldPlayer
 from durator.world.game.update_object_packet import (
@@ -60,16 +60,16 @@ class PlayerLoginHandler(object):
 
         return WorldConnectionState.IN_WORLD, None
 
-    def _get_checked_character(self):
-        """ Set the connection character to the specified GUID only if this
-        character belongs to the connected account, to avoid illegal uses. """
+    def _get_checked_character(self, guid):
+        """ Get the character data associated to that GUID, but only if this
+        character belongs to the connected account, else return None. """
         try:
-            character = Character.get(
-                Character.guid == self.conn.guid
-                and Character.account == self.conn.account
+            character = CharacterData.get(
+                CharacterData.guid == guid
+                and CharacterData.account == self.conn.account
             )
             return character
-        except Character.DoesNotExist:
+        except CharacterData.DoesNotExist:
             return None
 
     def _get_verify_login_packet(self):

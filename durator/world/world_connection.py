@@ -24,7 +24,7 @@ class WorldConnection(ConnectionAutomaton):
     several handlers; anything living longer than a few seconds should probably
     be stored somewhere else. The account and the session cipher attributes are
     set only when the AuthSessionHandler succeeds (state AUTH_OK at least). The
-    guid and characters variables are set only when the PlayerLoginHandler
+    guid and character_data variables are set only when the PlayerLoginHandler
     verifies them.
     """
 
