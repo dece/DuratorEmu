@@ -5,7 +5,7 @@ from durator.world.game.char.character import Character
 from durator.world.game.object import ObjectType, ObjectDescFlags
 from durator.world.game.update_fields import (
     UpdateFieldObject, UpdateFieldUnit, UpdateFieldPlayer )
-from durator.world.game.update_object_builder import (
+from durator.world.game.update_object_packet import (
     UpdateType, UpdateBlocksBuilder )
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState

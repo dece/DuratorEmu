@@ -6,17 +6,58 @@ from struct import Struct
 
 from durator.world.game.update_fields_type import (
     UpdateFieldsType, UPDATE_FIELD_TYPE_MAP )
+from durator.world.opcodes import OpCode
+from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
 
 
 class UpdateType(Enum):
     """ Determine the UpdateObject packet format. """
 
-    PARTIAL       = 0  # to be confirmed / renamed
+    PARTIAL       = 0
     MOVEMENT      = 1
     CREATE_OBJECT = 2
     FAR_OBJECTS   = 3
     NEAR_OBJECTS  = 4
+
+
+class UpdateObjectPacket(WorldPacket):
+
+    # uint32  count
+    # uint8   bool hasTransport (?)
+    # uint8   UPDATE_TYPE
+    # uint64  guid
+    # uint8   OBJECT_TYPE
+    PACKET_PART1_BIN    = Struct("<I2BQB")
+
+    # uint32    flags
+    # uint32    unk
+    # float[4]  position+ori
+    # float[6]  speeds (walk, run, bw, swim, swim bw, turn)
+    # may be more complete with some flags
+    PACKET_MOVEMENT_FMT = Struct("<2I4f6f")
+
+    # uint32  isPlayer ? 1 : 0
+    # uint32  attack cycle
+    # uint32  timer ID
+    # uint64  victim guid
+    PACKET_PART2_BIN    = Struct("<3IQ")
+
+    def __init__(self, data = None):
+        super().__init__(self, data)
+        self.opcode = OpCode.SMSG_UPDATE_OBJECT
+
+        self.blocks_builder = UpdateBlocksBuilder()
+
+    def add_field(self, field, value):
+        self.blocks_builder.add(field, value)
+
+    def create_data(self):
+        """ Create binary data from the packet information.
+        Required to call to_bytes. """
+        update_blocks = self.blocks_builder.to_bytes()
+        # TODO complete
+        self.data = update_blocks
 
 
 class UpdateBlocksBuilder(object):
