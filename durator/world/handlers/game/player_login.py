@@ -46,14 +46,15 @@ class PlayerLoginHandler(object):
 
     @db_connection
     def process(self):
-        self.conn.guid = self.PACKET_BIN.unpack(self.packet)[0]
-        self.conn.character = self._get_checked_character()
-        if self.conn.character is None:
+        guid = self.PACKET_BIN.unpack(self.packet)[0]
+        character_data = self._get_checked_character(guid)
+        if character_data is None:
             LOG.warning("Account {} tried to illegally use character {}".format(
-                self.conn.account.name, self.conn.guid
+                self.conn.account.name, guid
             ))
             return self.conn.MAIN_ERROR_STATE, None
 
+        self.conn.guid = guid
         self.conn.send_packet(self._get_verify_login_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
         self.conn.send_packet(self._get_update_object_packet())
