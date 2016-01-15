@@ -116,18 +116,18 @@ class CharacterManager(object):
 
     @staticmethod
     @db_connection
-    def does_char_with_guid_exist(guid):
-        return ( CharacterData
-                 .select()
-                 .where(CharacterData.guid == guid)
-                 .exists() )
-
-    @staticmethod
-    @db_connection
     def does_char_with_name_exist(name):
         return ( CharacterData
                  .select()
                  .where(CharacterData.name == name)
+                 .exists() )
+
+    @staticmethod
+    @db_connection
+    def does_char_with_guid_exist(guid):
+        return ( CharacterData
+                 .select()
+                 .where(CharacterData.guid == guid)
                  .exists() )
 
     @staticmethod

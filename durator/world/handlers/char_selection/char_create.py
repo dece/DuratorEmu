@@ -2,7 +2,7 @@ from enum import Enum
 import io
 from struct import Struct
 
-from durator.world.game.char.character import CharacterManager
+from durator.world.game.char.character_data import CharacterManager
 from durator.world.game.char.constants import (
     CharacterRace, CharacterClass, CharacterGender )
 from durator.world.opcodes import OpCode

@@ -1,7 +1,7 @@
 from struct import Struct
 
 from durator.db.database import db_connection
-from durator.world.game.char.character import CharacterData
+from durator.world.game.char.character_data import CharacterData
 from durator.world.game.object import ObjectType, ObjectDescFlags
 from durator.world.game.object_fields import FieldObject, FieldUnit, FieldPlayer
 from durator.world.game.update_object_packet import (
