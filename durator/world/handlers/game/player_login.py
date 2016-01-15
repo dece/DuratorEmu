@@ -54,7 +54,11 @@ class PlayerLoginHandler(object):
             ))
             return self.conn.MAIN_ERROR_STATE, None
 
+        # Now that we have the character data, spawn a new player object.
         self.conn.guid = guid
+        # OBJECT_MANAGER.add_player()
+
+        # Finally, send the packets necessary to let the client get in world.
         self.conn.send_packet(self._get_verify_login_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
         self.conn.send_packet(self._get_update_object_packet())
@@ -74,6 +78,7 @@ class PlayerLoginHandler(object):
             return None
 
     def _get_verify_login_packet(self):
+        """ Send the unique (?) SMSG_LOGIN_VERIFY_WORLD packet. """
         position = self.conn.character.position
         response_data = self.WORLD_INFO_BIN.pack(
             position.map_id,
@@ -88,6 +93,7 @@ class PlayerLoginHandler(object):
         return packet
 
     def _get_tutorial_flags_packet(self):
+        """ I agree with myself that I do not want to support tutorials. """
         tutorial_data = int.to_bytes(0xFFFFFFFF, 4, "little") * 8
 
         packet = WorldPacket(tutorial_data)
