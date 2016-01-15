@@ -59,7 +59,7 @@ class CharacterData(Model):
         database = DB
 
 
-class CharacterManager(Model):
+class CharacterManager(object):
     """ Transfer player character data between the database and the server. """
 
     @staticmethod
