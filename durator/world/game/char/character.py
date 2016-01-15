@@ -4,6 +4,7 @@ from peewee import ( Model, IntegerField, FloatField, ForeignKeyField, CharField
                    , PeeweeException )
 
 from durator.auth.account import Account
+from durator.world.game.char.constants import NEW_CHAR_CONSTS
 from durator.db.database import DB, db_connection
 from pyshgck.logger import LOG
 
@@ -22,8 +23,8 @@ class CharacterFeatures(Model):
 
 class CharacterStats(Model):
 
-    level      = IntegerField(default = 1)
-    experience = IntegerField(default = 0)
+    level      = IntegerField(default = NEW_CHAR_CONSTS["level"])
+    experience = IntegerField(default = NEW_CHAR_CONSTS["exp"])
 
     class Meta(object):
         database = DB
