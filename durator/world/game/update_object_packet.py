@@ -4,7 +4,10 @@ from enum import Enum
 import math
 from struct import Struct
 
-from durator.world.game.object_fields_type import FieldsType, FIELD_TYPE_MAP
+from durator.world.game.object.object_fields import (
+    FieldObject, FieldUnit, FieldPlayer )
+from durator.world.game.object.object_fields_type import (
+    FieldType, FIELD_TYPE_MAP )
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
@@ -63,11 +66,11 @@ class UpdateBlocksBuilder(object):
     """ Create the UpdateBlocks part of an UpdateObject packet. """
 
     FIELD_BIN_MAP = {
-        FieldsType.INT32:      Struct("<i"),
-        FieldsType.TWO_INT16:  Struct("<I"),
-        FieldsType.FLOAT:      Struct("<f"),
-        FieldsType.INT64:      Struct("<q"),
-        FieldsType.FOUR_BYTES: Struct("<I")
+        FieldType.INT32:      Struct("<i"),
+        FieldType.TWO_INT16:  Struct("<I"),
+        FieldType.FLOAT:      Struct("<f"),
+        FieldType.INT64:      Struct("<q"),
+        FieldType.FOUR_BYTES: Struct("<I")
     }
 
     def __init__(self):
@@ -108,6 +111,76 @@ class UpdateBlocksBuilder(object):
             self.update_blocks
         )
         return mask + update_data
+
+
+
+PLAYER_SPAWN_FIELDS = [
+    FieldObject.GUID,
+    FieldObject.TYPE,
+    FieldObject.SCALE_X,
+    FieldUnit.HEALTH,
+    FieldUnit.POWER_1,
+    FieldUnit.POWER_2,
+    FieldUnit.POWER_3,
+    FieldUnit.POWER_4,
+    FieldUnit.POWER_5,
+    FieldUnit.MAX_HEALTH,
+    FieldUnit.MAX_POWER_1,
+    FieldUnit.MAX_POWER_2,
+    FieldUnit.MAX_POWER_3,
+    FieldUnit.MAX_POWER_4,
+    FieldUnit.MAX_POWER_5,
+    FieldUnit.LEVEL,
+    FieldUnit.FACTION_TEMPLATE,
+    FieldUnit.BYTES_0,
+    FieldUnit.FLAGS,
+    FieldUnit.BASE_ATTACK_TIME,
+    FieldUnit.OFFHAND_ATTACK_TIME,
+    FieldUnit.BOUNDING_RADIUS,
+    FieldUnit.COMBAT_REACH,
+    FieldUnit.DISPLAY_ID,
+    FieldUnit.NATIVE_DISPLAY_ID,
+    FieldUnit.MOUNT_DISPLAY_ID,
+    FieldUnit.MIN_DAMAGE,
+    FieldUnit.MAX_DAMAGE,
+    FieldUnit.MIN_OFFHAND_DAMAGE,
+    FieldUnit.MAX_OFFHAND_DAMAGE,
+    FieldUnit.BYTES_1,
+    FieldUnit.MOD_CAST_SPEED,
+    FieldUnit.STAT_0,
+    FieldUnit.STAT_1,
+    FieldUnit.STAT_2,
+    FieldUnit.STAT_3,
+    FieldUnit.STAT_4,
+    FieldUnit.RESISTANCE_0,
+    FieldUnit.RESISTANCE_1,
+    FieldUnit.RESISTANCE_2,
+    FieldUnit.RESISTANCE_3,
+    FieldUnit.RESISTANCE_4,
+    FieldUnit.RESISTANCE_5,
+    FieldUnit.BASE_MANA,
+    FieldUnit.BYTES_2,
+    FieldUnit.ATTACK_POWER,
+    FieldUnit.ATTACK_POWER_MODS,
+    FieldUnit.RANGED_ATTACK_POWER,
+    FieldUnit.RANGED_ATTACK_POWER_MODS,
+    FieldUnit.MIN_RANGED_DAMAGE,
+    FieldUnit.MAX_RANGED_DAMAGE,
+    FieldPlayer.FLAGS,
+    FieldPlayer.BYTES_1,
+    FieldPlayer.BYTES_2,
+    FieldPlayer.BYTES_3,
+    FieldPlayer.EXP,
+    FieldPlayer.NEXT_LEVEL_EXP,
+    FieldPlayer.CHARACTER_POINTS_1,
+    FieldPlayer.CHARACTER_POINTS_2,
+    FieldPlayer.BLOCK_PERCENTAGE,
+    FieldPlayer.DODGE_PERCENTAGE,
+    FieldPlayer.PARRY_PERCENTAGE,
+    FieldPlayer.CRIT_PERCENTAGE,
+    FieldPlayer.REST_STATE_EXP,
+    FieldPlayer.COINAGE
+]
 
 
 class PlayerSpawner(UpdateBlocksBuilder):

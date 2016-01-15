@@ -1,8 +1,4 @@
-""" A BaseObject is the base type for all things spawned in world.
-
-This module defines a class that can hold a value for each object field, and a
-set of subclasses specific to each type of object discerned by the game.
-"""
+""" A BaseObject is the base type for all things spawned in world. """
 
 from enum import Enum
 
@@ -45,31 +41,3 @@ class BaseObject(object):
     def set(self, field, value):
         """ Set a new object field value. """
         self.fields[field] = value
-
-
-class ItemObject(BaseObject):
-    pass
-
-
-class ContainerObject(ItemObject):
-    pass
-
-
-class UnitObject(BaseObject):
-    pass
-
-
-class PlayerObject(UnitObject):
-    pass
-
-
-class GameObject(BaseObject):
-    pass
-
-
-class DynamicObject(BaseObject):
-    pass
-
-
-class CorpseObject(BaseObject):
-    pass
