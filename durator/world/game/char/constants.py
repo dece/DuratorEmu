@@ -1,4 +1,8 @@
-""" Constants values for characters, races and classes. """
+""" Constants values for characters, races and classes.
+
+These values are mostly taken from the WoWCore vanilla sandbox, so they may or
+may not be right, but they're good enough for me.
+"""
 
 from enum import Enum
 
@@ -49,7 +53,7 @@ class UnitPower(Enum):
     HAPPINESS = 4
 
 
-class UnitStats(Enum):
+class UnitStat(Enum):
 
     STRENGTH  = 0
     AGILITY   = 1
@@ -93,13 +97,13 @@ NEW_CHAR_CONSTS = {
     "speed_swim_bw": 2.5,
     "speed_turn":    3.141593,
 
-    "level":            1,
-    "exp":              100,
-    "next_level_exp":   2500,
-    "professions_left": 2,
-    "coinage":          1230000,
-    "rest_info":        1,
-    "rest_state_exp":   200
+    "level":          1,
+    "exp":            100,
+    "next_level_exp": 2500,
+    "prof_left":      2,
+    "coinage":        0,
+    "rest_info":      1,
+    "rest_state_exp": 200
 }
 
 
@@ -145,8 +149,9 @@ UNDEAD_CONSTS = {
 
 
 UNDEAD_ROGUE_CONSTS = {
-    "max_health":          65,
     "power_type":          UnitPower.ENERGY.value,
+
+    "max_health":          65,
     "max_power_mana":      0,
     "max_power_rage":      0,
     "max_power_focus":     0,
@@ -177,5 +182,5 @@ UNDEAD_ROGUE_CONSTS = {
     "attack_power":            23,
     "attack_power_mod":        0,
     "attack_power_ranged":     12,
-    "attack_power_ranged_mod": 0,
+    "attack_power_ranged_mod": 0
 }

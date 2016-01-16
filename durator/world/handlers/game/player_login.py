@@ -201,6 +201,7 @@ class PlayerLoginHandler(object):
         update.add(UnitField.RESISTANCE_3, 3)
         update.add(UnitField.RESISTANCE_4, 4)
         update.add(UnitField.RESISTANCE_5, 5)
+        update.add(UnitField.RESISTANCE_6, 6)
 
         update.add(UnitField.BASE_MANA, 1)
 
