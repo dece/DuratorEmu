@@ -168,7 +168,7 @@ class CharacterManager(object):
 
         This should check of other things like account char limit etc.
         """
-        name = char_values[0]
+        name = char_values["name"]
         name_exists = CharacterManager.does_char_with_name_exist(name)
         if name_exists:
             LOG.debug("Name " + name + " already used.")
@@ -176,16 +176,20 @@ class CharacterManager(object):
 
         try:
             character = CharacterData(
-                guid = CharacterManager._get_unused_guid(), account = account,
-                name = name, race = char_values[1].value,
-                class_id = char_values[2].value, gender = char_values[3].value
+                guid     = CharacterManager._get_unused_guid(),
+                account  = account,
+                name     = name,
+                race     = char_values["race"].value,
+                class_id = char_values["class"].value,
+                gender   = char_values["gender"].value
             )
 
-            features_tuple = char_values[4]
             features = CharacterFeatures.create(
-                skin = features_tuple[0], face = features_tuple[1],
-                hair_style = features_tuple[2], hair_color = features_tuple[3],
-                facial_hair = features_tuple[4]
+                skin        = char_values["features"]["skin"],
+                face        = char_values["features"]["face"],
+                hair_style  = char_values["features"]["hair_style"],
+                hair_color  = char_values["features"]["hair_color"],
+                facial_hair = char_values["features"]["facial_hair"]
             )
             character.features = features
 

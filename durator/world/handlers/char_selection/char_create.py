@@ -39,8 +39,19 @@ class CharCreateHandler(object):
     def process(self):
         self._parse_packet(self.packet)
 
-        char_values = ( self.char_name, self.char_race, self.char_class
-                      , self.char_gender, self.char_features )
+        char_values = {
+            "name": self.char_name,
+            "race": self.char_race,
+            "class": self.char_class,
+            "gender": self.char_gender,
+            "features": {
+                "skin": self.char_features[0],
+                "face": self.char_features[1],
+                "hair_style": self.char_features[2],
+                "hair_color": self.char_features[3],
+                "facial_hair": self.char_features[4]
+            }
+        }
         manager_code = CharacterManager.create_character(
             self.conn.account, char_values
         )
