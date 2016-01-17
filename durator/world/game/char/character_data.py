@@ -217,7 +217,7 @@ class CharacterManager(object):
     def _get_unused_guid():
         guid = -1
         while guid == -1 or CharacterManager.does_char_with_guid_exist(guid):
-            guid = random.randrange(0xFFFFFFFF)
+            guid = random.randrange(0x00FFFFFF)
         return guid
 
     @staticmethod
