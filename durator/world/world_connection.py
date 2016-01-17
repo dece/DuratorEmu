@@ -39,7 +39,10 @@ class WorldConnection(ConnectionAutomaton):
                                        , OpCode.CMSG_CHAR_CREATE
                                        , OpCode.CMSG_CHAR_DELETE
                                        , OpCode.CMSG_PLAYER_LOGIN ],
+        WorldConnectionState.IN_WORLD: [ OpCode.CMSG_GMTICKET_GETTICKET
+                                       , OpCode.CMSG_NAME_QUERY
         WorldConnectionState.IN_WORLD: [ OpCode.CMSG_NAME_QUERY ]
+                                       , OpCode.CMSG_SET_ACTIVE_MOVER ]
     }
 
     UNMANAGED_OPS = [
@@ -55,7 +58,9 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_NAME_QUERY:        NopHandler,
         OpCode.CMSG_PING:              PingHandler,
         OpCode.CMSG_PLAYER_LOGIN:      PlayerLoginHandler,
-        OpCode.MSG_MOVE_WORLDPORT_ACK: MoveWorldportAckHandler
+        OpCode.MSG_MOVE_WORLDPORT_ACK: MoveWorldportAckHandler,
+        OpCode.CMSG_GMTICKET_GETTICKET: NopHandler,
+        OpCode.CMSG_SET_ACTIVE_MOVER:   NopHandler
     }
 
     INIT_STATE       = WorldConnectionState.INIT
