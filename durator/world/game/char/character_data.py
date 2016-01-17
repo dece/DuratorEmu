@@ -33,6 +33,8 @@ class CharacterFeatures(Model):
 
 class CharacterStats(Model):
     """ A big bunch of Unit and Player fields that have to be stored. """
+    
+    scale_x = FloatField(default = 1.0)
 
     health    = IntegerField()
     mana      = IntegerField()
@@ -68,7 +70,7 @@ class CharacterStats(Model):
     min_offhand_damage = IntegerField(default = 0)
     max_offhand_damage = IntegerField(default = 0)
 
-    bytes_1 = IntegerField(default = 0)
+    unit_bytes_1 = IntegerField(default = 0)
 
     mod_cast_speed = IntegerField(default = 1)
 
@@ -90,7 +92,7 @@ class CharacterStats(Model):
     base_mana         = IntegerField(default = 1)
     attack_power_mods = IntegerField(default = 0)
 
-    bytes_2 = IntegerField(default = 0)
+    unit_bytes_2 = IntegerField(default = 0)
 
     ranged_attack_power      = IntegerField(default = 0)
     ranged_attack_power_mods = IntegerField(default = 0)
@@ -283,7 +285,7 @@ class CharacterManager(object):
             base_mana         = consts["class"]["base_mana"],
             attack_power_mods = consts["class"]["attack_power_mod"],
 
-            bytes_2 = NEW_CHAR_CONSTS["unit_bytes_2"],
+            unit_bytes_2 = NEW_CHAR_CONSTS["unit_bytes_2"],
 
             ranged_attack_power      = consts["class"]["ap_ranged"],
             ranged_attack_power_mods = consts["class"]["ap_ranged_mod"],
