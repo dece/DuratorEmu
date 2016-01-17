@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+import traceback
 
 from pyshgck.logger import LOG
 
@@ -63,7 +64,8 @@ class ConnectionAutomaton(metaclass = ABCMeta):
                 type(self).__name__
             ))
             LOG.error(str(exc))
-            raise
+            traceback.print_tb(exc.__traceback__)
+            self.state = self.MAIN_ERROR_STATE
 
     def _handle_packet(self, packet):
         """ Find and call a handler for that packet.
