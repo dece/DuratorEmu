@@ -15,19 +15,19 @@ class Bytes0Mask(Enum):
 
 
 class Unit(BaseObject):
-    
+
     def get_race(self):
-        unit_bytes_0 = self.get_bytes_0()
+        unit_bytes_0 = self._get_bytes_0()
         return unit_bytes_0 & Bytes0Mask.RACE.value
 
     def get_class(self):
-        unit_bytes_0 = self.get_bytes_0()
+        unit_bytes_0 = self._get_bytes_0()
         return (unit_bytes_0 & Bytes0Mask.CLASS.value) >> 8
 
     def get_gender(self):
-        unit_bytes_0 = self.get_bytes_0()
+        unit_bytes_0 = self._get_bytes_0()
         return (unit_bytes_0 & Bytes0Mask.GENDER.value) >> 16
 
-    def get_bytes_0(self):
+    def _get_bytes_0(self):
         unit_bytes_0 = self.get(UnitField.BYTES_0)
         return unit_bytes_0 or 0
