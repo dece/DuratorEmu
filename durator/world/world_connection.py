@@ -11,6 +11,7 @@ from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
 from durator.world.handlers.char_selection.char_enum import CharEnumHandler
 from durator.world.handlers.game.name_query import NameQueryHandler
 from durator.world.handlers.game.player_login import PlayerLoginHandler
+from durator.world.handlers.game.query_time import QueryTimeHandler
 from durator.world.handlers.nop import NopHandler
 from durator.world.handlers.ping import PingHandler
 from durator.world.opcodes import OpCode
@@ -42,6 +43,7 @@ class WorldConnection(ConnectionAutomaton):
                                        , OpCode.CMSG_PLAYER_LOGIN ],
         WorldConnectionState.IN_WORLD: [ OpCode.CMSG_GMTICKET_GETTICKET
                                        , OpCode.CMSG_NAME_QUERY
+                                       , OpCode.CMSG_QUERY_TIME
                                        , OpCode.CMSG_SET_ACTIVE_MOVER ]
     }
 
@@ -58,6 +60,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_NAME_QUERY:        NameQueryHandler,
         OpCode.CMSG_PING:              PingHandler,
         OpCode.CMSG_PLAYER_LOGIN:      PlayerLoginHandler,
+        OpCode.CMSG_QUERY_TIME:        QueryTimeHandler,
         OpCode.MSG_MOVE_WORLDPORT_ACK: MoveWorldportAckHandler,
 
         OpCode.CMSG_GMTICKET_GETTICKET: NopHandler,
