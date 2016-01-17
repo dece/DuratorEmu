@@ -12,7 +12,8 @@ from peewee import (
     PeeweeException )
 
 from durator.auth.account import Account
-from durator.world.game.char.constants import NEW_CHAR_CONSTS
+from durator.world.game.char.constants import (
+    CharacterGender, NEW_CHAR_CONSTS, RACE_AND_CLASS_CONSTS )
 from durator.db.database import DB, db_connection
 from pyshgck.logger import LOG
 
@@ -193,8 +194,14 @@ class CharacterManager(object):
             )
             character.features = features
 
-            character.stats = CharacterStats.create()
-            character.position = CharacterPosition.create()
+            race_and_class = (char_values["race"], char_values["class"])
+            consts = RACE_AND_CLASS_CONSTS[race_and_class]
+            gender = char_values["gender"]
+
+            stats = CharacterManager._get_char_stats(consts, gender)
+            position = CharacterManager._get_char_position(consts)
+            character.stats = stats
+            character.position = position
 
             character.save()
         except PeeweeException as exc:
@@ -205,12 +212,113 @@ class CharacterManager(object):
         return 0
 
     @staticmethod
-    @db_connection
     def _get_unused_guid():
         guid = -1
         while guid == -1 or CharacterManager.does_char_with_guid_exist(guid):
             guid = random.randrange(0xFFFFFFFF)
         return guid
+
+    @staticmethod
+    def _get_char_stats(consts, gender):
+        if gender == CharacterGender.MALE:
+            model = consts["race"]["model_male"]
+        else:
+            model = consts["race"]["model_female"]
+
+        return CharacterStats.create(
+            scale_x = consts["race"]["scale_x"],
+
+            health    = consts["class"]["max_health"],
+            mana      = consts["class"]["max_power_mana"],
+            rage      = consts["class"]["max_power_rage"],
+            focus     = consts["class"]["max_power_focus"],
+            energy    = consts["class"]["max_power_energy"],
+            happiness = consts["class"]["max_power_happiness"],
+
+            max_health    = consts["class"]["max_health"],
+            max_mana      = consts["class"]["max_power_mana"],
+            max_rage      = consts["class"]["max_power_rage"],
+            max_focus     = consts["class"]["max_power_focus"],
+            max_energy    = consts["class"]["max_power_energy"],
+            max_happiness = consts["class"]["max_power_happiness"],
+
+            level            = NEW_CHAR_CONSTS["level"],
+            faction_template = consts["race"]["faction_template"],
+            unit_flags       = NEW_CHAR_CONSTS["unit_flags"],
+
+            attack_time_mainhand = consts["class"]["attack_time_mainhand"],
+            attack_time_offhand  = consts["class"]["attack_time_offhand"],
+            attack_time_ranged   = consts["class"]["attack_time_ranged"],
+
+            bounding_radius = consts["race"]["bounding_radius"],
+            combat_reach    = consts["race"]["combat_reach"],
+
+            display_id        = model,
+            native_display_id = model,
+
+            min_damage         = consts["class"]["min_damage"],
+            max_damage         = consts["class"]["max_damage"],
+            min_offhand_damage = consts["class"]["min_offhand_damage"],
+            max_offhand_damage = consts["class"]["max_offhand_damage"],
+
+            unit_bytes_1 = NEW_CHAR_CONSTS["unit_bytes_1"],
+
+            mod_cast_speed = consts["class"]["mod_cast_speed"],
+
+            strength  = consts["class"]["stat_strength"],
+            agility   = consts["class"]["stat_agility"],
+            stamina   = consts["class"]["stat_stamina"],
+            intellect = consts["class"]["stat_intellect"],
+            spirit    = consts["class"]["stat_spirit"],
+
+            resistance_0 = NEW_CHAR_CONSTS["resistances"],
+            resistance_1 = NEW_CHAR_CONSTS["resistances"],
+            resistance_2 = NEW_CHAR_CONSTS["resistances"],
+            resistance_3 = NEW_CHAR_CONSTS["resistances"],
+            resistance_4 = NEW_CHAR_CONSTS["resistances"],
+            resistance_5 = NEW_CHAR_CONSTS["resistances"],
+            resistance_6 = NEW_CHAR_CONSTS["resistances"],
+
+            attack_power      = consts["class"]["attack_power"],
+            base_mana         = consts["class"]["base_mana"],
+            attack_power_mods = consts["class"]["attack_power_mod"],
+
+            bytes_2 = NEW_CHAR_CONSTS["unit_bytes_2"],
+
+            ranged_attack_power      = consts["class"]["ap_ranged"],
+            ranged_attack_power_mods = consts["class"]["ap_ranged_mod"],
+            min_ranged_damage        = consts["class"]["min_ranged_damage"],
+            max_ranged_damage        = consts["class"]["max_ranged_damage"],
+
+            player_flags = NEW_CHAR_CONSTS["player_flags"],
+
+            rest_info = NEW_CHAR_CONSTS["rest_info"],
+
+            exp            = NEW_CHAR_CONSTS["exp"],
+            next_level_exp = NEW_CHAR_CONSTS["next_level_exp"],
+
+            character_points_1 = NEW_CHAR_CONSTS["character_points_1"],
+            character_points_2 = NEW_CHAR_CONSTS["prof_left"],
+
+            block_percentage = NEW_CHAR_CONSTS["block_percentage"],
+            dodge_percentage = NEW_CHAR_CONSTS["dodge_percentage"],
+            parry_percentage = NEW_CHAR_CONSTS["parry_percentage"],
+            crit_percentage  = NEW_CHAR_CONSTS["crit_percentage"],
+
+            rest_state_exp = NEW_CHAR_CONSTS["rest_state_exp"],
+            coinage        = NEW_CHAR_CONSTS["coinage"]
+        )
+
+    @staticmethod
+    def _get_char_position(consts):
+        return CharacterPosition.create(
+            map_id      = consts["race"]["start_map"],
+            zone_id     = consts["race"]["start_zone"],
+            pos_x       = consts["race"]["start_pos_x"],
+            pos_y       = consts["race"]["start_pos_y"],
+            pos_z       = consts["race"]["start_pos_z"],
+            orientation = consts["race"]["start_orientation"]
+        )
 
     @staticmethod
     @db_connection

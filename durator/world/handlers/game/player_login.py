@@ -80,7 +80,7 @@ class PlayerLoginHandler(object):
 
     def _get_verify_login_packet(self):
         """ Send the unique (?) SMSG_LOGIN_VERIFY_WORLD packet. """
-        position = self.conn.character.position
+        position = self.conn.character_data.position
         response_data = self.WORLD_INFO_BIN.pack(
             position.map_id,
             position.pos_x,

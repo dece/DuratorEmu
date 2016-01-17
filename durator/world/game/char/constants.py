@@ -97,13 +97,30 @@ NEW_CHAR_CONSTS = {
     "speed_swim_bw": 2.5,
     "speed_turn":    3.141593,
 
-    "level":          1,
-    "exp":            100,
-    "next_level_exp": 2500,
-    "prof_left":      2,
-    "coinage":        0,
-    "rest_info":      1,
-    "rest_state_exp": 200
+    "level":        1,
+    "unit_flags":   0,
+    "unit_bytes_1": 0,
+
+    "resistances": 0,  # don't we know these?
+
+    "unit_bytes_2": 0,
+
+    "player_flags": 0,
+
+    "rest_info": 1,
+
+    "exp":                100,
+    "next_level_exp":     2500,
+    "character_points_1": 0,
+    "prof_left":          2,  # character_points_2
+
+    "block_percentage": 4.0,
+    "dodge_percentage": 4.0,
+    "parry_percentage": 4.0,
+    "crit_percentage":  4.0,
+
+    "rest_state_exp": 200,
+    "coinage":        0
 }
 
 
@@ -166,8 +183,6 @@ UNDEAD_ROGUE_CONSTS = {
     "max_damage":         4.63,
     "min_offhand_damage": 0.0,
     "max_offhand_damage": 0.0,
-    "min_ranged_damage":  5.54,
-    "max_ranged_damage":  9.54,
 
     "mod_cast_speed": 1,
 
@@ -177,10 +192,23 @@ UNDEAD_ROGUE_CONSTS = {
     "stat_intellect": 18,
     "stat_spirit":    25,
 
-    "base_mana":   0,
+    "attack_power":     23,
+    "base_mana":        0,
+    "attack_power_mod": 0,
 
-    "attack_power":            23,
-    "attack_power_mod":        0,
-    "attack_power_ranged":     12,
-    "attack_power_ranged_mod": 0
+    "ap_ranged":         12,
+    "ap_ranged_mod":     0,
+    "min_ranged_damage": 5.54,
+    "max_ranged_damage": 9.54,
+}
+
+
+# ------------------------------------------------------------------------------
+# This map allows you to access the constants dicts easily with race and class
+# ------------------------------------------------------------------------------
+
+
+RACE_AND_CLASS_CONSTS = {
+    (CharacterRace.UNDEAD, CharacterClass.ROGUE):
+        { "race": UNDEAD_CONSTS, "class": UNDEAD_ROGUE_CONSTS }
 }
