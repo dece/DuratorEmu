@@ -88,10 +88,9 @@ class AuthSessionHandler(object):
             response = self._get_failure_packet(error_code)
             return self.conn.MAIN_ERROR_STATE, response
 
-        # Once the session cipher is up and the client is fully checked, we can
-        # remove the session key from the database and move on.
+        # Once the session cipher is up and the client is fully checked,
+        # accept the authentication and move on.
         LOG.debug("World server auth OK.")
-        AccountSessionManager.delete_session(self.conn.account)
         response = self._get_success_packet()
         return WorldConnectionState.AUTH_OK, response
 

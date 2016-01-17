@@ -1,6 +1,7 @@
 import os
 from struct import Struct
 
+from durator.auth.account import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
@@ -69,7 +70,7 @@ class WorldConnection(ConnectionAutomaton):
         self.session_cipher = None
 
         self.guid = -1
-        self.character = None
+        self.character_data = None
 
     def send_packet(self, world_packet):
         print(">>>")
@@ -101,6 +102,8 @@ class WorldConnection(ConnectionAutomaton):
         self.send_packet(packet)
 
     def _actions_after_main_loop(self):
+        AccountSessionManager.delete_session(self.account)
+
         # TODO placeholder, remove that later
         LOG.debug("World connection stopped handling packets.")
         LOG.debug("PLACEHOLDER: looping over received data.")
