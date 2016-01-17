@@ -10,14 +10,6 @@ from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
 
 
-WALK_SPEED         = 2.5
-RUNNING_SPEED      = 7.0
-RUNNING_BACK_SPEED = 2.5
-SWIM_SPEED         = 4.7222223
-SWIM_BACK_SPEED    = 4.0
-TURN_SPEED         = 3.141593
-
-
 class PlayerLoginHandler(object):
     """ Handle the player entering in world. """
 
