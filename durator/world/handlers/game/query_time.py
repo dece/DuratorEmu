@@ -17,7 +17,7 @@ class QueryTimeHandler(object):
         self.guid = -1
 
     def process(self):
-        seconds = time.time()
+        seconds = int(time.time())
         response_data = self.RESPONSE_BIN.pack(seconds)
 
         response = WorldPacket(response_data)
