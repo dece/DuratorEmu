@@ -113,14 +113,5 @@ class WorldConnection(ConnectionAutomaton):
         self.send_packet(packet)
 
     def _actions_after_main_loop(self):
-        LOG.debug("World connection stopped handling packets.")
+        LOG.debug("WorldConnection: stopped handling packets.")
         AccountSessionManager.delete_session(self.account)
-
-        if DEBUG:
-            LOG.debug("Debug mode: looping over received data.")
-            try:
-                while True:
-                    data = self.socket.recv(1024)
-                    print(dump_data(data), end = "")
-            except ConnectionResetError:
-                LOG.debug("Lost connection.")

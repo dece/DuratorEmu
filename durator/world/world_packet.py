@@ -22,9 +22,29 @@ class WorldPacket(object):
 
     @staticmethod
     def from_socket(socket, session_cipher = None):
-        """ Receive a WorldPacket through socket, or None if the connection is
-        closed during reception. """
+        """ Receive a WorldPacket through socket and return it, or None if the
+        connection is closed during reception. """
+        data = WorldPacket._recv_next_packet(socket, session_cipher)
+        if data is None:
+            return None
+
+        opcode, opcode_value, data = WorldPacket._parse_packet_data(data)
+
+        if DEBUG:
+            if opcode is not None:
+                print("<<<", opcode)
+            else:
+                print("<<< 0x{:X}".format(opcode_value))
+            print(dump_data(data), end = "")
+
         packet = WorldPacket()
+        packet.opcode = opcode
+        packet.data = data
+        return packet
+
+    @staticmethod
+    def _recv_next_packet(socket, session_cipher):
+        """ Receive the next packet through socket and maybe decrypt it. """
         while True:
             # Receive data as long as the connection is opened.
             data_part = socket.recv(1024)
@@ -55,24 +75,22 @@ class WorldPacket(object):
             WorldPacket._PACKET_BUF = WorldPacket._PACKET_BUF[packet_size:]
             break
 
+        return data
+
+    @staticmethod
+    def _parse_packet_data(data):
+        """ Return the OpCode (if possible, else None), the opcode value and the
+        packet content. """
         opcode_bytes, data = data[:4], data[4:]
         opcode_value = int.from_bytes(opcode_bytes, "little")
 
+        opcode = None
         try:
             opcode = OpCode(opcode_value)
-            packet.opcode = opcode
         except ValueError:
             LOG.warning("Unknown opcode {:X}".format(opcode_value))
 
-        if DEBUG:
-            if packet.opcode is None:
-                print("<<< 0x{:X}".format(opcode_value))
-            else:
-                print("<<<", packet.opcode)
-            print(dump_data(data), end = "")
-
-        packet.data = data
-        return packet
+        return opcode, opcode_value, data
 
     def to_socket(self, session_cipher = None):
         """ Return ready-to-send bytes, possibly encrypted, from the packet. """
