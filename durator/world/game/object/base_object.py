@@ -32,6 +32,9 @@ class ObjectDescFlags(Enum):
 class BaseObject(object):
 
     def __init__(self):
+        self.coords = {
+            "map": 0, "zone": 0, "x": 0.0, "y": 0.0, "z": 0.0, "o": 0.0
+        }
         self.fields = {}
 
     def get(self, field):
