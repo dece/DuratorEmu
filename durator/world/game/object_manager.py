@@ -154,5 +154,9 @@ class ObjectManager(object):
         player.set(PlayerField.REST_STATE_EXP, stats.rest_state_exp)
         player.set(PlayerField.COINAGE,        stats.coinage)
 
+    def get(self, guid):
+        """ Return the object with that GUID, or None if it doesn't exist. """
+        return self.players.get(guid)
+
 
 OBJECT_MANAGER = ObjectManager()
