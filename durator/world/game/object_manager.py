@@ -13,6 +13,7 @@ class ObjectManager(object):
         """ Create (and return) a Player object from the data stored in the
         database, and add it to the managed object list. """
         player = Player()
+        player.name = char_data.name
 
         ObjectManager._add_coords_to_object(player, char_data.position)
         ObjectManager._add_object_fields_to_player(player, char_data)
