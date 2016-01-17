@@ -80,4 +80,3 @@ class CharEnumHandler(object):
         packet = WorldPacket(response_data)
         packet.opcode = OpCode.SMSG_CHAR_ENUM
         return packet
-

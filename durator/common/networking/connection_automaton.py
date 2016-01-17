@@ -59,9 +59,10 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         try:
             self._handle_packet(packet)
         except Exception as exc:
-            LOG.error("Uncaught exception in {}.{}: {}".format(
-                type(self).__name__, "_try_handle_packet", str(exc)
+            LOG.error("{}: uncaught exception in packet handler:".format(
+                type(self).__name__
             ))
+            LOG.error(str(exc))
             raise
 
     def _handle_packet(self, packet):
