@@ -241,14 +241,23 @@ PLAYER_SPAWN_FIELDS = [
 ]
 
 
-class PlayerSpawner(UpdateBlocksBuilder):
-    """ This builder is used to send the world-entering UpdateObject packet.
-    Probably a temporary solution until I have a better update object system.
+class PlayerSpawnPacket(UpdateObjectPacket):
+    """ This specific UpdateObjectPacket is used to let the player spawn.
+    May be a temporary solution until I have a better update object system.
     """
 
-    def __init__(self, character):
-        super().__init__(self)
-        self.character = character
+    def __init__(self, player):
+        update_infos = { "player": player }
+        super().__init__(UpdateType.CREATE_OBJECT, update_infos)
+        self.player = player
 
-        # self._prepare_player_values()
+        self._add_required_fields()
 
+    def _add_required_fields(self):
+        for required_field in PLAYER_SPAWN_FIELDS:
+            value = self.player.get(required_field)
+            if value is None:
+                LOG.error("A required field for player spawning is not set.")
+                LOG.error(str(required_field))
+                continue
+            self.add_field(required_field, value)
