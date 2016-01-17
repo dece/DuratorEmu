@@ -13,7 +13,8 @@ class WorldPacket(object):
     OUTGOING_OPCODE_BIN = Struct("<H")
 
     # This static packet buffer ensures that all world packets are correctly
-    # received in their entirety.
+    # received in their entirety. It is always either empty or starting with a
+    # new packet.
     _PACKET_BUF = b""
 
     def __init__(self, data = None):
@@ -46,11 +47,13 @@ class WorldPacket(object):
     def _recv_next_packet(socket, session_cipher):
         """ Receive the next packet through socket and maybe decrypt it. """
         while True:
-            # Receive data as long as the connection is opened.
-            data_part = socket.recv(1024)
-            if not data_part:
-                return None
-            WorldPacket._PACKET_BUF += data_part
+            # If the packet buffer is empty, receive data as long as the
+            # connection is opened.
+            if not WorldPacket._PACKET_BUF:
+                data_part = socket.recv(1024)
+                if not data_part:
+                    return None
+                WorldPacket._PACKET_BUF += data_part
 
             # Continue receiving data until we have a complete header.
             if len(WorldPacket._PACKET_BUF) < SessionCipher.DECRYPT_HEADER_SIZE:
