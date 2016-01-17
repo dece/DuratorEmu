@@ -66,11 +66,16 @@ class ConnectionAutomaton(metaclass = ABCMeta):
             raise
 
     def _handle_packet(self, packet):
+        """ Find and call a handler for that packet.
+
+        It is possible that we do not know the opcode, which is not a problem.
+        However, if it is known, it has to be legal (in a valid state) and we
+        need to enforce a handler to it, even if it's just NopHandler. If I
+        don't feel like adding the simplest handler for an opcode, it probably
+        shouldn't be in the OpCode enum in the first place.
+        """
         opcode, packet_data = self._parse_packet(packet)
         if opcode is None:
-            LOG.warning("{}: unknown opcode, ignoring packet.".format(
-                type(self).__name__
-            ))
             return
 
         if ( opcode not in self.UNMANAGED_OPS
@@ -98,6 +103,8 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         pass
 
     def _call_handler(self, handler_class, packet_data):
+        """ Call the handler and possibly send a response packet and update
+        the connection state. """
         handler = handler_class(self, packet_data)
         next_state, response = handler.process()
 
