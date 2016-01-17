@@ -3,6 +3,7 @@ from struct import Struct
 
 from durator.auth.account import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
+from durator.config import DEBUG
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.char_selection.char_create import CharCreateHandler
@@ -73,8 +74,9 @@ class WorldConnection(ConnectionAutomaton):
         self.character_data = None
 
     def send_packet(self, world_packet):
-        print(">>>")
-        print(dump_data(world_packet.data), end = "")
+        if DEBUG:
+            print(">>>")
+            print(dump_data(world_packet.data), end = "")
         ready_packet = world_packet.to_socket(self.session_cipher)
         self.socket.sendall(ready_packet)
 
@@ -102,14 +104,14 @@ class WorldConnection(ConnectionAutomaton):
         self.send_packet(packet)
 
     def _actions_after_main_loop(self):
+        LOG.debug("World connection stopped handling packets.")
         AccountSessionManager.delete_session(self.account)
 
-        # TODO placeholder, remove that later
-        LOG.debug("World connection stopped handling packets.")
-        LOG.debug("PLACEHOLDER: looping over received data.")
-        try:
-            while True:
-                data = self.socket.recv(1024)
-                print(dump_data(data), end = "")
-        except ConnectionResetError:
-            LOG.debug("Lost connection.")
+        if DEBUG:
+            LOG.debug("Debug mode: looping over received data.")
+            try:
+                while True:
+                    data = self.socket.recv(1024)
+                    print(dump_data(data), end = "")
+            except ConnectionResetError:
+                LOG.debug("Lost connection.")

@@ -13,9 +13,13 @@ def _load_config():
     CONFIG = ConfigParser()
     CONFIG.read(ALL_CONFIG_FILES)
 
+    global DEBUG
+    DEBUG = CONFIG.getboolean("general", "debug")
+
 
 # Static config object, loaded when the module is imported.
 CONFIG = None
+DEBUG = False
 
 
 _load_config()

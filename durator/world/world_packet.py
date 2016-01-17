@@ -1,6 +1,7 @@
 from struct import Struct
 
 from durator.common.crypto.session_cipher import SessionCipher
+from durator.config import DEBUG
 from durator.world.opcodes import OpCode
 from pyshgck.format import dump_data
 from pyshgck.logger import LOG
@@ -54,8 +55,9 @@ class WorldPacket(object):
             WorldPacket._PACKET_BUF = WorldPacket._PACKET_BUF[packet_size:]
             break
 
-        print("<<<")
-        print(dump_data(data), end = "")
+        if DEBUG:
+            print("<<<")
+            print(dump_data(data), end = "")
 
         opcode_bytes, data = data[:4], data[4:]
         opcode_value = int.from_bytes(opcode_bytes, "little")
