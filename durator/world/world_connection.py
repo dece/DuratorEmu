@@ -44,7 +44,9 @@ class WorldConnection(ConnectionAutomaton):
         WorldConnectionState.IN_WORLD: [ OpCode.CMSG_GMTICKET_GETTICKET
                                        , OpCode.CMSG_NAME_QUERY
                                        , OpCode.CMSG_QUERY_TIME
-                                       , OpCode.CMSG_SET_ACTIVE_MOVER ]
+                                       , OpCode.CMSG_SET_ACTIVE_MOVER
+                                       , OpCode.MSG_LOOKING_FOR_GROUP
+                                       , OpCode.MSG_QUERY_NEXT_MAIL_TIME ]
     }
 
     UNMANAGED_OPS = [
@@ -53,6 +55,7 @@ class WorldConnection(ConnectionAutomaton):
     ]
 
     OP_HANDLERS = {
+        # Handled opcodes
         OpCode.CMSG_AUTH_SESSION:      AuthSessionHandler,
         OpCode.CMSG_CHAR_CREATE:       CharCreateHandler,
         OpCode.CMSG_CHAR_DELETE:       CharDeleteHandler,
@@ -63,8 +66,11 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_QUERY_TIME:        QueryTimeHandler,
         OpCode.MSG_MOVE_WORLDPORT_ACK: MoveWorldportAckHandler,
 
-        OpCode.CMSG_GMTICKET_GETTICKET: NopHandler,
-        OpCode.CMSG_SET_ACTIVE_MOVER:   NopHandler
+        # Unhandled opcodes
+        OpCode.CMSG_GMTICKET_GETTICKET:  NopHandler,
+        OpCode.CMSG_SET_ACTIVE_MOVER:    NopHandler,
+        OpCode.MSG_LOOKING_FOR_GROUP:    NopHandler,
+        OpCode.MSG_QUERY_NEXT_MAIL_TIME: NopHandler
     }
 
     INIT_STATE       = WorldConnectionState.INIT
