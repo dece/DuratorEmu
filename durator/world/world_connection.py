@@ -75,7 +75,7 @@ class WorldConnection(ConnectionAutomaton):
 
     def send_packet(self, world_packet):
         if DEBUG:
-            print(">>>")
+            print(">>>", world_packet.opcode)
             print(dump_data(world_packet.data), end = "")
         ready_packet = world_packet.to_socket(self.session_cipher)
         self.socket.sendall(ready_packet)

@@ -55,16 +55,22 @@ class WorldPacket(object):
             WorldPacket._PACKET_BUF = WorldPacket._PACKET_BUF[packet_size:]
             break
 
-        if DEBUG:
-            print("<<<")
-            print(dump_data(data), end = "")
-
         opcode_bytes, data = data[:4], data[4:]
         opcode_value = int.from_bytes(opcode_bytes, "little")
+
         try:
-            packet.opcode = OpCode(opcode_value)
+            opcode = OpCode(opcode_value)
+            packet.opcode = opcode
         except ValueError:
             LOG.warning("Unknown opcode {:X}".format(opcode_value))
+
+        if DEBUG:
+            if packet.opcode is None:
+                print("<<< 0x{:X}".format(opcode_value))
+            else:
+                print("<<<", packet.opcode)
+            print(dump_data(data), end = "")
+
         packet.data = data
         return packet
 
