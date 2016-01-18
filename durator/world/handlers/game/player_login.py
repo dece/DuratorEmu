@@ -34,8 +34,6 @@ class PlayerLoginHandler(object):
         self.conn = connection
         self.packet = packet
 
-        self.player = None
-
     @db_connection
     def process(self):
         guid = self.PACKET_BIN.unpack(self.packet)[0]
@@ -47,8 +45,7 @@ class PlayerLoginHandler(object):
             return self.conn.MAIN_ERROR_STATE, None
 
         # Now that we have the character data, spawn a new player object.
-        self.conn.guid = guid
-        self.player = OBJECT_MANAGER.add_player(character_data)
+        self.conn.player = OBJECT_MANAGER.add_player(character_data)
 
         # Finally, send the packets necessary to let the client get in world.
         self.conn.send_packet(self._get_verify_login_packet())
@@ -72,11 +69,11 @@ class PlayerLoginHandler(object):
     def _get_verify_login_packet(self):
         """ Send the unique (?) SMSG_LOGIN_VERIFY_WORLD packet. """
         response_data = self.WORLD_INFO_BIN.pack(
-            self.player.map_id,
-            self.player.position.x,
-            self.player.position.y,
-            self.player.position.z,
-            self.player.position.o
+            self.conn.player.map_id,
+            self.conn.player.position.x,
+            self.conn.player.position.y,
+            self.conn.player.position.z,
+            self.conn.player.position.o
         )
 
         packet = WorldPacket(response_data)
@@ -93,4 +90,4 @@ class PlayerLoginHandler(object):
 
     def _get_update_object_packet(self):
         """ Get the UpdateObjectPacket needed to spawn in world. """
-        return PlayerSpawnPacket(self.player)
+        return PlayerSpawnPacket(self.conn.player)

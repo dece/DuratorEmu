@@ -86,8 +86,7 @@ class WorldConnection(ConnectionAutomaton):
         self.account = None
         self.session_cipher = None
 
-        self.guid = -1
-        self.character_data = None
+        self.player = None
 
     def send_packet(self, world_packet):
         if DEBUG:
