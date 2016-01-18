@@ -9,6 +9,7 @@ from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.char_selection.char_create import CharCreateHandler
 from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
 from durator.world.handlers.char_selection.char_enum import CharEnumHandler
+from durator.world.handlers.game.movement import MovementHandler
 from durator.world.handlers.game.name_query import NameQueryHandler
 from durator.world.handlers.game.player_login import PlayerLoginHandler
 from durator.world.handlers.game.query_time import QueryTimeHandler
