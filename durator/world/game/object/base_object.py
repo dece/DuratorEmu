@@ -2,6 +2,8 @@
 
 from enum import Enum
 
+from durator.world.game.position import Position
+
 
 class ObjectType(Enum):
     """ Object type sent in UpdateObject packets, with associated flags. """
@@ -33,9 +35,9 @@ class BaseObject(object):
 
     def __init__(self):
         self.name = "Unnamed object"
-        self.coords = {
-            "map": 0, "zone": 0, "x": 0.0, "y": 0.0, "z": 0.0, "o": 0.0
-        }
+        self.map_id = 0
+        self.zone_id = 0
+        self.position = Position()
         self.fields = {}
 
     def get(self, field):

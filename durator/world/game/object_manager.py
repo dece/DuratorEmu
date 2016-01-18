@@ -26,12 +26,12 @@ class ObjectManager(object):
 
     @staticmethod
     def _add_coords_to_object(base_object, position_data):
-        base_object.coords["map"] = position_data.map_id
-        base_object.coords["zone"] = position_data.zone_id
-        base_object.coords["x"] = position_data.pos_x
-        base_object.coords["y"] = position_data.pos_y
-        base_object.coords["z"] = position_data.pos_z
-        base_object.coords["o"] = position_data.orientation
+        base_object.map_id = position_data.map_id
+        base_object.zone_id = position_data.zone_id
+        base_object.position.x = position_data.pos_x
+        base_object.position.y = position_data.pos_y
+        base_object.position.z = position_data.pos_z
+        base_object.position.o = position_data.orientation
 
     @staticmethod
     def _add_object_fields_to_player(player, char_data):

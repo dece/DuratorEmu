@@ -87,10 +87,10 @@ class UpdateObjectPacket(WorldPacket):
         movement_struct = Struct(self.PACKET_MOVEMENT_FMT.format())
         data += movement_struct.pack(
             0, 0,
-            player.coords["x"],
-            player.coords["y"],
-            player.coords["z"],
-            player.coords["o"],
+            player.position.x,
+            player.position.y,
+            player.position.z,
+            player.position.o,
             NEW_CHAR_CONSTS["speed_walk"],
             NEW_CHAR_CONSTS["speed_run"],
             NEW_CHAR_CONSTS["speed_run_bw"],

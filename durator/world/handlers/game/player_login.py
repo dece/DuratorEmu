@@ -72,11 +72,11 @@ class PlayerLoginHandler(object):
     def _get_verify_login_packet(self):
         """ Send the unique (?) SMSG_LOGIN_VERIFY_WORLD packet. """
         response_data = self.WORLD_INFO_BIN.pack(
-            self.player.coords["map"],
-            self.player.coords["x"],
-            self.player.coords["y"],
-            self.player.coords["z"],
-            self.player.coords["o"]
+            self.player.map_id,
+            self.player.position.x,
+            self.player.position.y,
+            self.player.position.z,
+            self.player.position.o
         )
 
         packet = WorldPacket(response_data)
