@@ -12,15 +12,18 @@ class ConnectionAutomaton(metaclass = ABCMeta):
 
     * The LEGAL_OPS dict takes a state as key and a list of possible opcodes.
     * UNMANAGED_OPS is a list of opcodes that do not require a special state.
+    * UNMANAGED_STATES is a list of states that do not check the legality of
+        incoming opcodes. Useful only for states with tons of possible opcodes.
     * The OP_HANDLERS dict takes opcodes and a handler class.
     * INIT_STATE is the entry state of the automaton
     * END_STATES is a list of states that means this automaton can stop.
     * MAIN_ERROR_STATE is a general end state when something went wrong.
     """
 
-    LEGAL_OPS     = {}
-    UNMANAGED_OPS = []
-    OP_HANDLERS   = {}
+    LEGAL_OPS        = {}
+    UNMANAGED_OPS    = []
+    UNMANAGED_STATES = []
+    OP_HANDLERS      = {}
 
     INIT_STATE       = None
     END_STATES       = []
@@ -80,7 +83,8 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         if opcode is None:
             return
 
-        if ( opcode not in self.UNMANAGED_OPS
+        if ( self.state not in self.UNMANAGED_STATES
+             and opcode not in self.UNMANAGED_OPS
              and not self.opcode_is_legal(opcode) ):
             LOG.error("{}: received illegal opcode {} in state {}".format(
                 type(self).__name__, str(opcode), str(self.state)

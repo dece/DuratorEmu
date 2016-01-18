@@ -40,18 +40,15 @@ class WorldConnection(ConnectionAutomaton):
         WorldConnectionState.AUTH_OK:  [ OpCode.CMSG_CHAR_ENUM
                                        , OpCode.CMSG_CHAR_CREATE
                                        , OpCode.CMSG_CHAR_DELETE
-                                       , OpCode.CMSG_PLAYER_LOGIN ],
-        WorldConnectionState.IN_WORLD: [ OpCode.CMSG_GMTICKET_GETTICKET
-                                       , OpCode.CMSG_NAME_QUERY
-                                       , OpCode.CMSG_QUERY_TIME
-                                       , OpCode.CMSG_SET_ACTIVE_MOVER
-                                       , OpCode.MSG_LOOKING_FOR_GROUP
-                                       , OpCode.MSG_QUERY_NEXT_MAIL_TIME ]
+                                       , OpCode.CMSG_PLAYER_LOGIN ]
     }
 
     UNMANAGED_OPS = [
-        OpCode.CMSG_PING,
-        OpCode.MSG_MOVE_WORLDPORT_ACK,
+        OpCode.CMSG_PING
+    ]
+
+    UNMANAGED_STATES = [
+        WorldConnectionState.IN_WORLD
     ]
 
     OP_HANDLERS = {
