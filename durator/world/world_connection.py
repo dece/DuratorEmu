@@ -53,21 +53,25 @@ class WorldConnection(ConnectionAutomaton):
 
     OP_HANDLERS = {
         # Handled opcodes
-        OpCode.CMSG_AUTH_SESSION:      AuthSessionHandler,
-        OpCode.CMSG_CHAR_CREATE:       CharCreateHandler,
-        OpCode.CMSG_CHAR_DELETE:       CharDeleteHandler,
-        OpCode.CMSG_CHAR_ENUM:         CharEnumHandler,
-        OpCode.CMSG_NAME_QUERY:        NameQueryHandler,
-        OpCode.CMSG_PING:              PingHandler,
-        OpCode.CMSG_PLAYER_LOGIN:      PlayerLoginHandler,
-        OpCode.CMSG_QUERY_TIME:        QueryTimeHandler,
-        OpCode.MSG_MOVE_WORLDPORT_ACK: MoveWorldportAckHandler,
+        OpCode.CMSG_AUTH_SESSION:        AuthSessionHandler,
+        OpCode.CMSG_CHAR_CREATE:         CharCreateHandler,
+        OpCode.CMSG_CHAR_DELETE:         CharDeleteHandler,
+        OpCode.CMSG_CHAR_ENUM:           CharEnumHandler,
+        OpCode.CMSG_NAME_QUERY:          NameQueryHandler,
+        OpCode.CMSG_PING:                PingHandler,
+        OpCode.CMSG_PLAYER_LOGIN:        PlayerLoginHandler,
+        OpCode.CMSG_QUERY_TIME:          QueryTimeHandler,
+        OpCode.MSG_MOVE_WORLDPORT_ACK:   MoveWorldportAckHandler,
 
         # Unhandled opcodes
-        OpCode.CMSG_GMTICKET_GETTICKET:  NopHandler,
-        OpCode.CMSG_SET_ACTIVE_MOVER:    NopHandler,
-        OpCode.MSG_LOOKING_FOR_GROUP:    NopHandler,
-        OpCode.MSG_QUERY_NEXT_MAIL_TIME: NopHandler
+        OpCode.CMSG_GMTICKET_GETTICKET:           NopHandler,
+        OpCode.CMSG_ITEM_QUERY_SINGLE:            NopHandler,
+        OpCode.CMSG_ITEM_QUERY_MULTIPLE:          NopHandler,
+        OpCode.SMSG_ITEM_QUERY_SINGLE_RESPONSE:   NopHandler,
+        OpCode.SMSG_ITEM_QUERY_MULTIPLE_RESPONSE: NopHandler,
+        OpCode.CMSG_SET_ACTIVE_MOVER:             NopHandler,
+        OpCode.MSG_LOOKING_FOR_GROUP:             NopHandler,
+        OpCode.MSG_QUERY_NEXT_MAIL_TIME:          NopHandler
     }
 
     INIT_STATE       = WorldConnectionState.INIT
