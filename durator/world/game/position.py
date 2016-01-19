@@ -5,7 +5,7 @@ from pyshgck.bin import read_struct
 
 class Position(object):
 
-    BIN = Struct("<4I")
+    BIN = Struct("<4f")
 
     def __init__(self):
         self.x = 0.0
