@@ -2,6 +2,7 @@
 
 from enum import Enum
 
+from durator.world.game.movement import Movement
 from durator.world.game.object.base_object import BaseObject
 from durator.world.game.object.object_fields import UnitField
 
@@ -15,6 +16,10 @@ class Bytes0Mask(Enum):
 
 
 class Unit(BaseObject):
+
+    def __init__(self):
+        super().__init__()
+        self.movement = Movement()
 
     def get_race(self):
         unit_bytes_0 = self._get_bytes_0()
