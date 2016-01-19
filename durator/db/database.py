@@ -1,12 +1,14 @@
 from peewee import MySQLDatabase, OperationalError
 
+from durator.config import CONFIG
 from pyshgck.logger import LOG
 
 
-_USER = "durator"
-_PASS = "durator"
+_DB_NAME = CONFIG["db"]["db_name"]
+_DB_USER = CONFIG["db"]["db_user"]
+_DB_PASS = CONFIG["db"]["db_pass"]
 
-DB = MySQLDatabase("durator", user = _USER, password = _PASS)
+DB = MySQLDatabase(_DB_NAME, user = _DB_USER, password = _DB_PASS)
 
 
 # Count the number of functions currently using the db_connection decorator, to
