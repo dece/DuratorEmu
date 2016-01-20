@@ -78,6 +78,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.MSG_MOVE_SET_RUN_MODE:       MovementHandler,
         OpCode.MSG_MOVE_SET_WALK_MODE:      MovementHandler,
         OpCode.MSG_MOVE_FALL_LAND:          MovementHandler,
+        OpCode.MSG_MOVE_SET_FACING:         MovementHandler,
         OpCode.MSG_MOVE_WORLDPORT_ACK:      MoveWorldportAckHandler,
         OpCode.MSG_MOVE_HEARTBEAT:          MovementHandler,
         OpCode.CMSG_QUERY_TIME:             TimeQueryHandler,
