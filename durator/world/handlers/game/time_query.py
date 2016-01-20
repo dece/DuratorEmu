@@ -5,8 +5,8 @@ from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 
 
-class QueryTimeHandler(object):
-    """ Send name associated to a GUID to the client. """
+class TimeQueryHandler(object):
+    """ Send the server current timestamp. """
 
     RESPONSE_BIN = Struct("<I")
 

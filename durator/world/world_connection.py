@@ -13,7 +13,7 @@ from durator.world.handlers.game.logout import LogoutRequestHandler
 from durator.world.handlers.game.movement import MovementHandler
 from durator.world.handlers.game.name_query import NameQueryHandler
 from durator.world.handlers.game.player_login import PlayerLoginHandler
-from durator.world.handlers.game.query_time import QueryTimeHandler
+from durator.world.handlers.game.time_query import TimeQueryHandler
 from durator.world.handlers.nop import NopHandler
 from durator.world.handlers.ping import PingHandler
 from durator.world.opcodes import OpCode
@@ -80,7 +80,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.MSG_MOVE_FALL_LAND:          MovementHandler,
         OpCode.MSG_MOVE_WORLDPORT_ACK:      MoveWorldportAckHandler,
         OpCode.MSG_MOVE_HEARTBEAT:          MovementHandler,
-        OpCode.CMSG_QUERY_TIME:             QueryTimeHandler,
+        OpCode.CMSG_QUERY_TIME:             TimeQueryHandler,
         OpCode.CMSG_PING:                   PingHandler,
         OpCode.CMSG_AUTH_SESSION:           AuthSessionHandler,
 
