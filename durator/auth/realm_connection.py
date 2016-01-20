@@ -53,6 +53,5 @@ class RealmConnection(object):
         return realm_state
 
     def _register_realm_state(self, realm_state):
-        LOG.debug("Updating informations about realm " + self.realm_name)
         with self.server.locks["realms"]:
             self.server.realms[self.realm_name] = realm_state

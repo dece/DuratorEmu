@@ -1,5 +1,3 @@
-""" A BaseObject is the base type for all things spawned in world. """
-
 from enum import Enum
 
 from durator.world.game.position import Position
@@ -32,6 +30,11 @@ class ObjectDescFlags(Enum):
 
 
 class BaseObject(object):
+    """ A BaseObject is the base type for all things spawned in world.
+
+    It has a name that can be queried by clients, map and zone IDs, a Position,
+    and a dict of fields with their associated values.
+    """
 
     def __init__(self):
         self.name = "Unnamed object"

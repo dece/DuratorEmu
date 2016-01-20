@@ -81,8 +81,6 @@ class WorldServer(object):
     def _handle_login_server_connection(self):
         """ Update forever the realm state to the login server. """
         while not self.shutdown_flag.is_set():
-            LOG.debug("Sending heartbeat to login server")
-
             state_packet = self.realm.get_state_packet(
                 RealmFlags.NORMAL, self.population
             )

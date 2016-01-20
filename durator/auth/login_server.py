@@ -111,7 +111,6 @@ class LoginServer(object):
 
     def _handle_realm_connection(self, connection, address):
         """ Start another thread to securely handle the realm connection. """
-        LOG.debug("Accepting realm connection from " + str(address))
         realm_connection = RealmConnection(self, connection, address)
         simple_thread(realm_connection.handle_connection)
 

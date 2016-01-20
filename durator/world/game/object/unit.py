@@ -1,5 +1,3 @@
-""" A Unit is a BaseObject that can move, attack, etc. """
-
 from enum import Enum
 
 from durator.world.game.movement import Movement, MovementFlags
@@ -16,6 +14,11 @@ class Bytes0Mask(Enum):
 
 
 class Unit(BaseObject):
+    """ A Unit is a BaseObject that can move, attack, etc.
+
+    The movement attribute is the most recently recorded movement block; to
+    access this Unit's position, you should use BaseObject.position.
+    """
 
     def __init__(self):
         super().__init__()
