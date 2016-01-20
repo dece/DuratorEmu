@@ -19,6 +19,7 @@ class WorldServer(object):
     """
 
     BACKLOG_SIZE = 64
+    LOGIN_SERVER_HEARTBEAT_RATE = int(CONFIG["login"]["realm_heartbeat_time"])
 
     def __init__(self):
         self.hostname = CONFIG["realm"]["hostname"]
@@ -90,7 +91,7 @@ class WorldServer(object):
                 self.login_server_socket.sendall(state_packet)
                 self._close_login_server_socket()
 
-            time.sleep(30)
+            time.sleep(self.LOGIN_SERVER_HEARTBEAT_RATE)
 
     def _open_login_server_socket(self):
         """ Open the login server socket, or set it to None if it couldn't
