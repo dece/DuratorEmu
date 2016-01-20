@@ -74,10 +74,13 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         """ Find and call a handler for that packet.
 
         It is possible that we do not know the opcode, which is not a problem.
-        However, if it is known, it has to be legal (in a valid state) and we
-        need to enforce a handler to it, even if it's just NopHandler. If I
-        don't feel like adding the simplest handler for an opcode, it probably
-        shouldn't be in the OpCode enum in the first place.
+
+        If it is known, it should be legal (in a valid state) and we need to
+        enforce a handler to it, even if it's just NopHandler. If I don't feel
+        like adding the simplest handler for an opcode, it probably shouldn't be
+        in the OpCode enum in the first place. If an opcode is not valid, we do
+        not throw an error anymore because there are some cases where misc
+        opcodes can be received just after changing states.
         """
         opcode, packet_data = self._parse_packet(packet)
         if opcode is None:
@@ -86,10 +89,9 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         if ( self.state not in self.UNMANAGED_STATES
              and opcode not in self.UNMANAGED_OPS
              and not self.opcode_is_legal(opcode) ):
-            LOG.error("{}: received illegal opcode {} in state {}".format(
+            LOG.debug("{}: received illegal opcode {} in state {}".format(
                 type(self).__name__, str(opcode), str(self.state)
             ))
-            self.state = self.MAIN_ERROR_STATE
             return
 
         handler_class = self.OP_HANDLERS.get(opcode)
