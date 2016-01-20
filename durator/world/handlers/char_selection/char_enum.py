@@ -77,6 +77,4 @@ class CharEnumHandler(object):
 
     def _get_packet(self, num_chars, data):
         response_data = self.RESPONSE_HEADER_BIN.pack(num_chars) + data
-        packet = WorldPacket(response_data)
-        packet.opcode = OpCode.SMSG_CHAR_ENUM
-        return packet
+        return WorldPacket(OpCode.SMSG_CHAR_ENUM, response_data)

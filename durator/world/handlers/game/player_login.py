@@ -75,18 +75,12 @@ class PlayerLoginHandler(object):
             self.conn.player.position.z,
             self.conn.player.position.o
         )
-
-        packet = WorldPacket(response_data)
-        packet.opcode = OpCode.SMSG_LOGIN_VERIFY_WORLD
-        return packet
+        return WorldPacket(OpCode.SMSG_LOGIN_VERIFY_WORLD, response_data)
 
     def _get_tutorial_flags_packet(self):
         """ I agree with myself that I do not want to support tutorials. """
         tutorial_data = int.to_bytes(0xFFFFFFFF, 4, "little") * 8
-
-        packet = WorldPacket(tutorial_data)
-        packet.opcode = OpCode.SMSG_TUTORIAL_FLAGS
-        return packet
+        return WorldPacket(OpCode.SMSG_TUTORIAL_FLAGS, tutorial_data)
 
     def _get_update_object_packet(self):
         """ Get the UpdateObjectPacket needed to spawn in world. """

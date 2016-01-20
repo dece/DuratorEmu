@@ -56,7 +56,7 @@ class CharCreateHandler(object):
             self.conn.account, char_values
         )
 
-        packet = self._get_packet(manager_code)
+        packet = self._get_response_packet(manager_code)
         return None, packet
 
     def _parse_packet(self, packet):
@@ -71,13 +71,12 @@ class CharCreateHandler(object):
         self.char_features = char_data[3:8]
         self.unk_value = char_data[8]
 
-    def _get_packet(self, manager_code):
+    def _get_response_packet(self, manager_code):
         response_code = {
             0: CharCreateResponseCode.SUCCESS,
             1: CharCreateResponseCode.FAILED,
             2: CharCreateResponseCode.NAME_IN_USE
         }.get(manager_code)
 
-        packet = WorldPacket(self.RESPONSE_BIN.pack(response_code.value))
-        packet.opcode = OpCode.SMSG_CHAR_CREATE
-        return packet
+        response_data = self.RESPONSE_BIN.pack(response_code.value)
+        return WorldPacket(OpCode.SMSG_CHAR_CREATE, response_data)

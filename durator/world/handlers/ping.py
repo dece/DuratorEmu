@@ -14,6 +14,5 @@ class PingHandler(object):
         self.packet = packet
 
     def process(self):
-        pong_packet = WorldPacket(self.packet)
-        pong_packet.opcode = OpCode.SMSG_PONG
+        pong_packet = WorldPacket(OpCode.SMSG_PONG, self.packet)
         return None, pong_packet

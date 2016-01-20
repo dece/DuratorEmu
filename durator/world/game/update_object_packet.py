@@ -53,8 +53,7 @@ class UpdateObjectPacket(WorldPacket):
     PACKET_PART2_BIN = Struct("<3IQ")
 
     def __init__(self, update_type, update_infos):
-        super().__init__(data = None)
-        self.opcode = OpCode.SMSG_UPDATE_OBJECT
+        super().__init__(OpCode.SMSG_UPDATE_OBJECT)
         self.update_type = update_type
         self.update_infos = update_infos
 
@@ -249,13 +248,11 @@ class PlayerSpawnPacket(UpdateObjectPacket):
     def __init__(self, player):
         update_infos = { "player": player }
         super().__init__(UpdateType.CREATE_OBJECT, update_infos)
-        self.player = player
+        self._add_required_fields(player)
 
-        self._add_required_fields()
-
-    def _add_required_fields(self):
+    def _add_required_fields(self, player):
         for required_field in PLAYER_SPAWN_FIELDS:
-            value = self.player.get(required_field)
+            value = player.get(required_field)
             if value is None:
                 LOG.error("A required field for player spawning is not set.")
                 LOG.error(str(required_field))

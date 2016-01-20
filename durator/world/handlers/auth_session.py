@@ -134,12 +134,8 @@ class AuthSessionHandler(object):
             0,  # BillingPlanFlags
             0   # BillingTimeRested
         )
-        response = WorldPacket(data)
-        response.opcode = OpCode.SMSG_AUTH_RESPONSE
-        return response
+        return WorldPacket(OpCode.SMSG_AUTH_RESPONSE, data)
 
     def _get_failure_packet(self, error_code):
         data = self.RESPONSE_FAIL_BIN.pack(error_code.value)
-        response = WorldPacket(data)
-        response.opcode = OpCode.SMSG_AUTH_RESPONSE
-        return response
+        return WorldPacket(OpCode.SMSG_AUTH_RESPONSE, data)

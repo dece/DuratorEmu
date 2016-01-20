@@ -19,7 +19,5 @@ class QueryTimeHandler(object):
     def process(self):
         seconds = int(time.time())
         response_data = self.RESPONSE_BIN.pack(seconds)
-
-        response = WorldPacket(response_data)
-        response.opcode = OpCode.SMSG_QUERY_TIME_RESPONSE
+        response = WorldPacket(OpCode.SMSG_QUERY_TIME_RESPONSE, response_data)
         return None, response

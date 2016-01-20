@@ -52,7 +52,4 @@ class NameQueryHandler(object):
             unit.get_gender(),
             unit.get_class()
         )
-
-        response = WorldPacket(response_data)
-        response.opcode = OpCode.SMSG_NAME_QUERY_RESPONSE
-        return response
+        return WorldPacket(OpCode.SMSG_NAME_QUERY_RESPONSE, response_data)

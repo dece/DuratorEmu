@@ -17,9 +17,9 @@ class WorldPacket(object):
     # new packet.
     _PACKET_BUF = b""
 
-    def __init__(self, data = None):
-        self.opcode = None
-        self.data = data or b""
+    def __init__(self, opcode = None, data = b""):
+        self.opcode = opcode
+        self.data = data
 
     @staticmethod
     def from_socket(socket, session_cipher = None):
@@ -38,10 +38,7 @@ class WorldPacket(object):
                 print("<<< 0x{:X}".format(opcode_value))
             print(dump_data(data), end = "")
 
-        packet = WorldPacket()
-        packet.opcode = opcode
-        packet.data = data
-        return packet
+        return WorldPacket(opcode, data)
 
     @staticmethod
     def _recv_next_packet(socket, session_cipher):

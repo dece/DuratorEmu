@@ -131,8 +131,7 @@ class WorldConnection(ConnectionAutomaton):
         self.shared_data["auth_seed"] = auth_seed
 
         packet_data = self.AUTH_CHALLENGE_BIN.pack(auth_seed)
-        packet = WorldPacket(packet_data)
-        packet.opcode = OpCode.SMSG_AUTH_CHALLENGE
+        packet = WorldPacket(OpCode.SMSG_AUTH_CHALLENGE, packet_data)
         self.send_packet(packet)
 
     def _actions_after_main_loop(self):
