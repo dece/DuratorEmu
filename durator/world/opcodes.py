@@ -55,6 +55,7 @@ class OpCode(Enum):
     MSG_MOVE_STOP_PITCH         = 0x0C1
     MSG_MOVE_SET_RUN_MODE       = 0x0C2
     MSG_MOVE_SET_WALK_MODE      = 0x0C3
+    MSG_MOVE_FALL_LAND          = 0x0C9
 
     MSG_MOVE_WORLDPORT_ACK = 0x0DC
 
