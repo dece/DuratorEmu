@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-from durator.world.game.movement import Movement
+from durator.world.game.movement import Movement, MovementFlags
 from durator.world.game.object.base_object import BaseObject
 from durator.world.game.object.object_fields import UnitField
 
@@ -36,3 +36,7 @@ class Unit(BaseObject):
     def _get_bytes_0(self):
         unit_bytes_0 = self.get(UnitField.BYTES_0)
         return unit_bytes_0 or 0
+
+    def is_falling(self):
+        flags = MovementFlags.IS_FALLING | MovementFlags.IS_FALLING_FAR
+        return bool(self.movement.flags & flags)

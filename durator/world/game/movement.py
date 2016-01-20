@@ -22,7 +22,7 @@ class MovementFlags(Enum):
     # IS_LEVITATING  = 1 << 10
     # IS_FLYING      = 1 << 11
     IS_FALLING     = 1 << 13
-    # IS_FALLING_FAR = 1 << 14
+    IS_FALLING_FAR = 1 << 14
     IS_SWIMMING    = 1 << 21
 
     # SPLINE_ENABLED = 1 << 22
