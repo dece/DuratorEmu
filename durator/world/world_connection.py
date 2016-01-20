@@ -42,8 +42,7 @@ class WorldConnection(ConnectionAutomaton):
         WorldConnectionState.AUTH_OK:  [ OpCode.CMSG_CHAR_ENUM
                                        , OpCode.CMSG_CHAR_CREATE
                                        , OpCode.CMSG_CHAR_DELETE
-                                       , OpCode.CMSG_PLAYER_LOGIN ],
-        WorldConnectionState.LOGOUT:   [ ]
+                                       , OpCode.CMSG_PLAYER_LOGIN ]
     }
 
     UNMANAGED_OPS = [
@@ -97,8 +96,7 @@ class WorldConnection(ConnectionAutomaton):
     }
 
     INIT_STATE       = WorldConnectionState.INIT
-    END_STATES       = [ WorldConnectionState.ERROR
-                       , WorldConnectionState.LOGOUT ]
+    END_STATES       = [ WorldConnectionState.ERROR ]
     MAIN_ERROR_STATE = WorldConnectionState.ERROR
 
     def __init__(self, server, connection):

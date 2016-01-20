@@ -20,7 +20,7 @@ class LogoutRequestHandler(object):
         if self.can_logout():
             self.conn.send_packet(self._get_logout_response_packet(True))
             self.conn.send_packet(self._get_logout_complete_packet())
-            return WorldConnectionState.LOGOUT, None
+            return WorldConnectionState.AUTH_OK, None
         else:
             self.conn.send_packet(self._get_logout_response_packet(False))
             return None, None
