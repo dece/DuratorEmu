@@ -9,6 +9,7 @@ from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.char_selection.char_create import CharCreateHandler
 from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
 from durator.world.handlers.char_selection.char_enum import CharEnumHandler
+from durator.world.handlers.game.logout import LogoutRequestHandler
 from durator.world.handlers.game.movement import MovementHandler
 from durator.world.handlers.game.name_query import NameQueryHandler
 from durator.world.handlers.game.player_login import PlayerLoginHandler
@@ -41,7 +42,8 @@ class WorldConnection(ConnectionAutomaton):
         WorldConnectionState.AUTH_OK:  [ OpCode.CMSG_CHAR_ENUM
                                        , OpCode.CMSG_CHAR_CREATE
                                        , OpCode.CMSG_CHAR_DELETE
-                                       , OpCode.CMSG_PLAYER_LOGIN ]
+                                       , OpCode.CMSG_PLAYER_LOGIN ],
+        WorldConnectionState.LOGOUT:   [ ]
     }
 
     UNMANAGED_OPS = [
@@ -58,6 +60,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_CHAR_ENUM:              CharEnumHandler,
         OpCode.CMSG_CHAR_DELETE:            CharDeleteHandler,
         OpCode.CMSG_PLAYER_LOGIN:           PlayerLoginHandler,
+        OpCode.CMSG_LOGOUT_REQUEST:         LogoutRequestHandler,
         OpCode.CMSG_NAME_QUERY:             NameQueryHandler,
         OpCode.MSG_MOVE_START_FORWARD:      MovementHandler,
         OpCode.MSG_MOVE_START_BACKWARD:     MovementHandler,
@@ -92,7 +95,8 @@ class WorldConnection(ConnectionAutomaton):
     }
 
     INIT_STATE       = WorldConnectionState.INIT
-    END_STATES       = [ WorldConnectionState.ERROR ]
+    END_STATES       = [ WorldConnectionState.ERROR
+                       , WorldConnectionState.LOGOUT ]
     MAIN_ERROR_STATE = WorldConnectionState.ERROR
 
     def __init__(self, server, connection):
@@ -135,5 +139,5 @@ class WorldConnection(ConnectionAutomaton):
         self.send_packet(packet)
 
     def _actions_after_main_loop(self):
-        LOG.debug("WorldConnection: stopped handling packets.")
+        LOG.debug("WorldConnection: session ended.")
         AccountSessionManager.delete_session(self.account)

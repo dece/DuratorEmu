@@ -38,5 +38,6 @@ class Unit(BaseObject):
         return unit_bytes_0 or 0
 
     def is_falling(self):
-        flags = MovementFlags.IS_FALLING | MovementFlags.IS_FALLING_FAR
-        return bool(self.movement.flags & flags)
+        falling_flags = ( MovementFlags.IS_FALLING.value
+                        | MovementFlags.IS_FALLING_FAR.value )
+        return bool(self.movement.flags & falling_flags)
