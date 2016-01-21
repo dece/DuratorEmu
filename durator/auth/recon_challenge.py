@@ -58,7 +58,7 @@ class ReconChallenge(object):
             response = self._get_success_response()
             return LoginConnectionState.RECON_CHALL, response
         else:
-            LOG.warning("Reconnection: Account wasn't logged in!")
+            LOG.warning("Reconnection: account wasn't logged in!")
             response = self._get_failure_response()
             return LoginConnectionState.CLOSED, response
 

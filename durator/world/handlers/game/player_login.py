@@ -1,6 +1,8 @@
 from struct import Struct
+import time
 
 from durator.db.database import db_connection
+from durator.world.game.account_data import AccountData, AccountDataTypeMask
 from durator.world.game.char.character_data import CharacterData
 from durator.world.game.object_manager import OBJECT_MANAGER
 from durator.world.game.update_object_packet import PlayerSpawnPacket
@@ -28,7 +30,7 @@ class PlayerLoginHandler(object):
     # - possibly send server imminent shutdown notice
 
     PACKET_BIN = Struct("<Q")
-    WORLD_INFO_BIN = Struct("<I4f")
+    VERIFY_WORLD_BIN = Struct("<I4f")
 
     def __init__(self, connection, packet):
         self.conn = connection
@@ -49,6 +51,7 @@ class PlayerLoginHandler(object):
 
         # Finally, send the packets necessary to let the client get in world.
         self.conn.send_packet(self._get_verify_login_packet())
+        self.conn.send_packet(self._get_account_data_times_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
         self.conn.send_packet(self._get_update_object_packet())
 
@@ -68,7 +71,7 @@ class PlayerLoginHandler(object):
 
     def _get_verify_login_packet(self):
         """ Send the unique (?) SMSG_LOGIN_VERIFY_WORLD packet. """
-        response_data = self.WORLD_INFO_BIN.pack(
+        response_data = self.VERIFY_WORLD_BIN.pack(
             self.conn.player.map_id,
             self.conn.player.position.x,
             self.conn.player.position.y,
@@ -76,6 +79,23 @@ class PlayerLoginHandler(object):
             self.conn.player.position.o
         )
         return WorldPacket(OpCode.SMSG_LOGIN_VERIFY_WORLD, response_data)
+
+    DATA_TIMES_HEADER_BIN = Struct("<IBI")
+
+    def _get_account_data_times_packet(self):
+        """ Send this dummy packet to trigger account data sync. """
+        header_data = self.DATA_TIMES_HEADER_BIN.pack(
+            int(time.time()),
+            1,
+            AccountDataTypeMask.CHARACTER.value
+        )
+
+        dummy_account_data = AccountData()
+        times = dummy_account_data.get_times(AccountDataTypeMask.CHARACTER)
+        times_data = b"".join([int.to_bytes(t, 4, "little") for t in times])
+
+        response_data = header_data + times_data
+        return WorldPacket(OpCode.SMSG_ACCOUNT_DATA_TIMES, response_data)
 
     def _get_tutorial_flags_packet(self):
         """ I agree with myself that I do not want to support tutorials. """
