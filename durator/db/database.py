@@ -38,23 +38,23 @@ class _DbConnector(object):
             self.num_connections += 1
             if self.num_connections == 1:
                 try:
-                    DB.connect()
-                    return True
+                    self.database.connect()
                 except OperationalError as exc:
                     _DbConnector.log_error("connect", exc)
                     self.num_connections -= 1
-        return False
+                    return False
+        return True
 
     def close(self):
         with self.num_connections_lock:
             self.num_connections -= 1
             if self.num_connections == 0:
                 try:
-                    DB.close()
-                    return True
+                    self.database.close()
                 except OperationalError as exc:
                     _DbConnector.log_error("close", exc)
-        return False
+                    return False
+        return True
 
     @staticmethod
     def log_error(operation, exception):
