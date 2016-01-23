@@ -3,13 +3,12 @@ from struct import Struct
 
 from durator.auth.account import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
-from durator.config import DEBUG
+from durator.world.game.object_manager import OBJECT_MANAGER
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.char_selection.char_create import CharCreateHandler
 from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
 from durator.world.handlers.char_selection.char_enum import CharEnumHandler
-from durator.world.handlers.game.account_data import RequestAccountDataHandler
 from durator.world.handlers.game.logout import LogoutRequestHandler
 from durator.world.handlers.game.movement import MovementHandler
 from durator.world.handlers.game.name_query import NameQueryHandler
@@ -20,7 +19,6 @@ from durator.world.handlers.ping import PingHandler
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket
-from pyshgck.format import dump_data
 from pyshgck.logger import LOG
 
 
