@@ -46,16 +46,15 @@ class WorldConnection(ConnectionAutomaton):
                                        , OpCode.CMSG_PLAYER_LOGIN ]
     }
 
-    UNMANAGED_OPS = [
+    UNMANAGED_OPS    = [
         OpCode.CMSG_PING
     ]
-
     UNMANAGED_STATES = [
         WorldConnectionState.IN_WORLD
     ]
 
-    OP_HANDLERS = {
-        # Handled opcodes
+    DEFAULT_HANDLER = NopHandler
+    OP_HANDLERS     = {
         OpCode.CMSG_CHAR_CREATE:            CharCreateHandler,
         OpCode.CMSG_CHAR_ENUM:              CharEnumHandler,
         OpCode.CMSG_CHAR_DELETE:            CharDeleteHandler,
@@ -83,19 +82,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.MSG_MOVE_HEARTBEAT:          MovementHandler,
         OpCode.CMSG_QUERY_TIME:             TimeQueryHandler,
         OpCode.CMSG_PING:                   PingHandler,
-        OpCode.CMSG_AUTH_SESSION:           AuthSessionHandler,
-
-        # Unhandled opcodes
-        OpCode.CMSG_ITEM_QUERY_SINGLE:            NopHandler,
-        OpCode.CMSG_ITEM_QUERY_MULTIPLE:          NopHandler,
-        OpCode.SMSG_ITEM_QUERY_SINGLE_RESPONSE:   NopHandler,
-        OpCode.SMSG_ITEM_QUERY_MULTIPLE_RESPONSE: NopHandler,
-        OpCode.MSG_LOOKING_FOR_GROUP:             NopHandler,
-        OpCode.CMSG_REQUEST_ACCOUNT_DATA:         NopHandler,
-        OpCode.CMSG_UPDATE_ACCOUNT_DATA:          NopHandler,
-        OpCode.CMSG_GMTICKET_GETTICKET:           NopHandler,
-        OpCode.CMSG_SET_ACTIVE_MOVER:             NopHandler,
-        OpCode.MSG_QUERY_NEXT_MAIL_TIME:          NopHandler
+        OpCode.CMSG_AUTH_SESSION:           AuthSessionHandler
     }
 
     INIT_STATE       = WorldConnectionState.INIT

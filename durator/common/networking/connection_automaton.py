@@ -23,6 +23,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
     LEGAL_OPS        = {}
     UNMANAGED_OPS    = []
     UNMANAGED_STATES = []
+    DEFAULT_HANDLER  = None
     OP_HANDLERS      = {}
 
     INIT_STATE       = None
@@ -94,7 +95,7 @@ class ConnectionAutomaton(metaclass = ABCMeta):
             ))
             return
 
-        handler_class = self.OP_HANDLERS.get(opcode)
+        handler_class = self.OP_HANDLERS.get(opcode, self.DEFAULT_HANDLER)
         if handler_class is None:
             LOG.error("{}: known opcode without handler: {}".format(
                 type(self).__name__, str(opcode)
