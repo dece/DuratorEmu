@@ -84,7 +84,6 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_QUERY_TIME:             TimeQueryHandler,
         OpCode.CMSG_PING:                   PingHandler,
         OpCode.CMSG_AUTH_SESSION:           AuthSessionHandler,
-        OpCode.CMSG_REQUEST_ACCOUNT_DATA:   RequestAccountDataHandler,
 
         # Unhandled opcodes
         OpCode.CMSG_ITEM_QUERY_SINGLE:            NopHandler,
@@ -92,7 +91,8 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.SMSG_ITEM_QUERY_SINGLE_RESPONSE:   NopHandler,
         OpCode.SMSG_ITEM_QUERY_MULTIPLE_RESPONSE: NopHandler,
         OpCode.MSG_LOOKING_FOR_GROUP:             NopHandler,
-        OpCode.CMSG_UPDATE_ACCOUNT_DATA:          NopHandler,  # temp
+        OpCode.CMSG_REQUEST_ACCOUNT_DATA:         NopHandler,
+        OpCode.CMSG_UPDATE_ACCOUNT_DATA:          NopHandler,
         OpCode.CMSG_GMTICKET_GETTICKET:           NopHandler,
         OpCode.CMSG_SET_ACTIVE_MOVER:             NopHandler,
         OpCode.MSG_QUERY_NEXT_MAIL_TIME:          NopHandler
