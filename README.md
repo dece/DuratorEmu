@@ -17,7 +17,7 @@ Dependencies:
 - MySQL, anything slightly recent should be fine
 - Peewee, the Python ORM used, available in PyPI
 - A Python MySQL driver, PyMySQL preferably (in PyPI), or maybe MySQLdb
-- PyShgck, a toolbox available on this Gitlab.
+- PyShgck (v1), a toolbox available on this Gitlab.
 
 Quick MySQL database setup:
 
