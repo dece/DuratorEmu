@@ -1,13 +1,21 @@
+import threading
+
+from durator.world.game.char.character_data import CharacterManager
 from durator.world.game.object.base_object import ObjectDescFlags
 from durator.world.game.object.object_fields import (
     ObjectField, UnitField, PlayerField )
 from durator.world.game.object.player import Player
+from pyshgck.logger import LOG
 
 
 class ObjectManager(object):
+    """ Manage all objects in world. To avoid an overcrowded class, boring
+    stuff is moved to friend classes. """
 
     def __init__(self):
         self.players = {}
+        self.locks = { lock_name: threading.Lock() for lock_name in
+                       ["players"] }
 
     def add_player(self, char_data):
         """ Create (and return) a Player object from the data stored in the
@@ -16,25 +24,70 @@ class ObjectManager(object):
         player.name = char_data.name
 
         ObjectManager._add_coords_to_object(player, char_data.position)
-        ObjectManager._add_object_fields_to_player(player, char_data)
-        ObjectManager._add_unit_fields_to_player(player, char_data)
-        ObjectManager._add_player_fields_to_player(player, char_data)
+        _PlayerManager.add_object_fields(player, char_data)
+        _PlayerManager.add_unit_fields(player, char_data)
+        _PlayerManager.add_player_fields(player, char_data)
 
         guid = player.get(ObjectField.GUID)
-        self.players[guid] = player
+
+        with self.locks["players"]:
+            self.players[guid] = player
+
         return player
 
     @staticmethod
     def _add_coords_to_object(base_object, position_data):
-        base_object.map_id = position_data.map_id
-        base_object.zone_id = position_data.zone_id
+        base_object.map_id     = position_data.map_id
+        base_object.zone_id    = position_data.zone_id
         base_object.position.x = position_data.pos_x
         base_object.position.y = position_data.pos_y
         base_object.position.z = position_data.pos_z
         base_object.position.o = position_data.orientation
 
+    def get_player(self, guid):
+        """ Return the object with that GUID, or None if it doesn't exist. """
+        with self.locks["players"]:
+            return self.players.get(guid)
+
     @staticmethod
-    def _add_object_fields_to_player(player, char_data):
+    def _get_coords_from_object(base_object, position_data):
+        position_data.map_id      = base_object.map_id
+        position_data.zone_id     = base_object.zone_id
+        position_data.pos_x       = base_object.position.x
+        position_data.pos_y       = base_object.position.y
+        position_data.pos_z       = base_object.position.z
+        position_data.orientation = base_object.position.o
+
+    def remove_player(self, guid):
+        """ Remove the player from the object list and save its data. """
+        player = self.get_player(guid)
+        if player is None:
+            LOG.warning("Tried to remove a non-existing player.")
+            return
+
+        with self.locks["players"]:
+            del self.players[guid]
+
+        char_data = CharacterManager.get_char_data(guid)
+        ObjectManager._get_coords_from_object(player, char_data.position)
+        _PlayerManager.get_object_fields(player, char_data)
+        _PlayerManager.get_unit_fields(player, char_data)
+        _PlayerManager.get_player_fields(player, char_data)
+
+        char_data.features.save()
+        char_data.stats.save()
+        char_data.position.save()
+        char_data.save()
+
+
+OBJECT_MANAGER = ObjectManager()
+
+
+class _PlayerManager(object):
+    """ Static methods to transfer data from database models to objects. """
+
+    @staticmethod
+    def add_object_fields(player, char_data):
         object_type = (
             ObjectDescFlags.OBJECT.value |
             ObjectDescFlags.UNIT.value   |
@@ -45,7 +98,7 @@ class ObjectManager(object):
         player.set(ObjectField.SCALE_X, char_data.stats.scale_x)
 
     @staticmethod
-    def _add_unit_fields_to_player(player, char_data):
+    def add_unit_fields(player, char_data):
         stats = char_data.stats
 
         player.set(UnitField.HEALTH,  stats.health)
@@ -120,7 +173,7 @@ class ObjectManager(object):
         player.set(UnitField.MAX_RANGED_DAMAGE, stats.max_ranged_damage)
 
     @staticmethod
-    def _add_player_fields_to_player(player, char_data):
+    def add_player_fields(player, char_data):
         stats = char_data.stats
 
         player.set(PlayerField.FLAGS, stats.player_flags)
@@ -155,9 +208,111 @@ class ObjectManager(object):
         player.set(PlayerField.REST_STATE_EXP, stats.rest_state_exp)
         player.set(PlayerField.COINAGE,        stats.coinage)
 
-    def get(self, guid):
-        """ Return the object with that GUID, or None if it doesn't exist. """
-        return self.players.get(guid)
+    @staticmethod
+    def get_object_fields(player, char_data):
+        char_data.guid    = player.get(ObjectField.GUID)
+        char_data.scale_x = player.get(ObjectField.SCALE_X)
 
+    @staticmethod
+    def get_unit_fields(player, char_data):
+        stats = char_data.stats
 
-OBJECT_MANAGER = ObjectManager()
+        stats.health    = player.get(UnitField.HEALTH)
+        stats.mana      = player.get(UnitField.POWER_1)
+        stats.rage      = player.get(UnitField.POWER_2)
+        stats.focus     = player.get(UnitField.POWER_3)
+        stats.energy    = player.get(UnitField.POWER_4)
+        stats.happiness = player.get(UnitField.POWER_5)
+
+        stats.max_health    = player.get(UnitField.MAX_HEALTH)
+        stats.max_mana      = player.get(UnitField.MAX_POWER_1)
+        stats.max_rage      = player.get(UnitField.MAX_POWER_2)
+        stats.max_focus     = player.get(UnitField.MAX_POWER_3)
+        stats.max_energy    = player.get(UnitField.MAX_POWER_4)
+        stats.max_happiness = player.get(UnitField.MAX_POWER_5)
+
+        stats.level            = player.get(UnitField.LEVEL)
+        stats.faction_template = player.get(UnitField.FACTION_TEMPLATE)
+        unit_bytes_0           = player.get(UnitField.BYTES_0)
+        char_data.race         = unit_bytes_0       & 0xFF
+        char_data.class_id     = unit_bytes_0 >> 8  & 0xFF
+        char_data.gender       = unit_bytes_0 >> 16 & 0xFF
+        stats.unit_flags       = player.get(UnitField.FLAGS)
+
+        stats.attack_time_mainhand = player.get(UnitField.BASE_ATTACK_TIME)
+        stats.attack_time_offhand  = player.get(UnitField.OFFHAND_ATTACK_TIME)
+
+        stats.bounding_radius = player.get(UnitField.BOUNDING_RADIUS)
+        stats.combat_reach    = player.get(UnitField.COMBAT_REACH)
+
+        stats.display_id        = player.get(UnitField.DISPLAY_ID)
+        stats.native_display_id = player.get(UnitField.NATIVE_DISPLAY_ID)
+        stats.mount_display_id  = player.get(UnitField.MOUNT_DISPLAY_ID)
+
+        stats.min_damage         = player.get(UnitField.MIN_DAMAGE)
+        stats.max_damage         = player.get(UnitField.MAX_DAMAGE)
+        stats.min_offhand_damage = player.get(UnitField.MIN_OFFHAND_DAMAGE)
+        stats.max_offhand_damage = player.get(UnitField.MAX_OFFHAND_DAMAGE)
+
+        stats.unit_bytes_1 = player.get(UnitField.BYTES_1)
+
+        stats.mod_cast_speed = player.get(UnitField.MOD_CAST_SPEED)
+
+        stats.strength     = player.get(UnitField.STAT_0)
+        stats.agility      = player.get(UnitField.STAT_1)
+        stats.stamina      = player.get(UnitField.STAT_2)
+        stats.intellect    = player.get(UnitField.STAT_3)
+        stats.spirit       = player.get(UnitField.STAT_4)
+        stats.resistance_0 = player.get(UnitField.RESISTANCE_0)
+        stats.resistance_1 = player.get(UnitField.RESISTANCE_1)
+        stats.resistance_2 = player.get(UnitField.RESISTANCE_2)
+        stats.resistance_3 = player.get(UnitField.RESISTANCE_3)
+        stats.resistance_4 = player.get(UnitField.RESISTANCE_4)
+        stats.resistance_5 = player.get(UnitField.RESISTANCE_5)
+        stats.resistance_6 = player.get(UnitField.RESISTANCE_6)
+
+        stats.attack_power      = player.get(UnitField.ATTACK_POWER)
+        stats.base_mana         = player.get(UnitField.BASE_MANA)
+        stats.attack_power_mods = player.get(UnitField.ATTACK_POWER_MODS)
+
+        stats.unit_bytes_2 = player.get(UnitField.BYTES_2)
+
+        stats.ranged_attack_power = \
+            player.get(UnitField.RANGED_ATTACK_POWER)
+        stats.ranged_attack_power_mods = \
+            player.get(UnitField.RANGED_ATTACK_POWER_MODS)
+
+        stats.min_ranged_damage = player.get(UnitField.MIN_RANGED_DAMAGE)
+        stats.max_ranged_damage = player.get(UnitField.MAX_RANGED_DAMAGE)
+
+    @staticmethod
+    def get_player_fields(player, char_data):
+        stats = char_data.stats
+        features = char_data.features
+
+        stats.player_flags = player.get(PlayerField.FLAGS)
+
+        player_bytes_1       = player.get(PlayerField.BYTES_1)
+        features.skin        = player_bytes_1       & 0xFF
+        features.face        = player_bytes_1 >> 8  & 0xFF
+        features.hair_style  = player_bytes_1 >> 16 & 0xFF
+        features.hair_color  = player_bytes_1 >> 24 & 0xFF
+        player_bytes_2       = player.get(PlayerField.BYTES_2)
+        features.facial_hair = player_bytes_2       & 0xFF
+        stats.rest_info      = player_bytes_2 >> 24 & 0xFF
+        player_bytes_3       = player.get(PlayerField.BYTES_3)
+        char_data.gender     = player_bytes_3 & 0xFF
+
+        stats.exp            = player.get(PlayerField.EXP)
+        stats.next_level_exp = player.get(PlayerField.NEXT_LEVEL_EXP)
+
+        stats.character_points_1 = player.get(PlayerField.CHARACTER_POINTS_1)
+        stats.character_points_2 = player.get(PlayerField.CHARACTER_POINTS_2)
+
+        stats.block_percentage = player.get(PlayerField.BLOCK_PERCENTAGE)
+        stats.dodge_percentage = player.get(PlayerField.DODGE_PERCENTAGE)
+        stats.parry_percentage = player.get(PlayerField.PARRY_PERCENTAGE)
+        stats.crit_percentage  = player.get(PlayerField.CRIT_PERCENTAGE)
+
+        stats.rest_state_exp = player.get(PlayerField.REST_STATE_EXP)
+        stats.coinage        = player.get(PlayerField.COINAGE)

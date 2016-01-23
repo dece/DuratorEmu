@@ -127,4 +127,8 @@ class WorldConnection(ConnectionAutomaton):
 
     def _actions_after_main_loop(self):
         LOG.debug("WorldConnection: session ended.")
+
+        if self.player is not None:
+            OBJECT_MANAGER.remove_player(player.get(ObjectField.GUID))
+
         AccountSessionManager.delete_session(self.account)

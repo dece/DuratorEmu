@@ -200,8 +200,8 @@ class CharacterManager(object):
             consts = RACE_AND_CLASS_CONSTS[race_and_class]
             gender = char_values["gender"]
 
-            stats = CharacterManager._get_char_stats(consts, gender)
-            position = CharacterManager._get_char_position(consts)
+            stats = CharacterManager._get_default_char_stats(consts, gender)
+            position = CharacterManager._get_default_char_position(consts)
             character.stats = stats
             character.position = position
 
@@ -221,7 +221,7 @@ class CharacterManager(object):
         return guid
 
     @staticmethod
-    def _get_char_stats(consts, gender):
+    def _get_default_char_stats(consts, gender):
         if gender == CharacterGender.MALE:
             model = consts["race"]["model_male"]
         else:
@@ -312,7 +312,7 @@ class CharacterManager(object):
         )
 
     @staticmethod
-    def _get_char_position(consts):
+    def _get_default_char_position(consts):
         return CharacterPosition.create(
             map_id      = consts["race"]["start_map"],
             zone_id     = consts["race"]["start_zone"],
@@ -321,6 +321,15 @@ class CharacterManager(object):
             pos_z       = consts["race"]["start_pos_z"],
             orientation = consts["race"]["start_orientation"]
         )
+
+    @staticmethod
+    @db_connection
+    def get_char_data(guid):
+        """ Get the CharacterData associated to that GUID. """
+        try:
+            return CharacterData.get(CharacterData.guid == guid)
+        except CharacterData.DoesNotExist:
+            return None
 
     @staticmethod
     @db_connection
