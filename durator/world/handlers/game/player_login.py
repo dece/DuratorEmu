@@ -2,7 +2,6 @@ from struct import Struct
 
 from durator.db.database import db_connection
 from durator.world.game.char.character_data import CharacterData
-from durator.world.game.object_manager import OBJECT_MANAGER
 from durator.world.game.update_object_packet import PlayerSpawnPacket
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
@@ -45,11 +44,11 @@ class PlayerLoginHandler(object):
             return self.conn.MAIN_ERROR_STATE, None
 
         # Now that we have the character data, spawn a new player object.
-        self.conn.player = OBJECT_MANAGER.add_player(character_data)
+        self.conn.set_player(character_data)
 
         # Finally, send the packets necessary to let the client get in world.
         self.conn.send_packet(self._get_verify_login_packet())
-        self.conn.send_packet(self._get_account_data_md5_packet())
+        # self.conn.send_packet(self._get_account_data_md5_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
         self.conn.send_packet(self._get_update_object_packet())
 

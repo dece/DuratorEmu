@@ -4,6 +4,7 @@ from struct import Struct
 from durator.auth.account import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
 from durator.world.game.object_manager import OBJECT_MANAGER
+from durator.world.game.object.object_fields import ObjectField
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.char_selection.char_create import CharCreateHandler
@@ -125,8 +126,19 @@ class WorldConnection(ConnectionAutomaton):
 
     def _actions_after_main_loop(self):
         LOG.debug("WorldConnection: session ended.")
-
-        if self.player is not None:
-            OBJECT_MANAGER.remove_player(player.get(ObjectField.GUID))
-
         AccountSessionManager.delete_session(self.account)
+        self.unset_player()
+
+    def set_player(self, char_data):
+        """ Ask the ObjectManager to create a Player object with the char_data
+        from the database. """
+        self.player = OBJECT_MANAGER.add_player(char_data)
+
+    def unset_player(self):
+        """ Transfer the Player data back to the database, after a logout or
+        after the connection has been closed. """
+        if self.player is not None:
+            guid = self.player.get(ObjectField.GUID)
+            OBJECT_MANAGER.remove_player(guid)
+            self.player = None
+        

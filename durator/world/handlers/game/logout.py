@@ -1,5 +1,6 @@
 from struct import Struct
 
+from durator.world.game.object_manager import OBJECT_MANAGER
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket
@@ -20,6 +21,7 @@ class LogoutRequestHandler(object):
         if self.can_logout():
             self.conn.send_packet(self._get_logout_response_packet(True))
             self.conn.send_packet(self._get_logout_complete_packet())
+            self.conn.unset_player()
             return WorldConnectionState.AUTH_OK, None
         else:
             self.conn.send_packet(self._get_logout_response_packet(False))

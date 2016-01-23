@@ -28,9 +28,9 @@ class NameQueryHandler(object):
         self._parse_packet(self.packet)
         LOG.debug("NameQuery: GUID {:X}".format(self.guid))
 
-        unit = OBJECT_MANAGER.get(self.guid)
+        unit = OBJECT_MANAGER.get_player(self.guid)
         if unit is None:
-            LOG.warning("NameQueryHandler: couldn't find object {:X}".format(
+            LOG.warning("NameQueryHandler: couldn't find player {:X}".format(
                 self.guid
             ))
             return None, None
