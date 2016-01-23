@@ -94,6 +94,10 @@ class WorldPacket(object):
 
     def to_socket(self, session_cipher = None):
         """ Return ready-to-send bytes, possibly encrypted, from the packet. """
+        if DEBUG:
+            print(">>>", self.opcode)
+            print(dump_data(self.data), end = "")
+
         opcode_bytes = self.OUTGOING_OPCODE_BIN.pack(self.opcode.value)
         packet = opcode_bytes + self.data
         size_bytes = self.OUTGOING_SIZE_BIN.pack(len(packet))
