@@ -1,5 +1,6 @@
 from struct import Struct
 
+from durator.common.account.account_data import AccountDataManager
 from durator.db.database import db_connection
 from durator.world.game.char.character_data import CharacterData
 from durator.world.game.update_object_packet import PlayerSpawnPacket
@@ -82,8 +83,9 @@ class PlayerLoginHandler(object):
 
     def _get_account_data_md5_packet(self):
         """ Send this dummy packet to trigger account data sync. """
-        response_data = b"\x00" * 16 * 5
-        return WorldPacket(OpCode.SMSG_ACCOUNT_DATA_MD5, response_data)
+        md5s = AccountDataManager.get_account_data_md5(self.conn.account)
+        md5s_data = b"".join(md5s)
+        return WorldPacket(OpCode.SMSG_ACCOUNT_DATA_MD5, md5s_data)
 
     def _get_tutorial_flags_packet(self):
         """ I agree with myself that I do not want to support tutorials. """
