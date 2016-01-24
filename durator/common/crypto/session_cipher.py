@@ -25,6 +25,7 @@ class SessionCipher(object):
         return bytes(encrypted_header) + data[self.ENCRYPT_HEADER_SIZE:]
 
     def decrypt(self, data):
+        """ Return the decrypted data byte buffer. """
         assert len(data) >= self.DECRYPT_HEADER_SIZE
         decrypted_header = [0] * self.DECRYPT_HEADER_SIZE
 

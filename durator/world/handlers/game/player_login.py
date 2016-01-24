@@ -48,7 +48,7 @@ class PlayerLoginHandler(object):
 
         # Finally, send the packets necessary to let the client get in world.
         self.conn.send_packet(self._get_verify_login_packet())
-        # self.conn.send_packet(self._get_account_data_md5_packet())
+        self.conn.send_packet(self._get_account_data_md5_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
         self.conn.send_packet(self._get_update_object_packet())
 

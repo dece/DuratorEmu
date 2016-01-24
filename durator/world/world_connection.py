@@ -19,19 +19,23 @@ from durator.world.handlers.nop import NopHandler
 from durator.world.handlers.ping import PingHandler
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
-from durator.world.world_packet import WorldPacket
+from durator.world.world_packet import WorldPacket, WorldPacketReceiver
 from pyshgck.logger import LOG
 
 
 class WorldConnection(ConnectionAutomaton):
     """ Handle the communication between a client and the world server.
 
-    The shared_data dict holds misc temporary values that can be of use for
-    several handlers; anything living longer than a few seconds should probably
-    be stored somewhere else. The account and the session cipher attributes are
-    set only when the AuthSessionHandler succeeds (state AUTH_OK at least). The
-    guid and character_data variables are set only when the PlayerLoginHandler
-    verifies them.
+    Attributes:
+    - packet_buffer: incoming bytes are stored in there.
+    - shared_data: dict, holds misc temporary values that can be of use for
+        several handlers; anything living longer than a few seconds should
+        probably be stored somewhere else.
+    - account: player account
+    - session_cipher: current session cipher; this and the account attribute are
+        set only when the AuthSessionHandler succeeds (when state >= AUTH_OK).
+    - player: Player object for the currently player char. Set only once the
+        PlayerLoginHandler verifies them, unset when client leaves world.
     """
 
     AUTH_CHALLENGE_BIN = Struct("<I")
@@ -91,6 +95,8 @@ class WorldConnection(ConnectionAutomaton):
     def __init__(self, server, connection):
         super().__init__(connection)
         self.server = server
+
+        self.world_packet_receiver = WorldPacketReceiver(self.socket)
         self.shared_data = {}
 
         self.account = None
@@ -98,13 +104,18 @@ class WorldConnection(ConnectionAutomaton):
 
         self.player = None
 
+    def set_session_cipher(self, session_cipher):
+        self.session_cipher = session_cipher
+        self.world_packet_receiver.session_cipher = self.session_cipher
+
     def send_packet(self, world_packet):
         ready_packet = world_packet.to_socket(self.session_cipher)
         self.socket.sendall(ready_packet)
 
     def _recv_packet(self):
         try:
-            return WorldPacket.from_socket(self.socket, self.session_cipher)
+            packet = self.world_packet_receiver.get_next_packet()
+            return packet
         except ConnectionResetError:
             LOG.info("Lost connection with " + self.account.name + ".")
             return None
@@ -141,4 +152,3 @@ class WorldConnection(ConnectionAutomaton):
             guid = self.player.get(ObjectField.GUID)
             OBJECT_MANAGER.remove_player(guid)
             self.player = None
-        

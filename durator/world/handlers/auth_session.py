@@ -125,7 +125,7 @@ class AuthSessionHandler(object):
 
     def _setup_encryption(self):
         """ Set up the session cipher and return True on success. """
-        self.conn.session_cipher = SessionCipher(self.session_key)
+        self.conn.set_session_cipher(SessionCipher(self.session_key))
 
     def _get_success_packet(self):
         data = self.RESPONSE_SUCC_BIN.pack(
