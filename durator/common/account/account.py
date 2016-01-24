@@ -79,6 +79,11 @@ class AccountManager(object):
         Srp.generate_account_srp_data(account, password)
         account.status = AccountStatus.VALID.value
         account.save()
+
+        # Import AccountDataManager only here to avoid recursive import
+        from durator.common.account.account_data import AccountDataManager
+        AccountDataManager.create_account_data(account)
+
         return account
 
     @staticmethod

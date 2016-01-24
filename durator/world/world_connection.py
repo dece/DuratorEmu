@@ -10,6 +10,8 @@ from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.char_selection.char_create import CharCreateHandler
 from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
 from durator.world.handlers.char_selection.char_enum import CharEnumHandler
+from durator.world.handlers.game.account_data import RequestAccountDataHandler
+from durator.world.handlers.game.account_data import UpdateAccountDataHandler
 from durator.world.handlers.game.logout import LogoutRequestHandler
 from durator.world.handlers.game.movement import MovementHandler
 from durator.world.handlers.game.name_query import NameQueryHandler
@@ -87,7 +89,9 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_QUERY_TIME:             TimeQueryHandler,
         OpCode.CMSG_PING:                   PingHandler,
         OpCode.CMSG_AUTH_SESSION:           AuthSessionHandler,
-        OpCode.CMSG_ZONEUPDATE:             ZoneUpdateHandler
+        OpCode.CMSG_ZONEUPDATE:             ZoneUpdateHandler,
+        OpCode.CMSG_REQUEST_ACCOUNT_DATA:   RequestAccountDataHandler,
+        OpCode.CMSG_UPDATE_ACCOUNT_DATA:    UpdateAccountDataHandler
     }
 
     INIT_STATE       = WorldConnectionState.INIT
