@@ -149,12 +149,12 @@ class WorldConnection(ConnectionAutomaton):
     def set_player(self, char_data):
         """ Ask the ObjectManager to create a Player object with the char_data
         from the database. """
-        self.player = OBJECT_MANAGER.add_player(char_data)
+        self.player = self.server.object_manager.add_player(char_data)
 
     def unset_player(self):
         """ Transfer the Player data back to the database, after a logout or
         after the connection has been closed. """
         if self.player is not None:
             guid = self.player.get(ObjectField.GUID)
-            OBJECT_MANAGER.remove_player(guid)
+            self.server.object_manager.remove_player(guid)
             self.player = None

@@ -80,9 +80,6 @@ class ObjectManager(object):
         char_data.save()
 
 
-OBJECT_MANAGER = ObjectManager()
-
-
 class _PlayerManager(object):
     """ Static methods to transfer data from database models to objects. """
 

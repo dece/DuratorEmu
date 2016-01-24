@@ -25,11 +25,14 @@ class WorldServer(object):
         self.hostname = CONFIG["realm"]["hostname"]
         self.port = int(CONFIG["realm"]["port"])
         self.realm = None
-        self._create_realm()
         self.population = RealmPopulation.LOW
+        self._create_realm()
 
         self.login_server_socket = None
         self.clients_socket = None
+
+        self.object_manager = ObjectManager()
+
         self.shutdown_flag = threading.Event()
 
     def start(self):
