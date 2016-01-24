@@ -2,7 +2,7 @@ from enum import Enum
 import io
 from struct import Struct
 
-from durator.auth.account import AccountSessionManager
+from durator.common.account.account_session import AccountSessionManager
 from durator.common.crypto.session_cipher import SessionCipher
 from durator.common.crypto.sha1 import sha1
 from durator.config import CONFIG

@@ -2,7 +2,7 @@ import getpass
 
 from peewee import OperationalError
 
-from durator.auth.account import AccountManager
+from durator.common.account.account import AccountManager
 from durator.db.database import DB, db_connection
 from durator.db.models import MODELS
 from pyshgck.logger import LOG

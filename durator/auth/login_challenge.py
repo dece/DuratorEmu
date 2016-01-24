@@ -1,10 +1,10 @@
 import os
 from struct import Struct
 
-from durator.auth.account import AccountStatus
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
+from durator.common.account.account import AccountStatus
 from pyshgck.logger import LOG
 
 

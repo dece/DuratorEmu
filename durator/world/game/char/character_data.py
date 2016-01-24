@@ -11,10 +11,10 @@ from peewee import (
     Model, IntegerField, FloatField, ForeignKeyField, CharField,
     PeeweeException )
 
-from durator.auth.account import Account
+from durator.common.account.account import Account
+from durator.db.database import DB, db_connection
 from durator.world.game.char.constants import (
     CharacterGender, NEW_CHAR_CONSTS, RACE_AND_CLASS_CONSTS )
-from durator.db.database import DB, db_connection
 from pyshgck.logger import LOG
 
 

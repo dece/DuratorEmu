@@ -2,9 +2,10 @@ import socket
 import threading
 import time
 
-from durator.auth.account import AccountManager, AccountSessionManager
 from durator.auth.login_connection import LoginConnection
 from durator.auth.realm_connection import RealmConnection
+from durator.common.account.account import AccountManager
+from durator.common.account.account_session import AccountSessionManager
 from durator.config import CONFIG
 from pyshgck.concurrency import simple_thread
 from pyshgck.logger import LOG

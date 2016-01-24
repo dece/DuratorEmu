@@ -1,7 +1,7 @@
 import os
 from struct import Struct
 
-from durator.auth.account import AccountSessionManager
+from durator.common.account.account_session import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
 from durator.world.game.object_manager import OBJECT_MANAGER
 from durator.world.game.object.object_fields import ObjectField
