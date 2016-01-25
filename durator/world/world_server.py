@@ -48,45 +48,48 @@ class WorldServer(object):
 
     def start(self):
         LOG.info("Starting world server " + self.realm.name)
-        self._start_listening_for_clients()
+        self._listen_clients()
 
         simple_thread(self._handle_login_server_connection)
-        self._accept_client_connections()
+        self._accept_clients()
 
         self.shutdown_flag.set()
-        self._stop_listening_for_clients()
+        self._stop_listen_clients()
         LOG.info("World server stopped.")
 
     #------------------------------
     # Clients connection
     #------------------------------
 
-    def _start_listening_for_clients(self):
+    def _listen_clients(self):
         self.clients_socket = socket.socket()
         self.clients_socket.settimeout(1)
         clients_address = (self.hostname, self.port)
         self.clients_socket.bind(clients_address)
         self.clients_socket.listen(WorldServer.BACKLOG_SIZE)
 
-    def _stop_listening_for_clients(self):
+    def _stop_listen_clients(self):
         self.clients_socket.close()
         self.clients_socket = None
 
-    def _accept_client_connections(self):
+    def _accept_clients(self):
+        """ Regularly try to access client while looking for interrupts. """
         try:
             while True:
-                self._try_accept_client_connection()
+                self._try_accept_client()
         except KeyboardInterrupt:
             LOG.info("KeyboardInterrupt received, stop accepting clients.")
 
-    def _try_accept_client_connection(self):
+    def _try_accept_client(self):
+        """ Accept a client connection or timeout if there aren't any. """
         try:
             connection, address = self.clients_socket.accept()
-            self._handle_client_connection(connection, address)
+            self._handle_client(connection, address)
         except socket.timeout:
             pass
 
-    def _handle_client_connection(self, connection, address):
+    def _handle_client(self, connection, address):
+        """ Start the threaded WorldConnection and add it to the local list. """
         LOG.info("Accepting client connection from " + str(address))
         world_connection = WorldConnection(self, connection)
 
@@ -128,3 +131,32 @@ class WorldServer(object):
     def _close_login_server_socket(self):
         self.login_server_socket.close()
         self.login_server_socket = None
+
+    #------------------------------
+    # Server utilities
+    #------------------------------
+
+    def broadcast(self, packet, state = None, guids = None):
+        """ Send a WorldPacket to all eligible WorldConnection. """
+        with self.world_connections_lock:
+            for connection in self.world_connections:
+                eligible = WorldServer._get_broadcast_eligibility(
+                    connection, state, guids
+                )
+                if eligible:
+                    connection.outgoing_queue.put(packet)
+
+    @staticmethod
+    def _get_broadcast_eligibility(connection, state, guids):
+        """ Return whether a connection is eligible to receive a broadcast.
+
+        If state is provided, send packet only WorldConnections in that state.
+        If guids is provided, send packet only to players in that GUID list.
+        """
+        state_condition = ( state is None
+                            or connection.state == state )
+        guid_condition = ( guids is None
+                           or ( connection.player
+                                and connection.player.guid in guids ) )
+        eligible = state_condition and guid_condition
+        return eligible
