@@ -71,12 +71,17 @@ OBJECT_FLAGS_TO_TYPE = {
 }
 
 
-
 class BaseObject(object):
     """ A BaseObject is the base type for all things spawned in world.
 
-    It has a name that can be queried by clients, map and zone IDs, a Position,
-    and a dict of fields with their associated values.
+    Attributes:
+    - name: can be queried by clients
+    - map_id
+    - zone_id
+    - position: the current Position object
+    - fields: dict of fields with their associated values.
+        Beware, keys can be *Field values but also ints as not all fields have a
+        corresponding Enum member.
     """
 
     def __init__(self):
