@@ -34,7 +34,7 @@ class JoinChannelHandler(object):
         self.password = password_bytes.decode("utf8")
 
     def _try_join_channel(self):
-        join_result_code = self.conn.server.chat_manager.join(
+        join_result_code = self.conn.server.chat_manager.join_channel(
             self.conn.player, self.channel_name, self.password
         )
         return join_result_code

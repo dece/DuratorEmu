@@ -1,21 +1,42 @@
-import threading
+from threading import Lock
 
 from durator.world.game.character.character_data import CharacterManager
-from durator.world.game.object.base_object import ObjectDescFlags
+from durator.world.game.object.base_object import ObjectType, ObjectTypeFlags
 from durator.world.game.object.object_fields import (
     ObjectField, UnitField, PlayerField )
 from durator.world.game.object.player import Player
 from pyshgck.logger import LOG
 
 
+def lock(lock_name):
+    def lock_decorator_outer(func):
+        def lock_decorator(self, *args, **kwargs):
+            with self.locks[lock_name]:
+                return func(self, *args, **kwargs)
+        return lock_decorator
+    return lock_decorator_outer
+
+
 class ObjectManager(object):
     """ Manage all objects in world. To avoid an overcrowded class, boring
     stuff is moved to friend classes. """
 
-    def __init__(self):
-        self.players = {}
-        self.locks = { lock_name: threading.Lock() for lock_name in
-                       ["players"] }
+    CATEGORIES = { ObjectType.PLAYER: "players" }
+
+    def __init__(self, server):
+        self.server  = server
+        self.objects = { name: {} for name in self.CATEGORIES.values() }
+        self.locks   = { name: Lock() for name in self.CATEGORIES.values() }
+
+    def _add_misc_object(self, misc_object):
+        """ Add (blocking) an object of any type to the appropriate list. """
+        cat_name = self.CATEGORIES[misc_object.type]
+        with self.locks[cat_name]:
+            self.objects[cat_name][misc_object.guid] = misc_object
+
+    @lock("players")
+    def _add_player(self, player):
+        self.objects["players"][player.guid] = player
 
     def add_player(self, char_data):
         """ Create (and return) a Player object from the data stored in the
@@ -28,9 +49,7 @@ class ObjectManager(object):
         _PlayerManager.add_unit_fields(player, char_data)
         _PlayerManager.add_player_fields(player, char_data)
 
-        with self.locks["players"]:
-            self.players[player.guid] = player
-
+        self._add_player(player)
         return player
 
     @staticmethod
@@ -42,10 +61,15 @@ class ObjectManager(object):
         base_object.position.z = position_data.pos_z
         base_object.position.o = position_data.orientation
 
+    @lock("players")
     def get_player(self, guid):
-        """ Return the object with that GUID, or None if it doesn't exist. """
-        with self.locks["players"]:
-            return self.players.get(guid)
+        """ Return the player with that GUID, or None if it doesn't exist. """
+        return self.objects["players"].get(guid)
+
+    @lock("players")
+    def get_players_guids(self):
+        """ Return an iterable over registered Player GUIDs. """
+        return list(self.objects["players"].keys())
 
     @staticmethod
     def _get_coords_from_object(base_object, position_data):
@@ -56,17 +80,22 @@ class ObjectManager(object):
         position_data.pos_z       = base_object.position.z
         position_data.orientation = base_object.position.o
 
+    @lock("players")
+    def _remove_player(self, guid):
+        del self.objects["players"][guid]
+
     def remove_player(self, guid):
         """ Remove the player from the object list and save its data. """
         player = self.get_player(guid)
         if player is None:
             LOG.warning("Tried to remove a non-existing player.")
-            return
+        else:
+            self._remove_player(guid)
+            ObjectManager._save_player_data(player)
 
-        with self.locks["players"]:
-            del self.players[guid]
-
-        char_data = CharacterManager.get_char_data(guid)
+    @staticmethod
+    def _save_player_data(player):
+        char_data = CharacterManager.get_char_data(player.guid)
         ObjectManager._get_coords_from_object(player, char_data.position)
         _PlayerManager.get_object_fields(player, char_data)
         _PlayerManager.get_unit_fields(player, char_data)
@@ -78,15 +107,18 @@ class ObjectManager(object):
         char_data.save()
 
 
+
+
+
 class _PlayerManager(object):
     """ Static methods to transfer data from database models to objects. """
 
     @staticmethod
     def add_object_fields(player, char_data):
         object_type = (
-            ObjectDescFlags.OBJECT.value |
-            ObjectDescFlags.UNIT.value   |
-            ObjectDescFlags.PLAYER.value
+            ObjectTypeFlags.OBJECT.value |
+            ObjectTypeFlags.UNIT.value   |
+            ObjectTypeFlags.PLAYER.value
         )
         player.set(ObjectField.GUID,    char_data.guid)
         player.set(ObjectField.TYPE,    object_type)
