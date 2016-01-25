@@ -146,6 +146,8 @@ class WorldConnection(ConnectionAutomaton):
         AccountSessionManager.delete_session(self.account)
         self.unset_player()
 
+        self.server.world_connections.remove(self)
+
     def set_player(self, char_data):
         """ Ask the ObjectManager to create a Player object with the char_data
         from the database. """

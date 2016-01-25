@@ -33,6 +33,7 @@ class WorldServer(object):
         self.login_server_socket = None
         self.clients_socket = None
 
+        self.world_connections = []
         self.object_manager = ObjectManager()
         self.chat_manager = ChatManager()
 
@@ -54,6 +55,10 @@ class WorldServer(object):
         realm_address = "{}:{}".format(self.hostname, self.port)
         realm_id = RealmId(int(CONFIG["realm"]["id"]))
         self.realm = Realm(realm_name, realm_address, realm_id)
+
+    #------------------------------
+    # Clients connection
+    #------------------------------
 
     def _start_listening_for_clients(self):
         self.clients_socket = socket.socket()
@@ -83,7 +88,12 @@ class WorldServer(object):
     def _handle_client_connection(self, connection, address):
         LOG.info("Accepting client connection from " + str(address))
         world_connection = WorldConnection(self, connection)
+        self.world_connections.append(world_connection)
         simple_thread(world_connection.handle_connection)
+
+    #------------------------------
+    # Login server connection
+    #------------------------------
 
     def _handle_login_server_connection(self):
         """ Update forever the realm state to the login server. """
