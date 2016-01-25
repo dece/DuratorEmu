@@ -6,7 +6,7 @@ from pyshgck.logger import LOG
 class NotificationType(Enum):
     """ Untested values are commented. """
 
-    # JOINED                = 0x00
+    JOINED                = 0x00
     # LEFT                  = 0x01
     YOU_JOINED            = 0x02
     # YOU_LEFT              = 0x03
@@ -46,12 +46,17 @@ class Notification(object):
         self.notif_type = notif_type
         self.channel = channel
 
+        self.join_leave_guid = 0
+
     def to_bytes(self):
         data = b""
         data += int.to_bytes(self.notif_type.value, 1, "little")
         data += self.channel.name.encode("utf8") + b"\x00"
 
-        if self.notif_type == NotificationType.YOU_JOINED:
+        if self.notif_type == NotificationType.JOINED:
+            data += int.to_bytes(self.join_leave_guid, 8, "little")
+
+        elif self.notif_type == NotificationType.YOU_JOINED:
             chan_id = self.channel.internal_id
             data += int.to_bytes(chan_id, 4, "little")
             if chan_id == 0:
