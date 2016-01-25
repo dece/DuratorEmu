@@ -34,10 +34,17 @@ class WorldServer(object):
         self.clients_socket = None
 
         self.world_connections = []
+        self.world_connections_lock = threading.Lock()
         self.object_manager = ObjectManager(self)
         self.chat_manager = ChatManager(self)
 
         self.shutdown_flag = threading.Event()
+
+    def _create_realm(self):
+        realm_name = CONFIG["realm"]["name"]
+        realm_address = "{}:{}".format(self.hostname, self.port)
+        realm_id = RealmId(int(CONFIG["realm"]["id"]))
+        self.realm = Realm(realm_name, realm_address, realm_id)
 
     def start(self):
         LOG.info("Starting world server " + self.realm.name)
@@ -49,12 +56,6 @@ class WorldServer(object):
         self.shutdown_flag.set()
         self._stop_listening_for_clients()
         LOG.info("World server stopped.")
-
-    def _create_realm(self):
-        realm_name = CONFIG["realm"]["name"]
-        realm_address = "{}:{}".format(self.hostname, self.port)
-        realm_id = RealmId(int(CONFIG["realm"]["id"]))
-        self.realm = Realm(realm_name, realm_address, realm_id)
 
     #------------------------------
     # Clients connection
@@ -88,7 +89,10 @@ class WorldServer(object):
     def _handle_client_connection(self, connection, address):
         LOG.info("Accepting client connection from " + str(address))
         world_connection = WorldConnection(self, connection)
-        self.world_connections.append(world_connection)
+
+        with self.world_connections_lock:
+            self.world_connections.append(world_connection)
+
         simple_thread(world_connection.handle_connection)
 
     #------------------------------
