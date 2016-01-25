@@ -8,6 +8,7 @@ from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.character.char_create import CharCreateHandler
 from durator.world.handlers.character.char_delete import CharDeleteHandler
 from durator.world.handlers.character.char_enum import CharEnumHandler
+from durator.world.handlers.chat.join_channel import JoinChannelHandler
 from durator.world.handlers.game.account_data import RequestAccountDataHandler
 from durator.world.handlers.game.account_data import UpdateAccountDataHandler
 from durator.world.handlers.game.logout import LogoutRequestHandler
@@ -65,6 +66,7 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_PLAYER_LOGIN:           PlayerLoginHandler,
         OpCode.CMSG_LOGOUT_REQUEST:         LogoutRequestHandler,
         OpCode.CMSG_NAME_QUERY:             NameQueryHandler,
+        OpCode.CMSG_JOIN_CHANNEL:           JoinChannelHandler,
         OpCode.MSG_MOVE_START_FORWARD:      MovementHandler,
         OpCode.MSG_MOVE_START_BACKWARD:     MovementHandler,
         OpCode.MSG_MOVE_STOP:               MovementHandler,

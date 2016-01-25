@@ -1,6 +1,5 @@
 from struct import Struct
 
-from durator.world.game.object_manager import OBJECT_MANAGER
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG

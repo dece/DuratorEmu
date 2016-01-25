@@ -3,6 +3,7 @@ import threading
 import time
 
 from durator.config import CONFIG
+from durator.world.game.chat_manager import ChatManager
 from durator.world.game.object_manager import ObjectManager
 from durator.world.realm import Realm, RealmId, RealmFlags, RealmPopulation
 from durator.world.world_connection import WorldConnection
@@ -33,6 +34,7 @@ class WorldServer(object):
         self.clients_socket = None
 
         self.object_manager = ObjectManager()
+        self.chat_manager = ChatManager()
 
         self.shutdown_flag = threading.Event()
 
