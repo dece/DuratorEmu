@@ -3,6 +3,7 @@ import threading
 import time
 
 from durator.config import CONFIG
+from durator.world.game.object_manager import ObjectManager
 from durator.world.realm import Realm, RealmId, RealmFlags, RealmPopulation
 from durator.world.world_connection import WorldConnection
 from pyshgck.concurrency import simple_thread
