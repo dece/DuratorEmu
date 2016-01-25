@@ -44,10 +44,9 @@ class AccountData(Model):
         return zlib.compress(self.content.encode("utf8"))
     @content_as_zlib_data.setter
     def content_as_zlib_data(self, value_bytes):
-        if value_bytes:
+        try:
             self.content = zlib.decompress(value_bytes).decode("utf8")
-        else:
-            # Can't decompress an empty bytes object
+        except zlib.error:
             self.content = ""
 
     @property
