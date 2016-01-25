@@ -43,7 +43,7 @@ class ChatMessageType(Enum):
     LOOT                   = 0x18
 
 
-class MessageTag(Enum):
+class ChatMessageTag(Enum):
 
     NONE = 0
     AFK  = 1
@@ -111,7 +111,7 @@ class ServerChatMessage(object):
 
         self.sender_guid = 0
         self.content_size = 0
-        self.tag = MessageTag.NONE
+        self.tag = ChatMessageTag.NONE
 
     def load_client_message(self, client_message):
         self.message_type = client_message.message_type
