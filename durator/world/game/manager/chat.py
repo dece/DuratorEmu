@@ -115,6 +115,39 @@ class ChatManager(object):
             guids = members
         )
 
+    def leave_channel(self, player, chan_name):
+        """ Try to leave channel.
+
+        Return:
+        - 0 on success
+        - 1 if player wasn't on that channel to begin with
+        - 2 if the channel doesn't even exist
+        """
+        if chan_name not in self.get_channels_names():
+            return 2
+        channel = self.get_channel(chan_name)
+        if player.guid not in channel.get_members():
+            return 1
+
+        LOG.info("{} leaves channel '{}'.".format(player.name, channel.name))
+        guid = player.guid
+        channel.remove_member(guid)
+        self._notify_leave(channel, guid)
+        return 0
+
+    def _notify_leave(self, channel, leaver_guid):
+        """ Send to all members of this channel that a player left. """
+        members = channel.get_members()
+        notification = Notification(NotificationType.LEFT, channel)
+        notification.join_leave_guid = leaver_guid
+        notify_packet = notification.to_packet()
+
+        self.server.broadcast(
+            notify_packet,
+            state = WorldConnectionState.IN_WORLD,
+            guids = members
+        )
+
     def receive_message(self, sender, message):
         """ Register a received chat message for that sender (GUID).
 

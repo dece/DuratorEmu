@@ -8,9 +8,9 @@ class NotificationType(Enum):
     """ Untested values are commented. """
 
     JOINED                = 0x00
-    # LEFT                  = 0x01
+    LEFT                  = 0x01
     YOU_JOINED            = 0x02
-    # YOU_LEFT              = 0x03
+    YOU_LEFT              = 0x03
     WRONG_PASSWORD        = 0x04
     NOT_MEMBER            = 0x05
     # NOT_MODERATOR         = 0x06
@@ -43,22 +43,26 @@ class NotificationType(Enum):
 
 class Notification(object):
 
-    def __init__(self, notif_type, channel):
+    def __init__(self, notif_type, channel = None):
         self.notif_type = notif_type
         self.channel = channel
 
+        self.channel_name = channel.name if channel else "No channel"
+        self.channel_id = channel.internal_id if channel else 0
         self.join_leave_guid = 0
 
     def to_bytes(self):
         data = b""
         data += int.to_bytes(self.notif_type.value, 1, "little")
-        data += self.channel.name.encode("utf8") + b"\x00"
+        data += self.channel_name.encode("utf8") + b"\x00"
 
-        if self.notif_type == NotificationType.JOINED:
+        if (    self.notif_type == NotificationType.JOINED
+             or self.notif_type == NotificationType.LEFT ):
             data += int.to_bytes(self.join_leave_guid, 8, "little")
 
-        elif self.notif_type == NotificationType.YOU_JOINED:
-            chan_id = self.channel.internal_id
+        elif (    self.notif_type == NotificationType.YOU_JOINED
+               or self.notif_type == NotificationType.YOU_LEFT ):
+            chan_id = self.channel_id
             data += int.to_bytes(chan_id, 4, "little")
             if chan_id == 0:
                 data += b"\x00"  # Non internal channels have an additional str
