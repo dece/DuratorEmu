@@ -1,15 +1,6 @@
-""" Constants values for characters, races and classes.
-
-These values are mostly taken from the WoWCore vanilla sandbox, so they may or
-may not be right, but they're good enough for me.
-"""
+""" Constants for characters, races and classes. """
 
 from enum import Enum
-
-
-# ------------------------------------------------------------------------------
-# Constants shared by all characters
-# ------------------------------------------------------------------------------
 
 
 class CharacterRace(Enum):
@@ -44,24 +35,6 @@ class CharacterGender(Enum):
     FEMALE = 1
 
 
-class UnitPower(Enum):
-
-    MANA      = 0
-    RAGE      = 1
-    FOCUS     = 2
-    ENERGY    = 3
-    HAPPINESS = 4
-
-
-class UnitStat(Enum):
-
-    STRENGTH  = 0
-    AGILITY   = 1
-    STAMINA   = 2
-    INTELLECT = 3
-    SPIRIT    = 4
-
-
 class CharacterEquipSlot(Enum):
 
     HEAD      = 0
@@ -87,128 +60,3 @@ class CharacterEquipSlot(Enum):
     BAG2      = 20
     BAG3      = 21
     BAG4      = 22
-
-
-NEW_CHAR_CONSTS = {
-    "speed_walk":    2.5,
-    "speed_run":     7.0,
-    "speed_run_bw":  4.5,
-    "speed_swim":    4.7222223,
-    "speed_swim_bw": 2.5,
-    "speed_turn":    3.141593,
-
-    "level":        1,
-    "unit_flags":   0,
-    "unit_bytes_1": 0,
-
-    "resistances": 0,  # don't we know these?
-
-    "unit_bytes_2": 0,
-
-    "player_flags": 0,
-
-    "rest_info": 1,
-
-    "exp":                0,
-    "next_level_exp":     2500,
-    "character_points_1": 0,
-    "prof_left":          2,  # character_points_2
-
-    "block_percentage": 4.0,
-    "dodge_percentage": 4.0,
-    "parry_percentage": 4.0,
-    "crit_percentage":  4.0,
-
-    "rest_state_exp": 200,
-    "coinage":        0
-}
-
-
-# ------------------------------------------------------------------------------
-# Constants of each race
-# ------------------------------------------------------------------------------
-
-
-HUMAN_CONSTS = {
-    "scale_x":           1.0,
-    "start_map":         0,
-    "start_zone":        12,
-    "start_pos_x":       -8949.950195,
-    "start_pos_y":       -132.492996,
-    "start_pos_z":       83.531197,
-    "start_orientation": 0.000000,
-    "bounding_radius":   0.306000,
-    "combat_reach":      1.500000,
-    "model_male":        49,
-    "model_female":      50,
-    "faction_template":  CharacterRace.HUMAN.value
-}
-
-UNDEAD_CONSTS = {
-    "scale_x":           1.0,
-    "start_map":         0,
-    "start_zone":        85,
-    "start_pos_x":       1676.349976,
-    "start_pos_y":       1677.449951,
-    "start_pos_z":       121.669998,
-    "start_orientation": 2.705260,
-    "bounding_radius":   0.382999,
-    "combat_reach":      1.500000,
-    "model_male":        57,
-    "model_female":      58,
-    "faction_template":  CharacterRace.UNDEAD.value
-}
-
-
-# ------------------------------------------------------------------------------
-# Constants of each class (for each race)
-# ------------------------------------------------------------------------------
-
-
-UNDEAD_ROGUE_CONSTS = {
-    "power_type":          UnitPower.ENERGY.value,
-
-    "max_health":          65,
-    "max_power_mana":      0,
-    "max_power_rage":      0,
-    "max_power_focus":     0,
-    "max_power_energy":    100,
-    "max_power_happiness": 0,
-
-    "attack_time_mainhand": 1600,
-    "attack_time_offhand":  2000,
-    "attack_time_ranged":   1800,
-
-    "min_damage":         3.63,
-    "max_damage":         4.63,
-    "min_offhand_damage": 0.0,
-    "max_offhand_damage": 0.0,
-
-    "mod_cast_speed": 1,
-
-    "stat_strength":  20,
-    "stat_agility":   21,
-    "stat_stamina":   22,
-    "stat_intellect": 18,
-    "stat_spirit":    25,
-
-    "attack_power":     23,
-    "base_mana":        0,
-    "attack_power_mod": 0,
-
-    "ap_ranged":         12,
-    "ap_ranged_mod":     0,
-    "min_ranged_damage": 5.54,
-    "max_ranged_damage": 9.54,
-}
-
-
-# ------------------------------------------------------------------------------
-# This map allows you to access the constants dicts easily with race and class
-# ------------------------------------------------------------------------------
-
-
-RACE_AND_CLASS_CONSTS = {
-    (CharacterRace.UNDEAD, CharacterClass.ROGUE):
-        { "race": UNDEAD_CONSTS, "class": UNDEAD_ROGUE_CONSTS }
-}

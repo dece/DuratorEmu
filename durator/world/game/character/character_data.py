@@ -13,8 +13,9 @@ from peewee import (
 
 from durator.common.account.account import Account
 from durator.db.database import DB, db_connection
-from durator.world.game.character.constants import (
-    CharacterGender, NEW_CHAR_CONSTS, RACE_AND_CLASS_CONSTS )
+from durator.world.game.character.constants import CharacterGender
+from durator.world.game.character.defaults import (
+    NEW_CHAR_DEFAULTS, RACE_AND_CLASS_DEFAULTS )
 from pyshgck.logger import LOG
 
 
@@ -50,7 +51,7 @@ class CharacterStats(Model):
     max_energy    = IntegerField()
     max_happiness = IntegerField()
 
-    level            = IntegerField(default = NEW_CHAR_CONSTS["level"])
+    level            = IntegerField(default = NEW_CHAR_DEFAULTS["level"])
     faction_template = IntegerField(default = 0)
     unit_flags       = IntegerField(default = 0)
 
@@ -101,21 +102,21 @@ class CharacterStats(Model):
 
     player_flags = IntegerField(default = 0)
 
-    rest_info = IntegerField(default = NEW_CHAR_CONSTS["rest_info"])
+    rest_info = IntegerField(default = NEW_CHAR_DEFAULTS["rest_info"])
 
-    exp            = IntegerField(default = NEW_CHAR_CONSTS["exp"])
-    next_level_exp = IntegerField(default = NEW_CHAR_CONSTS["next_level_exp"])
+    exp            = IntegerField(default = NEW_CHAR_DEFAULTS["exp"])
+    next_level_exp = IntegerField(default = NEW_CHAR_DEFAULTS["next_level_exp"])
 
     character_points_1 = IntegerField(default = 0)
-    character_points_2 = IntegerField(default = NEW_CHAR_CONSTS["prof_left"])
+    character_points_2 = IntegerField(default = NEW_CHAR_DEFAULTS["prof_left"])
 
     block_percentage = FloatField(default = 4.0)
     dodge_percentage = FloatField(default = 4.0)
     parry_percentage = FloatField(default = 4.0)
     crit_percentage  = FloatField(default = 4.0)
 
-    rest_state_exp = IntegerField(default = NEW_CHAR_CONSTS["rest_state_exp"])
-    coinage        = IntegerField(default = NEW_CHAR_CONSTS["coinage"])
+    rest_state_exp = IntegerField(default = NEW_CHAR_DEFAULTS["rest_state_exp"])
+    coinage        = IntegerField(default = NEW_CHAR_DEFAULTS["coinage"])
 
     class Meta(object):
         database = DB
@@ -163,7 +164,8 @@ class CharacterManager(object):
     @db_connection
     def create_character(account, char_values):
         """ Try to create a new character and add it to the database. Return 0
-        on success, 1 on unspecified failure, 2 on name already used.
+        on success, 1 on unspecified failure, 2 on name already used, 3 if the
+        race and class combination isn't supported.
 
         The arg char_values is a tuple containing the Character data in the
         order they're defined, from name to features. This last value has to be
@@ -197,13 +199,17 @@ class CharacterManager(object):
             character.features = features
 
             race_and_class = (char_values["race"], char_values["class"])
-            consts = RACE_AND_CLASS_CONSTS[race_and_class]
+            consts = RACE_AND_CLASS_DEFAULTS.get(race_and_class)
+            if not consts:
+                return 3
             gender = char_values["gender"]
 
             stats = CharacterManager._get_default_char_stats(consts, gender)
             position = CharacterManager._get_default_char_position(consts)
             character.stats = stats
             character.position = position
+
+            CharacterManager._add_default_skills(character, consts)
 
             character.save()
         except PeeweeException as exc:
@@ -244,9 +250,9 @@ class CharacterManager(object):
             max_energy    = consts["class"]["max_power_energy"],
             max_happiness = consts["class"]["max_power_happiness"],
 
-            level            = NEW_CHAR_CONSTS["level"],
+            level            = NEW_CHAR_DEFAULTS["level"],
             faction_template = consts["race"]["faction_template"],
-            unit_flags       = NEW_CHAR_CONSTS["unit_flags"],
+            unit_flags       = NEW_CHAR_DEFAULTS["unit_flags"],
 
             attack_time_mainhand = consts["class"]["attack_time_mainhand"],
             attack_time_offhand  = consts["class"]["attack_time_offhand"],
@@ -263,7 +269,7 @@ class CharacterManager(object):
             min_offhand_damage = consts["class"]["min_offhand_damage"],
             max_offhand_damage = consts["class"]["max_offhand_damage"],
 
-            unit_bytes_1 = NEW_CHAR_CONSTS["unit_bytes_1"],
+            unit_bytes_1 = NEW_CHAR_DEFAULTS["unit_bytes_1"],
 
             mod_cast_speed = consts["class"]["mod_cast_speed"],
 
@@ -273,42 +279,42 @@ class CharacterManager(object):
             intellect = consts["class"]["stat_intellect"],
             spirit    = consts["class"]["stat_spirit"],
 
-            resistance_0 = NEW_CHAR_CONSTS["resistances"],
-            resistance_1 = NEW_CHAR_CONSTS["resistances"],
-            resistance_2 = NEW_CHAR_CONSTS["resistances"],
-            resistance_3 = NEW_CHAR_CONSTS["resistances"],
-            resistance_4 = NEW_CHAR_CONSTS["resistances"],
-            resistance_5 = NEW_CHAR_CONSTS["resistances"],
-            resistance_6 = NEW_CHAR_CONSTS["resistances"],
+            resistance_0 = NEW_CHAR_DEFAULTS["resistances"],
+            resistance_1 = NEW_CHAR_DEFAULTS["resistances"],
+            resistance_2 = NEW_CHAR_DEFAULTS["resistances"],
+            resistance_3 = NEW_CHAR_DEFAULTS["resistances"],
+            resistance_4 = NEW_CHAR_DEFAULTS["resistances"],
+            resistance_5 = NEW_CHAR_DEFAULTS["resistances"],
+            resistance_6 = NEW_CHAR_DEFAULTS["resistances"],
 
             attack_power      = consts["class"]["attack_power"],
             base_mana         = consts["class"]["base_mana"],
             attack_power_mods = consts["class"]["attack_power_mod"],
 
-            unit_bytes_2 = NEW_CHAR_CONSTS["unit_bytes_2"],
+            unit_bytes_2 = NEW_CHAR_DEFAULTS["unit_bytes_2"],
 
             ranged_attack_power      = consts["class"]["ap_ranged"],
             ranged_attack_power_mods = consts["class"]["ap_ranged_mod"],
             min_ranged_damage        = consts["class"]["min_ranged_damage"],
             max_ranged_damage        = consts["class"]["max_ranged_damage"],
 
-            player_flags = NEW_CHAR_CONSTS["player_flags"],
+            player_flags = NEW_CHAR_DEFAULTS["player_flags"],
 
-            rest_info = NEW_CHAR_CONSTS["rest_info"],
+            rest_info = NEW_CHAR_DEFAULTS["rest_info"],
 
-            exp            = NEW_CHAR_CONSTS["exp"],
-            next_level_exp = NEW_CHAR_CONSTS["next_level_exp"],
+            exp            = NEW_CHAR_DEFAULTS["exp"],
+            next_level_exp = NEW_CHAR_DEFAULTS["next_level_exp"],
 
-            character_points_1 = NEW_CHAR_CONSTS["character_points_1"],
-            character_points_2 = NEW_CHAR_CONSTS["prof_left"],
+            character_points_1 = NEW_CHAR_DEFAULTS["character_points_1"],
+            character_points_2 = NEW_CHAR_DEFAULTS["prof_left"],
 
-            block_percentage = NEW_CHAR_CONSTS["block_percentage"],
-            dodge_percentage = NEW_CHAR_CONSTS["dodge_percentage"],
-            parry_percentage = NEW_CHAR_CONSTS["parry_percentage"],
-            crit_percentage  = NEW_CHAR_CONSTS["crit_percentage"],
+            block_percentage = NEW_CHAR_DEFAULTS["block_percentage"],
+            dodge_percentage = NEW_CHAR_DEFAULTS["dodge_percentage"],
+            parry_percentage = NEW_CHAR_DEFAULTS["parry_percentage"],
+            crit_percentage  = NEW_CHAR_DEFAULTS["crit_percentage"],
 
-            rest_state_exp = NEW_CHAR_CONSTS["rest_state_exp"],
-            coinage        = NEW_CHAR_CONSTS["coinage"]
+            rest_state_exp = NEW_CHAR_DEFAULTS["rest_state_exp"],
+            coinage        = NEW_CHAR_DEFAULTS["coinage"]
         )
 
     @staticmethod

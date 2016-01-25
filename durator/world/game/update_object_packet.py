@@ -4,7 +4,7 @@ from enum import Enum
 import math
 from struct import Struct
 
-from durator.world.game.character.constants import NEW_CHAR_CONSTS
+from durator.world.game.character.constants import NEW_CHAR_DEFAULTS
 from durator.world.game.object.base_object import ObjectType
 from durator.world.game.object.object_fields import (
     ObjectField, UnitField, PlayerField )
@@ -89,12 +89,12 @@ class UpdateObjectPacket(WorldPacket):
             player.position.y,
             player.position.z,
             player.position.o,
-            NEW_CHAR_CONSTS["speed_walk"],
-            NEW_CHAR_CONSTS["speed_run"],
-            NEW_CHAR_CONSTS["speed_run_bw"],
-            NEW_CHAR_CONSTS["speed_swim"],
-            NEW_CHAR_CONSTS["speed_swim_bw"],
-            NEW_CHAR_CONSTS["speed_turn"]
+            NEW_CHAR_DEFAULTS["speed_walk"],
+            NEW_CHAR_DEFAULTS["speed_run"],
+            NEW_CHAR_DEFAULTS["speed_run_bw"],
+            NEW_CHAR_DEFAULTS["speed_swim"],
+            NEW_CHAR_DEFAULTS["speed_swim_bw"],
+            NEW_CHAR_DEFAULTS["speed_turn"]
         )
 
         data += self.PACKET_PART2_BIN.pack(1, 1, 0, 0)
