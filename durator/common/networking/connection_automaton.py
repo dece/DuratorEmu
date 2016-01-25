@@ -43,10 +43,10 @@ class ConnectionAutomaton(metaclass = ABCMeta):
             self._actions_at_loop_begin()
 
             packet, has_timeout = self._try_recv_packet()
-            if packet is None:
-                break
             if has_timeout:
                 continue
+            if packet is None:
+                break
             self._try_handle_packet(packet)
 
             self._actions_at_loop_end()

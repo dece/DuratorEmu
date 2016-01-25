@@ -161,8 +161,10 @@ class WorldConnection(ConnectionAutomaton):
 
     def _actions_after_main_loop(self):
         LOG.debug("WorldConnection: session ended.")
-        AccountSessionManager.delete_session(self.account)
-        self.unset_player()
+        if self.account and self.session_cipher:
+            AccountSessionManager.delete_session(self.account)
+        if self.player:
+            self.unset_player()
 
         with self.server.world_connections_lock:
             self.server.world_connections.remove(self)
@@ -175,6 +177,5 @@ class WorldConnection(ConnectionAutomaton):
     def unset_player(self):
         """ Transfer the Player data back to the database, after a logout or
         after the connection has been closed. """
-        if self.player is not None:
-            self.server.object_manager.remove_player(self.player.guid)
-            self.player = None
+        self.server.object_manager.remove_player(self.player.guid)
+        self.player = None
