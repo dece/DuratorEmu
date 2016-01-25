@@ -45,27 +45,27 @@ class LoginConnection(ConnectionAutomaton):
     def __del__(self):
         self.socket.close()
 
-    def send_packet(self, packet):
-        self.socket.sendall(packet)
-
     def _recv_packet(self):
         # This assumes that all packets are received in no more or less than one
         # piece, which is a wrong. However, exceptions shouldn't occur often
         # with how short login messages are.
-        data = self.socket.recv(1024)
-        return data or None
+        try:
+            data = self.socket.recv(1024)
+            return data or None
+        except ConnectionResetError:
+            LOG.info("Lost connection.")
+            return None
 
     def _parse_packet(self, packet):
         return LoginOpCode(packet[0]), packet[1:]
 
-    def _actions_after_handle_packet(self):
-        if self.state == self.MAIN_ERROR_STATE:
-            self.close_connection()
+    def send_packet(self, packet):
+        self.socket.sendall(packet)
 
-    def close_connection(self):
+    def _actions_after_main_loop(self):
         """ Close connection with client. """
+        LOG.debug("LoginConnection: session ended.")
         self.socket.close()
-        LOG.debug("Server closed the connection.")
 
     def accept_login(self):
         """ Ask the login server to validate this account session. """

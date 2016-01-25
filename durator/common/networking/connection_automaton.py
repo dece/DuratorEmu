@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+import socket
 import traceback
 
 from pyshgck.logger import LOG
@@ -37,27 +38,39 @@ class ConnectionAutomaton(metaclass = ABCMeta):
     def handle_connection(self):
         """ Call this method to let the automaton handle the connection. """
         self._actions_before_main_loop()
+
         while self.state not in self.END_STATES:
+            self._actions_at_loop_begin()
+
+            packet, has_timeout = self._try_recv_packet()
+            if packet is None:
+                break
+            if has_timeout:
+                continue
+            self._try_handle_packet(packet)
+
+            self._actions_at_loop_end()
+
+        self._actions_after_main_loop()
+
+    def _try_recv_packet(self):
+        packet, has_timeout = None, False
+
+        try:
             packet = self._recv_packet()
             if packet is None:
                 LOG.debug("Client closed the connection.")
-                break
+        except socket.timeout:
+            has_timeout = True
 
-            self._try_handle_packet(packet)
-            self._actions_after_handle_packet()
-        self._actions_after_main_loop()
-
-    @abstractmethod
-    def send_packet(self, data):
-        """ Prepend necessary infos to data and send it through the socket.
-        Data has the format returned by the packet handlers' response. """
-        pass
+        return packet, has_timeout
 
     @abstractmethod
     def _recv_packet(self):
         """ Receive a message from the socket and return the packet or None.
         It can be a bytes object, some class or whatever, as long as the other
-        parts of the class take the typ into account. """
+        parts of the class take the typ into account. Possible socket timeouts
+        can be raised as they will be captured by the main connection loop. """
         pass
 
     def _try_handle_packet(self, packet):
@@ -119,11 +132,21 @@ class ConnectionAutomaton(metaclass = ABCMeta):
         """ Check if that opcode is legal for the current connection state. """
         return opcode in self.LEGAL_OPS[self.state]
 
+    @abstractmethod
+    def send_packet(self, data):
+        """ Prepend necessary infos to data and send it through the socket.
+        Data has the format returned by the packet handlers' response. """
+        pass
+
     def _actions_before_main_loop(self):
         """ Perform possible required actions before looping over packets. """
         pass
 
-    def _actions_after_handle_packet(self):
+    def _actions_at_loop_begin(self):
+        """ Perform possible required actions before receiving packet. """
+        pass
+
+    def _actions_at_loop_end(self):
         """ Perform possible required actions after packet handling. """
         pass
 

@@ -1,8 +1,10 @@
 import os
+import queue
 from struct import Struct
 
 from durator.common.account.account_session import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
+from durator.config import CONFIG
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.character.char_create import CharCreateHandler
@@ -30,7 +32,9 @@ class WorldConnection(ConnectionAutomaton):
     """ Handle the communication between a client and the world server.
 
     Attributes:
-    - packet_buffer: incoming bytes are stored in there.
+    - world_packet_receiver: object that helps with world packet reception
+    - outgoing_queue: a thread-safe queue with messages for that client,
+        e.g. chat messages from other players.
     - shared_data: dict, holds misc temporary values that can be of use for
         several handlers; anything living longer than a few seconds should
         probably be stored somewhere else.
@@ -100,11 +104,15 @@ class WorldConnection(ConnectionAutomaton):
     END_STATES       = [ WorldConnectionState.ERROR ]
     MAIN_ERROR_STATE = WorldConnectionState.ERROR
 
+    RECV_TIMEOUT = float(CONFIG["realm"]["recv_timeout"])
+
     def __init__(self, server, connection):
         super().__init__(connection)
         self.server = server
+        self.socket.settimeout(self.RECV_TIMEOUT)
 
         self.world_packet_receiver = WorldPacketReceiver(self.socket)
+        self.outgoing_queue = queue.Queue()
         self.shared_data = {}
 
         self.account = None
@@ -116,10 +124,6 @@ class WorldConnection(ConnectionAutomaton):
         self.session_cipher = session_cipher
         self.world_packet_receiver.session_cipher = self.session_cipher
 
-    def send_packet(self, world_packet):
-        ready_packet = world_packet.to_socket(self.session_cipher)
-        self.socket.sendall(ready_packet)
-
     def _recv_packet(self):
         try:
             packet = self.world_packet_receiver.get_next_packet()
@@ -130,6 +134,10 @@ class WorldConnection(ConnectionAutomaton):
 
     def _parse_packet(self, packet):
         return packet.opcode, packet.data
+
+    def send_packet(self, world_packet):
+        ready_packet = world_packet.to_socket(self.session_cipher)
+        self.socket.sendall(ready_packet)
 
     def _actions_before_main_loop(self):
         LOG.debug("Sending auth challenge to setup session cipher.")
@@ -143,12 +151,21 @@ class WorldConnection(ConnectionAutomaton):
         packet = WorldPacket(OpCode.SMSG_AUTH_CHALLENGE, packet_data)
         self.send_packet(packet)
 
+    def _actions_at_loop_begin(self):
+        while not self.outgoing_queue.empty():
+            try:
+                packet = self.outgoing_queue.get(block = False)
+            except queue.Empty:
+                return
+            self.send_packet(packet)
+
     def _actions_after_main_loop(self):
         LOG.debug("WorldConnection: session ended.")
         AccountSessionManager.delete_session(self.account)
         self.unset_player()
 
-        self.server.world_connections.remove(self)
+        with self.server.world_connections_lock:
+            self.server.world_connections.remove(self)
 
     def set_player(self, char_data):
         """ Ask the ObjectManager to create a Player object with the char_data
