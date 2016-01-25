@@ -18,7 +18,7 @@ class ChatMessageType(Enum):
     YELL                   = 0x05  # ok
     WHISPER                = 0x06
     WHISPER_INFORM         = 0x07
-    EMOTE                  = 0x08
+    EMOTE                  = 0x08  # ok
     TEXT_EMOTE             = 0x09
 
     SYSTEM                 = 0x0A

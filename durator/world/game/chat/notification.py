@@ -12,7 +12,7 @@ class NotificationType(Enum):
     YOU_JOINED            = 0x02
     # YOU_LEFT              = 0x03
     WRONG_PASSWORD        = 0x04
-    # NOT_MEMBER            = 0x05
+    NOT_MEMBER            = 0x05
     # NOT_MODERATOR         = 0x06
     # PASSWORD_CHANGED      = 0x07
     # OWNER_CHANGED         = 0x08
@@ -24,7 +24,7 @@ class NotificationType(Enum):
     # ANNOUNCEMENTS_OFF     = 0x0E
     # MODERATION_ON         = 0x0F
     # MODERATION_OFF        = 0x10
-    # MUTED                 = 0x11
+    MUTED                 = 0x11
     # PLAYER_KICKED         = 0x12
     # BANNED                = 0x13
     # PLAYER_BANNED         = 0x14
@@ -34,7 +34,7 @@ class NotificationType(Enum):
     # INVITE                = 0x18
     # INVITE_WRONG_FACTION  = 0x19
     # WRONG_FACTION         = 0x1A
-    # INVALID_NAME          = 0x1B
+    INVALID_NAME          = 0x1B
     # NOT_MODERATED         = 0x1C
     # PLAYER_INVITED        = 0x1D
     # PLAYER_INVITE_BANNED  = 0x1E
