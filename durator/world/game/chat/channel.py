@@ -23,8 +23,7 @@ class Channel(object):
 
     @members_lock
     def _add_member(self, guid):
-        with self.members_lock:
-            self.members.append(guid)
+        self.members.append(guid)
 
     def add_member(self, player):
         guid = player.guid
