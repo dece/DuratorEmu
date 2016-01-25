@@ -1,6 +1,7 @@
 from enum import Enum
 
-from pyshgck.logger import LOG
+from durator.world.opcodes import OpCode
+from durator.world.world_packet import WorldPacket
 
 
 class NotificationType(Enum):
@@ -63,3 +64,6 @@ class Notification(object):
                 data += b"\x00"  # Non internal channels have an additional str
 
         return data
+
+    def to_packet(self):
+        return WorldPacket(OpCode.SMSG_CHANNEL_NOTIFY, self.to_bytes())

@@ -3,6 +3,8 @@ import io
 from struct import Struct
 
 from durator.world.game.chat.language import Language
+from durator.world.opcodes import OpCode
+from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring, read_struct
 
 
@@ -49,10 +51,45 @@ class MessageTag(Enum):
     GM   = 3
 
 
-class ChatMessage(object):
+class ClientChatMessage(object):
+
+    # - uint32    type
+    # - uint32    language
+    #     if type == CHANNEL
+    #     - string    name?
+    #     endif
+    # - string    message (size above)
+
+    HEADER_BIN = Struct("<2I")
+
+    def __init__(self):
+        self.message_type = None
+        self.language = None
+        self.channel_name = ""
+        self.content = ""
+
+    @staticmethod
+    def from_client(data):
+        message = ClientChatMessage()
+        data_io = io.BytesIO(data)
+
+        header_data = read_struct(data_io, ClientChatMessage.HEADER_BIN)
+        message.message_type = ChatMessageType(header_data[0])
+        message.language = Language(header_data[1])
+
+        if message.message_type == ChatMessageType.CHANNEL:
+            channel_name = read_cstring(data_io, data_io.tell())
+            message.channel_name = channel_name.decode("utf8")
+
+        content = read_cstring(data_io, data_io.tell())
+        message.content = content.decode("utf8")
+
+        return message
+
+
+class ServerChatMessage(object):
 
     # From the client SMSG_MESSAGECHAT handler, discarding some flags.
-    # Note that the CMSG is much simpler.
     # - uint8     type
     # - uint32    language
     #     if type == CHANNEL
@@ -63,30 +100,46 @@ class ChatMessage(object):
     # - string    message (size above)
     # - uint8     tag
 
-    HEADER_BIN = Struct("<2I")
+    HEADER_BIN      = Struct("<BI")
+    MIDDLE_PART_BIN = Struct("<QI")
 
     def __init__(self):
         self.message_type = None
-        self.language = 0
+        self.language = None
         self.channel_name = ""
         self.content = ""
 
-        self.guid = 0
+        self.sender_guid = 0
         self.content_size = 0
-        self.tag = None
+        self.tag = MessageTag.NONE
 
-    @staticmethod
-    def from_client(data):
-        message = ChatMessage()
-        data_io = io.BytesIO(data)
+    def load_client_message(self, client_message):
+        self.message_type = client_message.message_type
+        self.language = client_message.language
+        self.channel_name = client_message.channel_name
+        self.content = client_message.content
 
-        header_data = read_struct(data_io, ChatMessage.HEADER_BIN)
-        message.message_type = ChatMessageType(header_data[0])
-        message.language = Language(header_data[1])
+    def to_bytes(self):
+        data = b""
+        data += self.HEADER_BIN.pack(
+            self.message_type.value,
+            self.language.value
+        )
 
-        if message.message_type == ChatMessageType.CHANNEL:
-            message.channel_name = read_cstring(data_io, data_io.tell())
+        if self.message_type == ChatMessageType.CHANNEL:
+            data += self.channel_name.encode("utf8") + b"\x00"
 
-        message.content = read_cstring(data_io, data_io.tell())
+        content_bytes = self.content.encode("utf8") + b"\x00"
+        self.content_size = len(content_bytes)
 
-        return message
+        data += self.MIDDLE_PART_BIN.pack(
+            self.sender_guid,
+            self.content_size
+        )
+        data += content_bytes
+        data += int.to_bytes(self.tag.value, 1, "little")
+
+        return data
+
+    def to_packet(self):
+        return WorldPacket(OpCode.SMSG_MESSAGECHAT, self.to_bytes())

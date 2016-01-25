@@ -1,9 +1,6 @@
-import io
 from struct import Struct
 
-from durator.world.game.chat.message import ChatMessage
-from durator.world.opcodes import OpCode
-from durator.world.world_packet import WorldPacket
+from durator.world.game.chat.message import ClientChatMessage
 
 
 class MessageHandler(object):
@@ -19,8 +16,12 @@ class MessageHandler(object):
 
     def process(self):
         self._parse_packet(self.packet)
-        self.conn.server.chat_manager.receive_chat_message(ChatMessage)
+
+        player_guid = self.conn.player.guid
+        chat_manager = self.conn.server.chat_manager
+        chat_manager.receive_message(player_guid, self.message)
+
         return None, None
 
     def _parse_packet(self, packet):
-        self.message = ChatMessage.from_client(packet)
+        self.message = ClientChatMessage.from_client(packet)

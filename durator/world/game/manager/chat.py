@@ -7,7 +7,7 @@ maybe, but in the meantime the common channel is global to the server.
 import threading
 
 from durator.world.game.chat.channel import Channel
-from durator.world.game.chat.message import ChatMessageType
+from durator.world.game.chat.message import ServerChatMessage, ChatMessageType
 from durator.world.game.chat.notification import Notification, NotificationType
 from durator.world.world_connection_state import WorldConnectionState
 
@@ -102,15 +102,18 @@ class ChatManager(object):
     def _notify_join(self, channel, joiner_guid):
         """ Send to all members of this channel that a player joined. """
         members = channel.get_members()
-        joined_packet = Notification(NotificationType.JOINED, channel)
-        with self.server.world_connections_lock:
-            for connection in self.server.world_connections:
-                if connection.player is not None:
-                    guid = connection.player.guid
-                    if guid in members:
-                        connection.queue.put(joined_packet)
+        notification = Notification(NotificationType.JOINED, channel)
+        notification.join_leave_guid = joiner_guid
+        notify_packet = notification.to_packet()
 
-    def receive_chat_message(self, sender, message):
+        members.remove(joiner_guid)
+        self.server.broadcast(
+            notify_packet,
+            state = WorldConnectionState.IN_WORLD,
+            guids = members
+        )
+
+    def receive_message(self, sender, message):
         """ Register a received chat message for that sender (GUID). """
         if message.message_type is ChatMessageType.CHANNEL:
             channel = self.get_channel(message.channel_name)
@@ -126,10 +129,15 @@ class ChatManager(object):
         pass
 
     def _send_global_chat_message(self, sender, message):
-        with self.server.world_connections_lock:
-            for connection in self.server.world_connections:
-                if connection.state == WorldConnectionState.IN_WORLD:
-                    connection.queue.put(joined_packet)
+        server_message = ServerChatMessage()
+        server_message.load_client_message(message)
+        server_message.sender_guid = sender
+        message_packet = server_message.to_packet()
+
+        self.server.broadcast(
+            message_packet,
+            state = WorldConnectionState.IN_WORLD
+        )
 
     #------------------------------
     # Remove channels

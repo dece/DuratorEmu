@@ -31,43 +31,43 @@ class ObjectTypeFlags(Enum):
 
 
 OBJECT_TYPE_TO_FLAGS = {
-    ObjectType.OBJECT:         ( ObjectTypeFlags.OBJECT ),
-    ObjectType.ITEM:           ( ObjectTypeFlags.OBJECT |
-                                   ObjectTypeFlags.ITEM ),
-    ObjectType.CONTAINER:      ( ObjectTypeFlags.OBJECT      |
-                                   ObjectTypeFlags.ITEM      |
-                                   ObjectTypeFlags.CONTAINER ),
-    ObjectType.UNIT:           ( ObjectTypeFlags.OBJECT |
-                                   ObjectTypeFlags.UNIT ),
-    ObjectType.PLAYER:         ( ObjectTypeFlags.OBJECT   |
-                                   ObjectTypeFlags.UNIT   |
-                                   ObjectTypeFlags.PLAYER ),
-    ObjectType.GAME_OBJECT:    ( ObjectTypeFlags.OBJECT        |
-                                   ObjectTypeFlags.GAME_OBJECT ),
-    ObjectType.DYNAMIC_OBJECT: ( ObjectTypeFlags.OBJECT           |
-                                   ObjectTypeFlags.DYNAMIC_OBJECT ),
-    ObjectType.CORPSE:         ( ObjectTypeFlags.OBJECT   |
-                                   ObjectTypeFlags.CORPSE )
+    ObjectType.OBJECT:         ( ObjectTypeFlags.OBJECT.value ),
+    ObjectType.ITEM:           ( ObjectTypeFlags.OBJECT.value |
+                                   ObjectTypeFlags.ITEM.value ),
+    ObjectType.CONTAINER:      ( ObjectTypeFlags.OBJECT.value      |
+                                   ObjectTypeFlags.ITEM.value      |
+                                   ObjectTypeFlags.CONTAINER.value ),
+    ObjectType.UNIT:           ( ObjectTypeFlags.OBJECT.value |
+                                   ObjectTypeFlags.UNIT.value ),
+    ObjectType.PLAYER:         ( ObjectTypeFlags.OBJECT.value   |
+                                   ObjectTypeFlags.UNIT.value   |
+                                   ObjectTypeFlags.PLAYER.value ),
+    ObjectType.GAME_OBJECT:    ( ObjectTypeFlags.OBJECT.value        |
+                                   ObjectTypeFlags.GAME_OBJECT.value ),
+    ObjectType.DYNAMIC_OBJECT: ( ObjectTypeFlags.OBJECT.value           |
+                                   ObjectTypeFlags.DYNAMIC_OBJECT.value ),
+    ObjectType.CORPSE:         ( ObjectTypeFlags.OBJECT.value   |
+                                   ObjectTypeFlags.CORPSE.value )
 }
 
 OBJECT_FLAGS_TO_TYPE = {
-    ( ObjectTypeFlags.OBJECT ):           ObjectType.OBJECT,
-    ( ObjectTypeFlags.OBJECT |
-        ObjectTypeFlags.ITEM ):           ObjectType.ITEM,
-    ( ObjectTypeFlags.OBJECT      |
-        ObjectTypeFlags.ITEM      |
-        ObjectTypeFlags.CONTAINER ):      ObjectType.CONTAINER,
-    ( ObjectTypeFlags.OBJECT |
-        ObjectTypeFlags.UNIT ):           ObjectType.UNIT,
-    ( ObjectTypeFlags.OBJECT   |
-        ObjectTypeFlags.UNIT   |
-        ObjectTypeFlags.PLAYER ):         ObjectType.PLAYER,
-    ( ObjectTypeFlags.OBJECT        |
-        ObjectTypeFlags.GAME_OBJECT ):    ObjectType.GAME_OBJECT,
-    ( ObjectTypeFlags.OBJECT           |
-        ObjectTypeFlags.DYNAMIC_OBJECT ): ObjectType.DYNAMIC_OBJECT,
-    ( ObjectTypeFlags.OBJECT   |
-        ObjectTypeFlags.CORPSE ):         ObjectType.CORPSE
+    ( ObjectTypeFlags.OBJECT.value ):           ObjectType.OBJECT,
+    ( ObjectTypeFlags.OBJECT.value |
+        ObjectTypeFlags.ITEM.value ):           ObjectType.ITEM,
+    ( ObjectTypeFlags.OBJECT.value      |
+        ObjectTypeFlags.ITEM.value      |
+        ObjectTypeFlags.CONTAINER.value ):      ObjectType.CONTAINER,
+    ( ObjectTypeFlags.OBJECT.value |
+        ObjectTypeFlags.UNIT.value ):           ObjectType.UNIT,
+    ( ObjectTypeFlags.OBJECT.value   |
+        ObjectTypeFlags.UNIT.value   |
+        ObjectTypeFlags.PLAYER.value ):         ObjectType.PLAYER,
+    ( ObjectTypeFlags.OBJECT.value        |
+        ObjectTypeFlags.GAME_OBJECT.value ):    ObjectType.GAME_OBJECT,
+    ( ObjectTypeFlags.OBJECT.value           |
+        ObjectTypeFlags.DYNAMIC_OBJECT.value ): ObjectType.DYNAMIC_OBJECT,
+    ( ObjectTypeFlags.OBJECT.value   |
+        ObjectTypeFlags.CORPSE.value ):         ObjectType.CORPSE
 }
 
 
