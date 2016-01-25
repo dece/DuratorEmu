@@ -5,6 +5,24 @@ from durator.world.game.object.base_object import BaseObject
 from durator.world.game.object.object_fields import UnitField
 
 
+class UnitPower(Enum):
+
+    MANA      = 0
+    RAGE      = 1
+    FOCUS     = 2
+    ENERGY    = 3
+    HAPPINESS = 4
+
+
+class UnitStat(Enum):
+
+    STRENGTH  = 0
+    AGILITY   = 1
+    STAMINA   = 2
+    INTELLECT = 3
+    SPIRIT    = 4
+
+
 class Bytes0Mask(Enum):
 
     RACE   = 0x000000FF
