@@ -20,7 +20,9 @@ class JoinChannelHandler(object):
 
     def process(self):
         self._parse_packet(self.packet)
-        response_packet = self._try_join_channel()
+
+        join_result_code = self._try_join_channel()
+        response_packet = self._get_response_packet(join_result_code)
         return None, response_packet
 
     def _parse_packet(self, packet):
@@ -32,18 +34,19 @@ class JoinChannelHandler(object):
         self.password = password_bytes.decode("utf8")
 
     def _try_join_channel(self):
-        chat_manager = self.conn.server.chat_manager
-
-        join_result_code = chat_manager.join(
+        join_result_code = self.conn.server.chat_manager.join(
             self.conn.player, self.channel_name, self.password
         )
+        return join_result_code
+
+    def _get_response_packet(self, join_result_code):
         notif_type = {
             0: NotificationType.YOU_JOINED,
             1: NotificationType.WRONG_PASSWORD
         }[join_result_code]
 
-        channel = chat_manager.get_channel(self.channel_name)
+        channel = self.conn.server.chat_manager.get_channel(self.channel_name)
+
         notification = Notification(notif_type, channel)
         notification_bytes = notification.to_bytes()
-
         return WorldPacket(OpCode.SMSG_CHANNEL_NOTIFY, notification_bytes)
