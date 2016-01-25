@@ -1,5 +1,6 @@
 from enum import Enum
 
+from durator.world.game.object.object_fields import ObjectField
 from durator.world.game.position import Position
 
 
@@ -42,6 +43,10 @@ class BaseObject(object):
         self.zone_id = 0
         self.position = Position()
         self.fields = {}
+
+    @property
+    def guid(self):
+        return self.get(ObjectField.GUID)
 
     def get(self, field):
         """ Return the object field value, or None if it hasn't been set. """

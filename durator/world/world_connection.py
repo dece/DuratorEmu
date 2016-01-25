@@ -3,8 +3,6 @@ from struct import Struct
 
 from durator.common.account.account_session import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
-from durator.world.game.object_manager import OBJECT_MANAGER
-from durator.world.game.object.object_fields import ObjectField
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
 from durator.world.handlers.character.char_create import CharCreateHandler
@@ -155,6 +153,5 @@ class WorldConnection(ConnectionAutomaton):
         """ Transfer the Player data back to the database, after a logout or
         after the connection has been closed. """
         if self.player is not None:
-            guid = self.player.get(ObjectField.GUID)
-            self.server.object_manager.remove_player(guid)
+            self.server.object_manager.remove_player(self.player.guid)
             self.player = None

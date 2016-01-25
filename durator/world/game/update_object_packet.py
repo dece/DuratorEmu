@@ -77,9 +77,8 @@ class UpdateObjectPacket(WorldPacket):
         # The update_infos dict should contain the player field at least for
         # type 2 updates, and maybe some others.
         player = self.update_infos["player"]
-        guid = player.get(ObjectField.GUID)
         data += self.PACKET_PART1_BIN.pack(
-            1, 0, self.update_type.value, guid, ObjectType.PLAYER.value
+            1, 0, self.update_type.value, player.guid, ObjectType.PLAYER.value
         )
 
         # Assumes no flag for the movement

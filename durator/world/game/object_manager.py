@@ -28,10 +28,8 @@ class ObjectManager(object):
         _PlayerManager.add_unit_fields(player, char_data)
         _PlayerManager.add_player_fields(player, char_data)
 
-        guid = player.get(ObjectField.GUID)
-
         with self.locks["players"]:
-            self.players[guid] = player
+            self.players[player.guid] = player
 
         return player
 
