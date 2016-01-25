@@ -16,6 +16,7 @@ from durator.db.database import DB, db_connection
 from durator.world.game.character.constants import CharacterGender
 from durator.world.game.character.defaults import (
     NEW_CHAR_DEFAULTS, RACE_AND_CLASS_DEFAULTS )
+from durator.world.game.skill.skill import Skill
 from pyshgck.logger import LOG
 
 
@@ -34,7 +35,7 @@ class CharacterFeatures(Model):
 
 class CharacterStats(Model):
     """ A big bunch of Unit and Player fields that have to be stored. """
-    
+
     scale_x = FloatField(default = 1.0)
 
     health    = IntegerField()
@@ -327,6 +328,21 @@ class CharacterManager(object):
             pos_z       = consts["race"]["start_pos_z"],
             orientation = consts["race"]["start_orientation"]
         )
+
+    @staticmethod
+    @db_connection
+    def _add_default_skills(char_data, consts):
+        skills = consts["class"]["skills"]
+        for skill in skills:
+            values = skills[skill]
+            Skill.create(
+                character      = char_data,
+                ident          = skill.value,
+                level          = values[0],
+                max_level      = values[1],
+                stat_level     = values[2],
+                max_stat_level = values[3]
+            )
 
     @staticmethod
     @db_connection
