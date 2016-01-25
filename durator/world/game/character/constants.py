@@ -109,7 +109,7 @@ NEW_CHAR_CONSTS = {
 
     "rest_info": 1,
 
-    "exp":                100,
+    "exp":                0,
     "next_level_exp":     2500,
     "character_points_1": 0,
     "prof_left":          2,  # character_points_2

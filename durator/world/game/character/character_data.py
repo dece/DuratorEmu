@@ -13,7 +13,7 @@ from peewee import (
 
 from durator.common.account.account import Account
 from durator.db.database import DB, db_connection
-from durator.world.game.char.constants import (
+from durator.world.game.character.constants import (
     CharacterGender, NEW_CHAR_CONSTS, RACE_AND_CLASS_CONSTS )
 from pyshgck.logger import LOG
 

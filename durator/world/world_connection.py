@@ -7,9 +7,9 @@ from durator.world.game.object_manager import OBJECT_MANAGER
 from durator.world.game.object.object_fields import ObjectField
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler
 from durator.world.handlers.auth_session import AuthSessionHandler
-from durator.world.handlers.char_selection.char_create import CharCreateHandler
-from durator.world.handlers.char_selection.char_delete import CharDeleteHandler
-from durator.world.handlers.char_selection.char_enum import CharEnumHandler
+from durator.world.handlers.character.char_create import CharCreateHandler
+from durator.world.handlers.character.char_delete import CharDeleteHandler
+from durator.world.handlers.character.char_enum import CharEnumHandler
 from durator.world.handlers.game.account_data import RequestAccountDataHandler
 from durator.world.handlers.game.account_data import UpdateAccountDataHandler
 from durator.world.handlers.game.logout import LogoutRequestHandler

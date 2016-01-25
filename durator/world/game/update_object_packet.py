@@ -4,7 +4,7 @@ from enum import Enum
 import math
 from struct import Struct
 
-from durator.world.game.char.constants import NEW_CHAR_CONSTS
+from durator.world.game.character.constants import NEW_CHAR_CONSTS
 from durator.world.game.object.base_object import ObjectType
 from durator.world.game.object.object_fields import (
     ObjectField, UnitField, PlayerField )

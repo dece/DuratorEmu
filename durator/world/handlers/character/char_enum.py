@@ -1,6 +1,6 @@
 from struct import Struct
 
-from durator.world.game.char.constants import CharacterEquipSlot
+from durator.world.game.character.constants import CharacterEquipSlot
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 
