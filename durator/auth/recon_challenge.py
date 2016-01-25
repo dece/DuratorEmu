@@ -3,6 +3,7 @@ from struct import Struct
 
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
+from durator.common.account.account_session import AccountSessionManager
 from pyshgck.logger import LOG
 
 
@@ -50,7 +51,7 @@ class ReconChallenge(object):
         self.account_name = account_name.decode("ascii")
 
     def _process_reconnection(self):
-        session = self.conn.server.get_account_session(self.account_name)
+        session = AccountSessionManager.get_session(self.account_name)
         if session is not None:
             LOG.debug("Reconnection: account was logged in.")
             self.conn.account = session.account

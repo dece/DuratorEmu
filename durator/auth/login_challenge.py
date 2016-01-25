@@ -4,7 +4,7 @@ from struct import Struct
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
-from durator.common.account.account import AccountStatus
+from durator.common.account.account import AccountManager, AccountStatus
 from pyshgck.logger import LOG
 
 
@@ -76,7 +76,7 @@ class LoginChallenge(object):
 
     def _process_account(self):
         """ Check if the account received can log to the server. """
-        account = self.conn.server.get_account(self.account_name)
+        account = AccountManager.get_account(self.account_name)
         if account is not None and account.is_valid():
             self.conn.account = account
             self.conn.srp.generate_server_ephemeral(account.srp_verifier_as_int)

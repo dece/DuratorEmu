@@ -2,6 +2,7 @@ from struct import Struct
 
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
+from durator.common.account.account_session import AccountSessionManager
 from durator.common.crypto.sha1 import sha1
 from pyshgck.logger import LOG
 
@@ -45,7 +46,11 @@ class ReconProof(object):
 
     def _generate_local_proof(self):
         account_name = self.conn.account.name
-        session = self.conn.server.get_account_session(account_name)
+        session = AccountSessionManager.get_session(account_name)
+        if session is None:
+            LOG.warning("Reconnection proof: account wasn't logged in!")
+            return
+
         challenge = self.conn.recon_challenge
         to_hash = ( account_name.encode("ascii") + self.proof_data +
                     challenge + session.session_key_as_bytes )

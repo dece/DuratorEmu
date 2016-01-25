@@ -49,9 +49,9 @@ class LoginConnection(ConnectionAutomaton):
         self.socket.sendall(packet)
 
     def _recv_packet(self):
-        # TODO this assumes that all packets are received in no more or less
-        # than one piece which is a wrong way to look at networking,
-        # so clean that later.
+        # This assumes that all packets are received in no more or less than one
+        # piece, which is a wrong. However, exceptions shouldn't occur often
+        # with how short login messages are.
         data = self.socket.recv(1024)
         return data or None
 
@@ -69,5 +69,4 @@ class LoginConnection(ConnectionAutomaton):
 
     def accept_login(self):
         """ Ask the login server to validate this account session. """
-        session_key = self.srp.session_key
-        self.server.accept_account_login(self.account, session_key)
+        self.server.accept_account_login(self.account, self.srp.session_key)

@@ -4,7 +4,6 @@ import time
 
 from durator.auth.login_connection import LoginConnection
 from durator.auth.realm_connection import RealmConnection
-from durator.common.account.account import AccountManager
 from durator.common.account.account_session import AccountSessionManager
 from durator.config import CONFIG
 from pyshgck.concurrency import simple_thread
@@ -49,91 +48,61 @@ class LoginServer(object):
 
     def start(self):
         LOG.info("Starting login server")
-        self._start_listening()
+        self._start_listen()
 
-        simple_thread(self._accept_realm_connections)
-        self._accept_client_connections()
+        simple_thread(self._accept_realms)
+        self._accept_clients()
 
         self.shutdown_flag.set()
-        self._stop_listening()
-        self._clean_db()
+        self._stop_listen()
+        AccountSessionManager.delete_all_sessions()
         LOG.info("Login server stopped.")
 
-    def _clean_db(self):
-        LOG.debug("Cleaning database")
-        AccountSessionManager.delete_all_sessions()
-
-    def _start_listening(self):
+    def _start_listen(self):
         """ Start listening with non-blocking sockets, to still capture
         Windows signals. """
-        self.realms_socket = socket.socket()
-        self.realms_socket.settimeout(1)
-        address = (self.REALMS_HOST, self.REALMS_PORT)
-        self.realms_socket.bind(address)
-        self.realms_socket.listen(self.BACKLOG_SIZE)
+        self._listen_clients()
+        self._listen_realms()
 
+    def _stop_listen(self):
+        self._stop_listen_clients()
+        self._stop_listen_realms()
+
+    #------------------------------
+    # Clients connection
+    #------------------------------
+
+    def _listen_clients(self):
         self.clients_socket = socket.socket()
         self.clients_socket.settimeout(1)
         address = (self.CLIENTS_HOST, self.CLIENTS_PORT)
         self.clients_socket.bind(address)
         self.clients_socket.listen(self.BACKLOG_SIZE)
 
-    def _accept_client_connections(self):
+    def _accept_clients(self):
         """ Accept incoming clients connections until manual interruption. """
         try:
             while not self.shutdown_flag.is_set():
-                self._try_accept_client_connection()
+                self._try_accept_client()
         except KeyboardInterrupt:
             LOG.info("KeyboardInterrupt received, stop accepting clients.")
 
-    def _try_accept_client_connection(self):
+    def _try_accept_client(self):
         try:
             connection, address = self.clients_socket.accept()
-            self._handle_client_connection(connection, address)
+            self._handle_client(connection, address)
         except socket.timeout:
             pass
 
-    def _handle_client_connection(self, connection, address):
+    def _handle_client(self, connection, address):
         """ Start another thread to securely handle the client connection. """
         LOG.info("Accepting client connection from " + str(address))
         login_connection = LoginConnection(self, connection)
         simple_thread(login_connection.handle_connection)
 
-    def _accept_realm_connections(self):
-        """ Accept incoming realm connections forever, so this has to run in
-        another thread. """
-        while not self.shutdown_flag.is_set():
-            with self.locks["realms_socket"]:
-                try:
-                    connection, address = self.realms_socket.accept()
-                    self._handle_realm_connection(connection, address)
-                except socket.timeout:
-                    pass
-
-    def _handle_realm_connection(self, connection, address):
-        """ Start another thread to securely handle the realm connection. """
-        realm_connection = RealmConnection(self, connection, address)
-        simple_thread(realm_connection.handle_connection)
-
-    def _stop_listening(self):
-        with self.locks["realms_socket"]:
-            self.realms_socket.close()
-            self.realms_socket = None
-
-        self.clients_socket.close()
-        self.clients_socket = None
-
-    def get_account(self, account_name):
-        """ Return the account with that name. """
-        return AccountManager.get_account(account_name)
-
     def accept_account_login(self, account, session_key):
         """ Accept the account login in the active sessions table. """
         AccountSessionManager.add_session(account, session_key)
-
-    def get_account_session(self, account_name):
-        """ Return the account session if it's logged in, None otherwise. """
-        return AccountSessionManager.get_session(account_name)
 
     def get_realm_list(self):
         """ Return a copy of the realm states dict. """
@@ -153,3 +122,39 @@ class LoginServer(object):
                     LOG.debug("Realm " + realm + " down, removed from list.")
             for realm_to_remove in to_remove:
                 del self.realms[realm_to_remove]
+
+    def _stop_listen_clients(self):
+        self.clients_socket.close()
+        self.clients_socket = None
+
+    #------------------------------
+    # World servers connection
+    #------------------------------
+
+    def _listen_realms(self):
+        self.realms_socket = socket.socket()
+        self.realms_socket.settimeout(1)
+        address = (self.REALMS_HOST, self.REALMS_PORT)
+        self.realms_socket.bind(address)
+        self.realms_socket.listen(self.BACKLOG_SIZE)
+
+    def _accept_realms(self):
+        """ Accept incoming realm connections forever, so this has to run in
+        another thread. """
+        while not self.shutdown_flag.is_set():
+            with self.locks["realms_socket"]:
+                try:
+                    connection, address = self.realms_socket.accept()
+                    self._handle_realm(connection, address)
+                except socket.timeout:
+                    pass
+
+    def _handle_realm(self, connection, address):
+        """ Start another thread to securely handle the realm connection. """
+        realm_connection = RealmConnection(self, connection, address)
+        simple_thread(realm_connection.handle_connection)
+
+    def _stop_listen_realms(self):
+        with self.locks["realms_socket"]:
+            self.realms_socket.close()
+            self.realms_socket = None
