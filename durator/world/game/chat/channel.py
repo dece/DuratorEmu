@@ -1,7 +1,5 @@
 import threading
 
-from pyshgck.logger import LOG
-
 
 def members_lock(func):
     def members_lock_decorator(self, *args, **kwargs):
@@ -22,15 +20,19 @@ class Channel(object):
         self.members_lock = threading.Lock()
 
     @members_lock
-    def _add_member(self, guid):
-        self.members.append(guid)
-
-    def add_member(self, player):
-        guid = player.guid
+    def add_member(self, guid):
         if guid not in self.members:
-            LOG.info("{} joins channel '{}'.".format(player.name, self.name))
-            self._add_member(guid)
+            self.members.append(guid)
 
     @members_lock
     def get_members(self):
         return list(self.members)
+
+    @members_lock
+    def is_member(self, guid):
+        return guid in self.members
+
+    @members_lock
+    def remove_member(self, guid):
+        if guid in self.members:
+            self.members.remove(guid)

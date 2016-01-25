@@ -10,6 +10,7 @@ from durator.world.game.chat.channel import Channel
 from durator.world.game.chat.message import ServerChatMessage, ChatMessageType
 from durator.world.game.chat.notification import Notification, NotificationType
 from durator.world.world_connection_state import WorldConnectionState
+from pyshgck.logger import LOG
 
 
 INTERNAL_NAME_PREFIX_MAP = {
@@ -48,7 +49,7 @@ class ChatManager(object):
         - 0 on success
         - 1 if a channel with that name already exists
         """
-        if name not in self.channels:
+        if name not in self.get_channels_names():
             internal_id = ChatManager._get_internal_channel_id(name)
             channel = Channel(name, password, internal_id)
             self._add_channel(channel)
@@ -86,13 +87,14 @@ class ChatManager(object):
         - 0 on success
         - 1 if the password is wrong
         """
-        if chan_name not in self.channels:
+        if chan_name not in self.get_channels_names():
             self.create_channel(chan_name, password)
 
         # This call assumes that after create_channel, the chan always exists.
         channel = self.get_channel(chan_name)
         if password == channel.password:
-            channel.add_member(player)
+            LOG.info("{} joins channel '{}'.".format(player.name, channel.name))
+            channel.add_member(player.guid)
             self._notify_join(channel, player.guid)
             return 0
         else:
