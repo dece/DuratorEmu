@@ -91,18 +91,11 @@ class ConnectionAutomaton(metaclass = ABCMeta):
              and opcode not in self.UNMANAGED_OPS
              and not self.opcode_is_legal(opcode) ):
             LOG.debug("{}: received illegal opcode {} in state {}".format(
-                type(self).__name__, str(opcode), str(self.state)
+                type(self).__name__, opcode.name, self.state.name
             ))
             return
 
         handler_class = self.OP_HANDLERS.get(opcode, self.DEFAULT_HANDLER)
-        if handler_class is None:
-            LOG.error("{}: known opcode without handler: {}".format(
-                type(self).__name__, str(opcode)
-            ))
-            self.state = self.MAIN_ERROR_STATE
-            return
-
         self._call_handler(handler_class, packet_data)
 
     @abstractmethod
