@@ -1,7 +1,12 @@
 from enum import Enum
+import io
+from struct import Struct
+
+from durator.world.game.chat.language import Language
+from pyshgck.bin import read_cstring, read_struct
 
 
-class MessageType(Enum):
+class ChatMessageType(Enum):
 
     SAY                    = 0x00  # ok
     PARTY                  = 0x01
@@ -46,22 +51,42 @@ class MessageTag(Enum):
 
 class ChatMessage(object):
 
-    # From the client SMSG_MESSAGECHAT handler, discarding some flags
-    # uint8     type
-    # uint32    flags?
-    #   if type == CHANNEL
-    #     string    name?
-    #   endif
-    # uint64    guid
-    # uint32    size
-    # string    message (size above)
-    # uint8     tag
+    # From the client SMSG_MESSAGECHAT handler, discarding some flags.
+    # Note that the CMSG is much simpler.
+    # - uint8     type
+    # - uint32    language
+    #     if type == CHANNEL
+    #     - string    name?
+    #     endif
+    # - uint64    guid
+    # - uint32    size
+    # - string    message (size above)
+    # - uint8     tag
+
+    HEADER_BIN = Struct("<2I")
 
     def __init__(self):
         self.message_type = None
-        self.flags = 0
+        self.language = 0
         self.channel_name = ""
-        self.guid = 0
-        self.size = 0
         self.content = ""
+
+        self.guid = 0
+        self.content_size = 0
         self.tag = None
+
+    @staticmethod
+    def from_client(data):
+        message = ChatMessage()
+        data_io = io.BytesIO(data)
+
+        header_data = read_struct(data_io, ChatMessage.HEADER_BIN)
+        message.message_type = ChatMessageType(header_data[0])
+        message.language = Language(header_data[1])
+
+        if message.message_type == ChatMessageType.CHANNEL:
+            message.channel_name = read_cstring(data_io, data_io.tell())
+
+        message.content = read_cstring(data_io, data_io.tell())
+
+        return message

@@ -1,7 +1,12 @@
-""" Simple chat manager. Does not handle localisation or anything. """
+""" Simple chat manager.
+
+Does not handle localisation or anything. There will be basic channel support,
+maybe, but in the meantime the common channel is global to the server.
+"""
 
 import threading
 
+from durator.world.game.chat.message import ChatMessageType
 from pyshgck.logger import LOG
 
 
@@ -73,6 +78,17 @@ class ChatManager(object):
         else:
             self.clean(chan_name)
             return 1
+
+    def receive_chat_message(self, message):
+        if message.message_type is ChatMessageType.CHANNEL:
+            channel = self.get_channel(message.channel_name)
+            if channel is not None:
+                channel.receive_message(message)
+        elif (    message.message_type is ChatMessageType.SAY
+               or message.message_type is ChatMessageType.YELL
+               or message.message_type is ChatMessageType.EMOTE
+               or message.message_type is ChatMessageType.TEXT_EMOTE ):
+            print("TODO pass it to other clients")
 
     def clean(self, chan_name = None):
         """ Remove all empty channels, or chan_name if provided. """
