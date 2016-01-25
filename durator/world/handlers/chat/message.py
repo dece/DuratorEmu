@@ -1,6 +1,7 @@
 from struct import Struct
 
-from durator.world.game.chat.message import ClientChatMessage
+from durator.world.game.chat.message import ChatMessageType, ClientChatMessage
+from durator.world.game.chat.notification import Notification, NotificationType
 
 
 class MessageHandler(object):
@@ -19,9 +20,31 @@ class MessageHandler(object):
 
         player_guid = self.conn.player.guid
         chat_manager = self.conn.server.chat_manager
-        chat_manager.receive_message(player_guid, self.message)
+        result_code = chat_manager.receive_message(player_guid, self.message)
 
-        return None, None
+        if self.message.message_type == ChatMessageType.CHANNEL:
+            response_packet = self._get_channel_response_packet(result_code)
+            return None, response_packet
+        else:
+            return None, None
 
     def _parse_packet(self, packet):
         self.message = ClientChatMessage.from_client(packet)
+
+    def _get_channel_response_packet(self, result_code):
+        notif_type = {
+            0: None,
+            1: NotificationType.NOT_MEMBER,
+            2: NotificationType.INVALID_NAME,
+            3: None,
+            4: NotificationType.MUTED
+        }[result_code]
+
+        if notif_type is None:
+            return None
+
+        channel_name = self.message.channel_name
+        channel = self.conn.server.chat_manager.get_channel(channel_name)
+
+        notification = Notification(notif_type, channel)
+        return notification.to_packet()

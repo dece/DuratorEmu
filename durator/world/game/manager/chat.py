@@ -114,19 +114,44 @@ class ChatManager(object):
         )
 
     def receive_message(self, sender, message):
-        """ Register a received chat message for that sender (GUID). """
+        """ Register a received chat message for that sender (GUID).
+
+        Return:
+        - 0 on success
+        - 1 if not on the channel
+        - 2 if channel name is invalid
+        - 3 on unhandled message type
+        - 4 if muted (not implemented)
+        """
         if message.message_type is ChatMessageType.CHANNEL:
             channel = self.get_channel(message.channel_name)
             if channel is not None:
-                self._send_channel_message(channel, sender, message)
+                return self._send_channel_message(channel, sender, message)
+            else:
+                return 2
         elif (    message.message_type is ChatMessageType.SAY
                or message.message_type is ChatMessageType.YELL
-               or message.message_type is ChatMessageType.EMOTE
-               or message.message_type is ChatMessageType.TEXT_EMOTE ):
-            self._send_global_chat_message(sender, message)
+               or message.message_type is ChatMessageType.EMOTE ):
+            return self._send_global_chat_message(sender, message)
+        else:
+            return 3
 
     def _send_channel_message(self, channel, sender, message):
-        pass
+        members = channel.get_members()
+        if sender not in members:
+            return 1
+
+        server_message = ServerChatMessage()
+        server_message.load_client_message(message)
+        server_message.sender_guid = sender
+        message_packet = server_message.to_packet()
+
+        self.server.broadcast(
+            message_packet,
+            state = WorldConnectionState.IN_WORLD,
+            guids = members
+        )
+        return 0
 
     def _send_global_chat_message(self, sender, message):
         server_message = ServerChatMessage()
@@ -138,6 +163,7 @@ class ChatManager(object):
             message_packet,
             state = WorldConnectionState.IN_WORLD
         )
+        return 0
 
     #------------------------------
     # Remove channels

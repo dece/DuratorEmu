@@ -2,8 +2,6 @@ import io
 from struct import Struct
 
 from durator.world.game.chat.notification import Notification, NotificationType
-from durator.world.opcodes import OpCode
-from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring
 
 
@@ -48,5 +46,4 @@ class JoinChannelHandler(object):
         channel = self.conn.server.chat_manager.get_channel(self.channel_name)
 
         notification = Notification(notif_type, channel)
-        notification_bytes = notification.to_bytes()
-        return WorldPacket(OpCode.SMSG_CHANNEL_NOTIFY, notification_bytes)
+        return notification.to_packet()
