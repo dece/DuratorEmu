@@ -17,7 +17,7 @@ class ObjectType(Enum):
     CORPSE         = 7  # 0x81 (object, corpse)
 
 
-class ObjectDescFlags(Enum):
+class ObjectTypeFlags(Enum):
     """ BaseObject descriptors "flags" (field 0x8). """
 
     OBJECT         = 1 << 0
@@ -28,6 +28,48 @@ class ObjectDescFlags(Enum):
     GAME_OBJECT    = 1 << 5
     DYNAMIC_OBJECT = 1 << 6
     CORPSE         = 1 << 7
+
+
+OBJECT_TYPE_TO_FLAGS = {
+    ObjectType.OBJECT:         ( ObjectTypeFlags.OBJECT ),
+    ObjectType.ITEM:           ( ObjectTypeFlags.OBJECT |
+                                   ObjectTypeFlags.ITEM ),
+    ObjectType.CONTAINER:      ( ObjectTypeFlags.OBJECT      |
+                                   ObjectTypeFlags.ITEM      |
+                                   ObjectTypeFlags.CONTAINER ),
+    ObjectType.UNIT:           ( ObjectTypeFlags.OBJECT |
+                                   ObjectTypeFlags.UNIT ),
+    ObjectType.PLAYER:         ( ObjectTypeFlags.OBJECT   |
+                                   ObjectTypeFlags.UNIT   |
+                                   ObjectTypeFlags.PLAYER ),
+    ObjectType.GAME_OBJECT:    ( ObjectTypeFlags.OBJECT        |
+                                   ObjectTypeFlags.GAME_OBJECT ),
+    ObjectType.DYNAMIC_OBJECT: ( ObjectTypeFlags.OBJECT           |
+                                   ObjectTypeFlags.DYNAMIC_OBJECT ),
+    ObjectType.CORPSE:         ( ObjectTypeFlags.OBJECT   |
+                                   ObjectTypeFlags.CORPSE )
+}
+
+OBJECT_FLAGS_TO_TYPE = {
+    ( ObjectTypeFlags.OBJECT ):           ObjectType.OBJECT,
+    ( ObjectTypeFlags.OBJECT |
+        ObjectTypeFlags.ITEM ):           ObjectType.ITEM,
+    ( ObjectTypeFlags.OBJECT      |
+        ObjectTypeFlags.ITEM      |
+        ObjectTypeFlags.CONTAINER ):      ObjectType.CONTAINER,
+    ( ObjectTypeFlags.OBJECT |
+        ObjectTypeFlags.UNIT ):           ObjectType.UNIT,
+    ( ObjectTypeFlags.OBJECT   |
+        ObjectTypeFlags.UNIT   |
+        ObjectTypeFlags.PLAYER ):         ObjectType.PLAYER,
+    ( ObjectTypeFlags.OBJECT        |
+        ObjectTypeFlags.GAME_OBJECT ):    ObjectType.GAME_OBJECT,
+    ( ObjectTypeFlags.OBJECT           |
+        ObjectTypeFlags.DYNAMIC_OBJECT ): ObjectType.DYNAMIC_OBJECT,
+    ( ObjectTypeFlags.OBJECT   |
+        ObjectTypeFlags.CORPSE ):         ObjectType.CORPSE
+}
+
 
 
 class BaseObject(object):
@@ -47,6 +89,11 @@ class BaseObject(object):
     @property
     def guid(self):
         return self.get(ObjectField.GUID)
+
+    @property
+    def type(self):
+        flags = self.get(ObjectField.TYPE)  # misleading field name
+        return ObjectType(OBJECT_FLAGS_TO_TYPE[flags])
 
     def get(self, field):
         """ Return the object field value, or None if it hasn't been set. """
