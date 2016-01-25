@@ -4,12 +4,13 @@ from enum import Enum
 import math
 from struct import Struct
 
-from durator.world.game.character.constants import NEW_CHAR_DEFAULTS
+from durator.world.game.character.defaults import NEW_CHAR_DEFAULTS
 from durator.world.game.object.base_object import ObjectType
 from durator.world.game.object.object_fields import (
     ObjectField, UnitField, PlayerField )
 from durator.world.game.object.object_fields_type import (
     FieldType, FIELD_TYPE_MAP )
+from durator.world.game.object.player import Player
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
@@ -145,9 +146,17 @@ class UpdateBlocksBuilder(object):
             raise Exception()
 
     def _set_field_mask_bits(self, field, field_struct):
+        start_value = UpdateBlocksBuilder._get_field_value(field)
         num_mask_blocks = math.ceil(field_struct.size / 4)
-        for field_value in range(field.value, field.value + num_mask_blocks):
+        for field_value in range(start_value, start_value + num_mask_blocks):
             self._set_field_mask_bit(field_value)
+
+    @staticmethod
+    def _get_field_value(field):
+        if isinstance(field, Enum):
+            return field.value
+        else:
+            return int(field)
 
     def _set_field_mask_bit(self, field_value):
         mask_block_index = field_value // 32
@@ -248,6 +257,7 @@ class PlayerSpawnPacket(UpdateObjectPacket):
         update_infos = { "player": player }
         super().__init__(UpdateType.CREATE_OBJECT, update_infos)
         self._add_required_fields(player)
+        self._add_int_fields(player)
 
     def _add_required_fields(self, player):
         for required_field in PLAYER_SPAWN_FIELDS:
@@ -257,3 +267,23 @@ class PlayerSpawnPacket(UpdateObjectPacket):
                 LOG.error(str(required_field))
                 continue
             self.add_field(required_field, value)
+
+    def _add_int_fields(self, player):
+        start_field = PlayerField.SKILL_INFO_1_ID.value
+        for index in range(Player.NUM_SKILLS):
+            field_value = start_field + index*3
+            ident = player.get(field_value)
+            if ident is None:
+                continue
+            else:
+                self.add_field(field_value, ident)
+
+            field_value += 1
+            level = player.get(field_value)
+            if level:
+                self.add_field(field_value, level)
+
+            field_value += 1
+            stat_level = player.get(field_value)
+            if stat_level:
+                self.add_field(field_value, stat_level)

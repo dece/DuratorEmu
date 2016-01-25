@@ -6,6 +6,7 @@ from durator.world.game.object.object_fields import (
     ObjectField, ItemField, ContainerField,
     UnitField, PlayerField,
     DynamicObjectField, GameObjectField, CorpseField )
+from durator.world.game.object.player import Player
 
 
 class FieldType(Enum):
@@ -192,9 +193,9 @@ FIELD_TYPE_MAP = {
     PlayerField.EXP:                       FieldType.INT32,
     PlayerField.NEXT_LEVEL_EXP:            FieldType.INT32,
 
-    PlayerField.SKILL_INFO_1_1:            FieldType.TWO_INT16,
-
     PlayerField.QUEST_LOG_1_1:             FieldType.INT32,
+    PlayerField.QUEST_LOG_1_2:             FieldType.INT32,
+    PlayerField.QUEST_LOG_1_3:             FieldType.INT32,
 
     PlayerField.CHARACTER_POINTS_1:        FieldType.INT32,
     PlayerField.CHARACTER_POINTS_2:        FieldType.INT32,
@@ -210,37 +211,6 @@ FIELD_TYPE_MAP = {
     PlayerField.CRIT_PERCENTAGE:           FieldType.FLOAT,
 
     PlayerField.EXPLORED_ZONES_1:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_2:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_3:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_4:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_5:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_6:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_7:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_8:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_9:          FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_10:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_11:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_12:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_13:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_14:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_15:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_16:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_17:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_18:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_19:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_20:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_21:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_22:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_23:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_24:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_25:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_26:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_27:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_28:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_29:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_30:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_31:         FieldType.FOUR_BYTES,
-    PlayerField.EXPLORED_ZONES_32:         FieldType.FOUR_BYTES,
 
     PlayerField.REST_STATE_EXP:            FieldType.INT32,
     PlayerField.COINAGE:                   FieldType.INT32,
@@ -357,28 +327,19 @@ FIELD_TYPE_MAP = {
     CorpseField.DISPLAY_ID: FieldType.INT32,
 
     CorpseField.ITEM_1:     FieldType.INT32,
-    CorpseField.ITEM_2:     FieldType.INT32,
-    CorpseField.ITEM_3:     FieldType.INT32,
-    CorpseField.ITEM_4:     FieldType.INT32,
-    CorpseField.ITEM_5:     FieldType.INT32,
-    CorpseField.ITEM_6:     FieldType.INT32,
-    CorpseField.ITEM_7:     FieldType.INT32,
-    CorpseField.ITEM_8:     FieldType.INT32,
-    CorpseField.ITEM_9:     FieldType.INT32,
-    CorpseField.ITEM_10:    FieldType.INT32,
-    CorpseField.ITEM_11:    FieldType.INT32,
-    CorpseField.ITEM_12:    FieldType.INT32,
-    CorpseField.ITEM_13:    FieldType.INT32,
-    CorpseField.ITEM_14:    FieldType.INT32,
-    CorpseField.ITEM_15:    FieldType.INT32,
-    CorpseField.ITEM_16:    FieldType.INT32,
-    CorpseField.ITEM_17:    FieldType.INT32,
-    CorpseField.ITEM_18:    FieldType.INT32,
-    CorpseField.ITEM_19:    FieldType.INT32,
 
     CorpseField.BYTES_1:    FieldType.FOUR_BYTES,
     CorpseField.BYTES_2:    FieldType.FOUR_BYTES,
 
     CorpseField.GUILD:      FieldType.INT32,
     CorpseField.FLAGS:      FieldType.INT32
+
 }
+
+
+for i in range(Player.NUM_SKILLS):
+    FIELD_TYPE_MAP.update({
+        PlayerField.SKILL_INFO_1_ID.value + i*3:         FieldType.INT32,
+        PlayerField.SKILL_INFO_1_LEVEL.value + i*3:      FieldType.INT32,
+        PlayerField.SKILL_INFO_1_STAT_LEVEL.value + i*3: FieldType.INT32
+    })

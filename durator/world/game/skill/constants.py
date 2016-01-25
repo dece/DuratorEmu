@@ -57,4 +57,4 @@ class SkillIdent(Enum):
     LOCKPICKING           = 633
     LANGUAGE_GUTTERSPEAK  = 673
     KODO_RIDING           = 713
-    JEWELCRAFTING         = 755
+    JEWELCRAFTING         = 755  # ?!

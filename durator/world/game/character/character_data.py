@@ -16,7 +16,6 @@ from durator.db.database import DB, db_connection
 from durator.world.game.character.constants import CharacterGender
 from durator.world.game.character.defaults import (
     NEW_CHAR_DEFAULTS, RACE_AND_CLASS_DEFAULTS )
-from durator.world.game.skill.skill import Skill
 from pyshgck.logger import LOG
 
 
@@ -210,9 +209,9 @@ class CharacterManager(object):
             character.stats = stats
             character.position = position
 
-            CharacterManager._add_default_skills(character, consts)
-
             character.save()
+
+            CharacterManager._add_default_skills(character, consts)
         except PeeweeException as exc:
             LOG.error("An error occured while creating character: " + str(exc))
             return 1
@@ -332,6 +331,7 @@ class CharacterManager(object):
     @staticmethod
     @db_connection
     def _add_default_skills(char_data, consts):
+        from durator.world.game.skill.skill import Skill
         skills = consts["class"]["skills"]
         for skill in skills:
             values = skills[skill]

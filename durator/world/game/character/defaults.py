@@ -6,7 +6,7 @@ may not be right, but they're good enough for me.
 
 from durator.world.game.character.constants import CharacterRace, CharacterClass
 from durator.world.game.object.unit import UnitPower
-from durator.world.game.skill.Defaults import SkillIdent
+from durator.world.game.skill.constants import SkillIdent
 
 
 # ------------------------------------------------------------------------------

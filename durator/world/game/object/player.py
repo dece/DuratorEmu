@@ -3,16 +3,15 @@ from durator.world.game.object.unit import Unit
 from durator.world.game.skill.skill import Skill
 
 
-NUM_TUTORIALS      = 64
-NUM_SKILLS         = 128
-NUM_SPELLS         = 100
-NUM_ACTION_BUTTONS = 120
-NUM_REPUTATIONS    = 128
-NUM_VISIBLE_ITEMS  = 19
-
-
 class Player(Unit):
     """ A Player is a Unit controlled by a human player. """
+
+    NUM_TUTORIALS      = 64
+    NUM_SKILLS         = 128
+    NUM_SPELLS         = 100
+    NUM_ACTION_BUTTONS = 120
+    NUM_REPUTATIONS    = 128
+    NUM_VISIBLE_ITEMS  = 19
 
     def __init__(self):
         super().__init__()
@@ -23,7 +22,7 @@ class Player(Unit):
                    .select()
                    .where(Skill.character == char_data)
                    .order_by(Skill.ident)
-                   .limit(NUM_SKILLS) )
+                   .limit(self.NUM_SKILLS) )
         for skill in skills:
             slot = len(self.skills)
             self.skills.append(skill)
@@ -39,7 +38,7 @@ class Player(Unit):
         level_value = skill.level | skill.max_level << 16
         self.set(level_field, level_value)
 
-        stat_level_value = skill.stat_level | skill.stat_max_level << 16
+        stat_level_value = skill.stat_level | skill.max_stat_level << 16
         self.set(stat_level_field, stat_level_value)
 
     def export_skills(self):
