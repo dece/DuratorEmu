@@ -33,6 +33,7 @@ class _DbConnector(object):
         self.num_connections_lock = threading.Lock()
 
     def connect(self):
+        """ Connect to the database, return True on success. """
         with self.num_connections_lock:
             assert self.num_connections >= 0
             self.num_connections += 1
@@ -46,6 +47,7 @@ class _DbConnector(object):
         return True
 
     def close(self):
+        """ Close the database connection, return True on success. """
         with self.num_connections_lock:
             self.num_connections -= 1
             if self.num_connections == 0:
@@ -74,7 +76,6 @@ def db_connection(func):
     returns None and does not call the decorated function. """
 
     def db_connection_decorator(*args, **kwargs):
-        global _DB_CONNECTOR
         if not _DB_CONNECTOR.connect():
             return None
         return_value = func(*args, **kwargs)

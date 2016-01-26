@@ -1,9 +1,7 @@
 import io
-from struct import Struct
 import time
 
 from pyshgck.bin import read_cstring
-from pyshgck.logger import LOG
 
 
 class RealmConnection(object):
