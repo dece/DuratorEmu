@@ -121,7 +121,7 @@ class UpdateBlocksBuilder(object):
 
     def __init__(self):
         self.mask_blocks = []
-        self.update_blocks = []
+        self.update_blocks = {}
 
     def add(self, field, value):
         """ Add a field and its value to the UpdateBlocks. """
@@ -131,46 +131,49 @@ class UpdateBlocksBuilder(object):
             LOG.error("No type associated with " + str(field))
             LOG.error("Object not updated.")
             return
-
         field_struct = self.FIELD_BIN_MAP[field_type]
-        self._set_field_mask_bits(field, field_struct)
 
-        update_block = field_struct.pack(value)
-        self.update_blocks.append(update_block)
+        field_index = UpdateBlocksBuilder._get_field_index(field)
+        self._set_field_mask_bits(field_index, field_struct)
+        self._set_field_value(field_index, field_struct, value)
 
-        num_mask_blocks = len(self.mask_blocks)
-        if num_mask_blocks >= self.HARD_MASK_BLOCKS_LIMIT:
-            LOG.critical("Too much update mask blocks ({} >= {})".format(
-                num_mask_blocks, self.HARD_MASK_BLOCKS_LIMIT
-            ))
-            raise Exception()
-
-    def _set_field_mask_bits(self, field, field_struct):
-        start_value = UpdateBlocksBuilder._get_field_value(field)
-        num_mask_blocks = math.ceil(field_struct.size / 4)
-        for field_value in range(start_value, start_value + num_mask_blocks):
-            self._set_field_mask_bit(field_value)
+        assert len(self.mask_blocks) < self.HARD_MASK_BLOCKS_LIMIT
 
     @staticmethod
-    def _get_field_value(field):
+    def _get_field_index(field):
         if isinstance(field, Enum):
             return field.value
         else:
             return int(field)
 
-    def _set_field_mask_bit(self, field_value):
-        mask_block_index = field_value // 32
-        bit_index = field_value % 32
+    def _set_field_mask_bits(self, field_index, field_struct):
+        num_mask_blocks = math.ceil(field_struct.size / 4)
+        for index in range(field_index, field_index + num_mask_blocks):
+            print("Field", index, "")
+            self._set_field_mask_bit(index)
+
+    def _set_field_mask_bit(self, field_index):
+        mask_block_index = field_index // 32
+        bit_index = field_index % 32
         while len(self.mask_blocks) < mask_block_index+1:
             self.mask_blocks.append(0)
         self.mask_blocks[mask_block_index] |= 1 << bit_index
 
+    def _set_field_value(self, field_index, field_struct, value):
+        update_block = field_struct.pack(value)
+        self.update_blocks[field_index] = update_block
+
     def to_bytes(self):
         """ Return the mask count, the mask and the update blocks as bytes. """
         num_mask_blocks_bytes = int.to_bytes(len(self.mask_blocks), 1, "little")
+
         mask_blocks = [int.to_bytes(b, 4, "little") for b in self.mask_blocks]
         mask_bytes = b"".join(mask_blocks)
-        update_data = b"".join(self.update_blocks)
+
+        sorted_blocks = [ self.update_blocks[k]
+                          for k in sorted(self.update_blocks.keys()) ]
+        update_data = b"".join(sorted_blocks)
+
         return num_mask_blocks_bytes + mask_bytes + update_data
 
 
@@ -272,8 +275,9 @@ class PlayerSpawnPacket(UpdateObjectPacket):
         start_field = PlayerField.SKILL_INFO_1_ID.value
         for index in range(Player.NUM_SKILLS):
             field_value = start_field + index*3
+
             ident = player.get(field_value)
-            if ident is None:
+            if ident is None or ident == 0:
                 continue
             else:
                 self.add_field(field_value, ident)
