@@ -10,15 +10,15 @@ from pyshgck.bin import read_cstring, read_struct
 
 class ChatMessageType(Enum):
 
-    SAY                    = 0x00  # ok
+    SAY                    = 0x00
     PARTY                  = 0x01
     RAID                   = 0x02
-    GUILD                  = 0x03  # ok
+    GUILD                  = 0x03
     OFFICER                = 0x04
-    YELL                   = 0x05  # ok
+    YELL                   = 0x05
     WHISPER                = 0x06
     WHISPER_INFORM         = 0x07
-    EMOTE                  = 0x08  # ok
+    EMOTE                  = 0x08
     TEXT_EMOTE             = 0x09
 
     SYSTEM                 = 0x0A

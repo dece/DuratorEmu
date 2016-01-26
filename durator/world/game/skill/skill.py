@@ -5,7 +5,8 @@ from durator.db.database import DB
 
 
 class Skill(Model):
-    """ Features specific to a player character. """
+    """ Player skill. Max values shouldn't be stored in the database but we're
+    reaching the end of development and I'm getting lazy. """
 
     character      = ForeignKeyField(CharacterData)
     ident          = IntegerField()
