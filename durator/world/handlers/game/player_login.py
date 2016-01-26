@@ -3,7 +3,7 @@ from struct import Struct
 from durator.common.account.account_data import AccountDataManager
 from durator.db.database import db_connection
 from durator.world.game.character.character_data import CharacterData
-from durator.world.game.update_object_packet import PlayerSpawnPacket
+from durator.world.game.player_spawn_packet import PlayerSpawnPacket
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket
