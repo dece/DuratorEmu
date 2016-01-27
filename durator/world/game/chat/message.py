@@ -1,3 +1,5 @@
+""" {C,S}MSG_MESSAGECHAT structures """
+
 from enum import Enum
 import io
 from struct import Struct

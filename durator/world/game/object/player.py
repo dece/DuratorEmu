@@ -34,6 +34,7 @@ class Player(Unit):
             self._set_skill_fields(slot, skill)
 
     def _set_skill_fields(self, slot, skill):
+        """ Update the object's fields for that skill at this skill slot. """
         id_field         = PlayerField.SKILL_INFO_1_ID.value + slot*3
         level_field      = PlayerField.SKILL_INFO_1_LEVEL.value + slot*3
         stat_level_field = PlayerField.SKILL_INFO_1_STAT_LEVEL.value + slot*3
@@ -51,6 +52,6 @@ class Player(Unit):
 
     @db_connection
     def export_skills(self):
-        """ Save the local  """
+        """ Save the local list of skills in the database. """
         for skill in self.skills:
             skill.save()

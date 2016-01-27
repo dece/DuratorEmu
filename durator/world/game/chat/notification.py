@@ -1,3 +1,5 @@
+""" SMSG_CHANNEL_NOTIFY structure """
+
 from enum import Enum
 
 from durator.world.opcodes import OpCode
