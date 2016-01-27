@@ -17,9 +17,9 @@ class CharacterManager(object):
     """ Transfer player character data between the database and the server. """
 
     @staticmethod
-    def create_character(account, char_values):
-        """ See CharacterCreator.create_character. """
-        return _CharacterCreator.create_character(account, char_values)
+    def create_char(char_values):
+        """ See CharacterCreator.create_char. """
+        return _CharacterCreator.create_char(char_values)
 
     @staticmethod
     @db_connection
@@ -34,31 +34,24 @@ class CharacterManager(object):
     @db_connection
     def does_char_with_name_exist(name):
         """ Return whether or not a character with that name exists in DB. """
-        return ( CharacterData
-                 .select()
-                 .where(CharacterData.name == name)
-                 .exists() )
+        return CharacterData.select().where(CharacterData.name == name).exists()
 
     @staticmethod
     @db_connection
     def does_char_with_guid_exist(guid):
         """ Return whether or not a character with that GUID exists in DB. """
-        return ( CharacterData
-                 .select()
-                 .where(CharacterData.guid == guid)
-                 .exists() )
+        return CharacterData.select().where(CharacterData.guid == guid).exists()
 
     @staticmethod
-    def delete_character(guid):
-        """ See CharacterDestructor.delete_character. """
-        return _CharacterDestructor.delete_character(guid)
+    def delete_char(guid):
+        """ See CharacterDestructor.delete_char. """
+        return _CharacterDestructor.delete_char(guid)
 
 
 class _CharacterCreator(object):
 
     @staticmethod
-    @db_connection
-    def create_character(account, char_values):
+    def create_char(char_values):
         """ Try to create a new character and add it to the database. Return 0
         on success, 1 on unspecified failure, 2 on name already used, 3 if the
         race and class combination isn't supported.
@@ -69,51 +62,73 @@ class _CharacterCreator(object):
 
         This should check of other things like account char limit etc.
         """
-        name = char_values["name"]
-        name_exists = CharacterManager.does_char_with_name_exist(name)
-        if name_exists:
-            LOG.debug("Name " + name + " already used.")
+        consts = _CharacterCreator._get_constants(char_values)
+        if consts is None:
+            return 3
+
+        if CharacterManager.does_char_with_name_exist(char_values["name"]):
             return 2
 
-        try:
-            character = CharacterData(
-                guid     = _CharacterCreator._get_unused_guid(),
-                account  = account,
-                name     = name,
-                race     = char_values["race"].value,
-                class_id = char_values["class"].value,
-                gender   = char_values["gender"].value
-            )
-
-            features = CharacterFeatures.create(
-                skin        = char_values["features"]["skin"],
-                face        = char_values["features"]["face"],
-                hair_style  = char_values["features"]["hair_style"],
-                hair_color  = char_values["features"]["hair_color"],
-                facial_hair = char_values["features"]["facial_hair"]
-            )
-            character.features = features
-
-            race_and_class = (char_values["race"], char_values["class"])
-            consts = RACE_AND_CLASS_DEFAULTS.get(race_and_class)
-            if consts is None:
-                return 3
-            gender = char_values["gender"]
-
-            stats = _CharacterCreator._get_default_char_stats(consts, gender)
-            position = _CharacterCreator._get_default_char_position(consts)
-            character.stats = stats
-            character.position = position
-
-            character.save()
-
-            _CharacterCreator._add_default_skills(character, consts)
-        except PeeweeException as exc:
-            LOG.error("An error occured while creating character: " + str(exc))
+        char_data = _CharacterCreator._try_create_char(char_values, consts)
+        if char_data is None:
             return 1
 
-        LOG.debug("Character " + name + " created.")
+        _CharacterCreator._add_default_skills(char_data, consts)
+
+        LOG.debug("Character " + char_data.name + " created.")
         return 0
+
+    @staticmethod
+    def _get_constants(char_values):
+        """ Return constants values for such char race and class, or None. """
+        race_and_class = (char_values["race"], char_values["class"])
+        return RACE_AND_CLASS_DEFAULTS.get(race_and_class)
+
+    @staticmethod
+    @db_connection
+    def _try_create_char(char_values, consts):
+        char_data = None
+        with DB.transaction() as transaction:
+            try:
+                char_data = _CharacterCreator._create_char(char_values, consts)
+            except PeeweeException as exc:
+                LOG.error("An error occured while creating character:")
+                LOG.error(str(exc))
+                transaction.rollback()
+                return None
+        return char_data
+
+    @staticmethod
+    @db_connection
+    def _create_char(char_values, consts):
+        gender = char_values["gender"]
+        char_data = _CharacterCreator._get_char_data(char_values)
+        features = _CharacterCreator._get_char_features(char_values)
+        stats = _CharacterCreator._get_default_char_stats(consts, gender)
+        position = _CharacterCreator._get_default_char_position(consts)
+
+        char_data.features = features
+        char_data.stats = stats
+        char_data.position = position
+
+        char_data.features.save()
+        char_data.stats.save()
+        char_data.position.save()
+        char_data.save()
+
+        return char_data
+
+    @staticmethod
+    @db_connection
+    def _get_char_data(char_values):
+        return CharacterData(
+            guid     = _CharacterCreator._get_unused_guid(),
+            account  = char_values["account"],
+            name     = char_values["name"],
+            race     = char_values["race"].value,
+            class_id = char_values["class"].value,
+            gender   = char_values["gender"].value
+        )
 
     @staticmethod
     def _get_unused_guid():
@@ -123,6 +138,16 @@ class _CharacterCreator(object):
         return guid
 
     @staticmethod
+    @db_connection
+    def _get_char_features(char_values):
+        return CharacterFeatures.create(
+            skin        = char_values["features"]["skin"],
+            face        = char_values["features"]["face"],
+            hair_style  = char_values["features"]["hair_style"],
+            hair_color  = char_values["features"]["hair_color"],
+            facial_hair = char_values["features"]["facial_hair"]
+        )
+
     @staticmethod
     @db_connection
     def _get_default_char_stats(consts, gender):
@@ -255,7 +280,7 @@ class _CharacterDestructor(object):
 
     @staticmethod
     @db_connection
-    def delete_character(guid):
+    def delete_char(guid):
         """ Try to delete character and all associated data from the database.
         Return 0 on success, 1 on error. """
         try:
