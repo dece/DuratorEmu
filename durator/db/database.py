@@ -41,7 +41,7 @@ class _DbConnector(object):
                 try:
                     self.database.connect()
                     if DEBUG:
-                        LOG.debug("DATABASE CONNECTED")
+                        LOG.debug("[db] Database connected")
                 except OperationalError as exc:
                     _DbConnector.log_error("connect", exc)
                     self.num_connections -= 1
@@ -56,7 +56,7 @@ class _DbConnector(object):
                 try:
                     self.database.close()
                     if DEBUG:
-                        LOG.debug("DATABASE CLOSED")
+                        LOG.debug("[db] Database closed")
                 except OperationalError as exc:
                     _DbConnector.log_error("close", exc)
                     return False

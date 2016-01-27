@@ -9,6 +9,7 @@ level (whatever that means).
 from durator.world.game.character.constants import CharacterRace, CharacterClass
 from durator.world.game.object.type.unit import UnitPower
 from durator.world.game.skill.constants import SkillId
+from durator.world.game.spell.constants import SpellId
 
 
 # ------------------------------------------------------------------------------
@@ -55,21 +56,6 @@ NEW_CHAR_DEFAULTS = {
 # Defaults of each race
 # ------------------------------------------------------------------------------
 
-
-HUMAN_DEFAULTS = {
-    "scale_x":           1.0,
-    "start_map":         0,
-    "start_zone":        12,
-    "start_pos_x":       -8949.950195,
-    "start_pos_y":       -132.492996,
-    "start_pos_z":       83.531197,
-    "start_orientation": 0.000000,
-    "bounding_radius":   0.306000,
-    "combat_reach":      1.500000,
-    "model_male":        49,
-    "model_female":      50,
-    "faction_template":  CharacterRace.HUMAN.value
-}
 
 UNDEAD_DEFAULTS = {
     "scale_x":           1.0,
@@ -183,6 +169,39 @@ UNDEAD_ROGUE_DEFAULTS = {
         SkillId.KODO_RIDING:           (   0, 0 ),
         SkillId.JEWELCRAFTING:         (   0, 0 )
     },
+
+    "spells": [
+        SpellId.DODGE,
+        SpellId.ONE_HANDED_MACES,
+        SpellId.UNARMED,
+        SpellId.DEFENSE,
+        SpellId.SPELLDEFENSE_DND,
+        SpellId.SMITE,
+        SpellId.LANGUAGE_ORCISH,
+        SpellId.LESSER_HEAL,
+        SpellId.GENERIC_2382,
+        SpellId.HONORLESS_TARGET,
+        SpellId.DETECT,
+        SpellId.OPENING_3365,
+        SpellId.WANDS,
+        SpellId.SHOOT,
+        SpellId.UNDERWATER_BREATHING,
+        SpellId.CLOSING_6233,
+        SpellId.CLOSING_6246,
+        SpellId.OPENING_6247,
+        SpellId.OPENING_6477,
+        SpellId.OPENING_6478,
+        SpellId.ATTACK,
+        SpellId.DUEL,
+        SpellId.GROVEL,
+        SpellId.STUCK,
+        SpellId.WILL_OF_THE_FORSAKEN,
+        SpellId.ATTACKING,
+        SpellId.CLOTH,
+        SpellId.GENERIC_9125,
+        SpellId.LANGUAGE_GUTTERSPEAK,
+        SpellId.CANNIBALIZE
+    ]
 }
 
 

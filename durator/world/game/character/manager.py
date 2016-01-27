@@ -8,8 +8,9 @@ from durator.world.game.character.character_data import (
 from durator.world.game.character.constants import CharacterGender
 from durator.world.game.character.defaults import (
     NEW_CHAR_DEFAULTS, RACE_AND_CLASS_DEFAULTS )
-from durator.world.game.skill.skill import Skill
 from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
+from durator.world.game.skill.skill import Skill
+from durator.world.game.spell.spell import Spell
 from pyshgck.logger import LOG
 
 
@@ -74,6 +75,7 @@ class _CharacterCreator(object):
             return 1
 
         _CharacterCreator._add_default_skills(char_data, consts)
+        _CharacterCreator._add_default_spells(char_data, consts)
 
         LOG.debug("Character " + char_data.name + " created.")
         return 0
@@ -121,6 +123,7 @@ class _CharacterCreator(object):
     @staticmethod
     @db_connection
     def _get_char_data(char_values):
+        """ Return a new CharacterData object from char_values. """
         return CharacterData(
             guid     = _CharacterCreator._get_unused_guid(),
             account  = char_values["account"],
@@ -255,15 +258,15 @@ class _CharacterCreator(object):
     @staticmethod
     @db_connection
     def _add_default_skills(char_data, consts):
-        skills = consts["class"]["skills"]
-        for skill in skills:
-            values = skills[skill]
-            max_values = SKILL_MAX_LEVELS[skill]
+        skills_id = consts["class"]["skills"]
+        for skill_id in skills_id:
+            values = skills_id[skill_id]
+            max_values = SKILL_MAX_LEVELS[skill_id]
 
             try:
                 Skill.create(
                     character      = char_data,
-                    ident          = skill.value,
+                    ident          = skill_id.value,
                     level          = values[0],
                     stat_level     = values[1],
                     max_level      = max_values[0],
@@ -271,7 +274,23 @@ class _CharacterCreator(object):
                 )
             except PeeweeException as exc:
                 LOG.error("Couldn't add skill {} for char {}".format(
-                    skill.name, char_data.guid
+                    skill_id.name, char_data.guid
+                ))
+                LOG.error(str(exc))
+
+    @staticmethod
+    @db_connection
+    def _add_default_spells(char_data, consts):
+        spells_id = consts["class"]["spells"]
+        for spell_id in spells_id:
+            try:
+                Spell.create(
+                    character = char_data,
+                    ident     = spell_id.value
+                )
+            except PeeweeException as exc:
+                LOG.error("Couldn't add spell {} for char {}".format(
+                    spell_id.name, char_data.guid
                 ))
                 LOG.error(str(exc))
 
