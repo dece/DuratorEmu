@@ -71,6 +71,8 @@ class OpCode(Enum):
 
     CMSG_CANCEL_TRADE = 0x11C
 
+    SMSG_INITIAL_SPELLS = 0x12A
+
     CMSG_QUERY_TIME          = 0x1CE
     SMSG_QUERY_TIME_RESPONSE = 0x1CF
 

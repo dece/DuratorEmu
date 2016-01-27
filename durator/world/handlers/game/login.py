@@ -3,6 +3,7 @@ from struct import Struct
 from durator.common.account.managers import AccountDataManager
 from durator.db.database import db_connection
 from durator.world.game.character.character_data import CharacterData
+from durator.world.game.spell.initial_packet import InitialSpellsPacket
 from durator.world.game.player_spawn_packet import PlayerSpawnPacket
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
@@ -51,6 +52,7 @@ class PlayerLoginHandler(object):
         self.conn.send_packet(self._get_account_data_md5_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
         self.conn.send_packet(self._get_update_object_packet())
+        self.conn.send_packet(self._get_initial_spells_packet())
 
         return WorldConnectionState.IN_WORLD, None
 
@@ -95,3 +97,7 @@ class PlayerLoginHandler(object):
     def _get_update_object_packet(self):
         """ Get the UpdateObjectPacket needed to spawn in world. """
         return PlayerSpawnPacket(self.conn.player)
+
+    def _get_initial_spells_packet(self):
+        """ Get a packet with player spells. """
+        return InitialSpellsPacket(self.conn.player)
