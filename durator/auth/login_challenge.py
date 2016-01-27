@@ -4,7 +4,8 @@ from struct import Struct
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
-from durator.common.account.account import AccountManager, AccountStatus
+from durator.common.account.account import AccountStatus
+from durator.common.account.managers import AccountManager
 from pyshgck.logger import LOG
 
 

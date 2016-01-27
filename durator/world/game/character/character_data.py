@@ -5,18 +5,12 @@ models. This way, when accessing data with Peewee (the ORM engine), we can
 preload bunches of values that are usually used together.
 """
 
-import random
-
 from peewee import (
-    Model, IntegerField, FloatField, ForeignKeyField, CharField,
-    PeeweeException )
+    Model, IntegerField, FloatField, ForeignKeyField, CharField )
 
 from durator.common.account.account import Account
-from durator.db.database import DB, db_connection
-from durator.world.game.character.constants import CharacterGender
-from durator.world.game.character.defaults import (
-    NEW_CHAR_DEFAULTS, RACE_AND_CLASS_DEFAULTS )
-from pyshgck.logger import LOG
+from durator.db.database import DB
+from durator.world.game.character.defaults import NEW_CHAR_DEFAULTS
 
 
 class CharacterFeatures(Model):

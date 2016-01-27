@@ -3,7 +3,7 @@ from struct import Struct
 
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
-from durator.common.account.account_session import AccountSessionManager
+from durator.common.account.managers import AccountSessionManager
 from pyshgck.logger import LOG
 
 

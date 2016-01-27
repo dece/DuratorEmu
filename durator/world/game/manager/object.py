@@ -1,6 +1,6 @@
 from threading import Lock
 
-from durator.world.game.character.character_data import CharacterManager
+from durator.world.game.character.manager import CharacterManager
 from durator.world.game.object.base_object import ObjectType, ObjectTypeFlags
 from durator.world.game.object.object_fields import (
     ObjectField, UnitField, PlayerField )

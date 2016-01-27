@@ -2,8 +2,8 @@
 
 from struct import Struct
 
-from durator.common.account.account_data import (
-    AccountDataType, AccountDataManager )
+from durator.common.account.account_data import AccountDataType
+from durator.common.account.managers import AccountDataManager
 
 
 class RequestAccountDataHandler(object):

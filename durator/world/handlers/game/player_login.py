@@ -1,6 +1,6 @@
 from struct import Struct
 
-from durator.common.account.account_data import AccountDataManager
+from durator.common.account.managers import AccountDataManager
 from durator.db.database import db_connection
 from durator.world.game.character.character_data import CharacterData
 from durator.world.game.player_spawn_packet import PlayerSpawnPacket
@@ -34,7 +34,6 @@ class PlayerLoginHandler(object):
         self.conn = connection
         self.packet = packet
 
-    @db_connection
     def process(self):
         guid = self.PACKET_BIN.unpack(self.packet)[0]
         character_data = self._get_checked_character(guid)
@@ -55,6 +54,7 @@ class PlayerLoginHandler(object):
 
         return WorldConnectionState.IN_WORLD, None
 
+    @db_connection
     def _get_checked_character(self, guid):
         """ Get the character data associated to that GUID, but only if this
         character belongs to the connected account, else return None. """

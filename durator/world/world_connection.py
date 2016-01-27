@@ -2,7 +2,7 @@ import os
 import queue
 from struct import Struct
 
-from durator.common.account.account_session import AccountSessionManager
+from durator.common.account.managers import AccountSessionManager
 from durator.common.networking.connection_automaton import ConnectionAutomaton
 from durator.config import CONFIG
 from durator.world.handlers.ack.move_worldport import MoveWorldportAckHandler

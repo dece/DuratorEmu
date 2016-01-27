@@ -4,12 +4,10 @@ import re
 
 from peewee import Model, CharField, IntegerField
 
-from durator.auth.srp import Srp
-from durator.db.database import DB, db_connection
-from pyshgck.logger import LOG
+from durator.db.database import DB
 
 
-_ACCOUNT_NAME_RE = re.compile(r"\w+")
+ACCOUNT_NAME_RE = re.compile(r"\w+")
 
 
 class AccountStatus(Enum):
@@ -57,47 +55,3 @@ class Account(Model):
     def srp_verifier_as_int(self, value_int):
         verifier_bytes = int.to_bytes(value_int, 32, "little")
         self.srp_verifier = base64.b64encode(verifier_bytes).decode("ascii")
-
-
-
-
-
-class AccountManager(object):
-    """ Collection of functions to manage the accounts in the database. """
-
-    @staticmethod
-    @db_connection
-    def create_account(account_name, password):
-        """ Create a valid account and add it to the database, or None if the
-        arguments are invalid. """
-        if not _ACCOUNT_NAME_RE.match(account_name):
-            LOG.debug("Invalid account name.")
-            return None
-
-        account = Account( name = account_name.upper()
-                         , status = AccountStatus.NOT_READY.value )
-        Srp.generate_account_srp_data(account, password)
-        account.status = AccountStatus.VALID.value
-        account.save()
-
-        # Import AccountDataManager only here to avoid recursive import
-        from durator.common.account.account_data import AccountDataManager
-        AccountDataManager.create_account_data(account)
-
-        return account
-
-    @staticmethod
-    def create_dummy_account(name):
-        """ Get a dummy testing account, using account name as a password. """
-        account = AccountManager.create_account(name, name)
-        return account
-
-    @staticmethod
-    @db_connection
-    def get_account(account_name):
-        """ Return the account from the database if it exists, or None. """
-        try:
-            return Account.get(Account.name == account_name)
-        except Account.DoesNotExist:
-            LOG.warning("No account with that name: " + account_name)
-            return None

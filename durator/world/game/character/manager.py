@@ -8,11 +8,53 @@ from durator.world.game.character.character_data import (
 from durator.world.game.character.constants import CharacterGender
 from durator.world.game.character.defaults import (
     NEW_CHAR_DEFAULTS, RACE_AND_CLASS_DEFAULTS )
+from durator.world.game.skill.skill import Skill
+from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
 from pyshgck.logger import LOG
 
 
 class CharacterManager(object):
     """ Transfer player character data between the database and the server. """
+
+    @staticmethod
+    def create_character(account, char_values):
+        """ See CharacterCreator.create_character. """
+        return _CharacterCreator.create_character(account, char_values)
+
+    @staticmethod
+    @db_connection
+    def get_char_data(guid):
+        """ Get the CharacterData associated to that GUID, or None. """
+        try:
+            return CharacterData.get(CharacterData.guid == guid)
+        except CharacterData.DoesNotExist:
+            return None
+
+    @staticmethod
+    @db_connection
+    def does_char_with_name_exist(name):
+        """ Return whether or not a character with that name exists in DB. """
+        return ( CharacterData
+                 .select()
+                 .where(CharacterData.name == name)
+                 .exists() )
+
+    @staticmethod
+    @db_connection
+    def does_char_with_guid_exist(guid):
+        """ Return whether or not a character with that GUID exists in DB. """
+        return ( CharacterData
+                 .select()
+                 .where(CharacterData.guid == guid)
+                 .exists() )
+
+    @staticmethod
+    def delete_character(guid):
+        """ See CharacterDestructor.delete_character. """
+        return _CharacterDestructor.delete_character(guid)
+
+
+class _CharacterCreator(object):
 
     @staticmethod
     @db_connection
@@ -35,7 +77,7 @@ class CharacterManager(object):
 
         try:
             character = CharacterData(
-                guid     = CharacterManager._get_unused_guid(),
+                guid     = _CharacterCreator._get_unused_guid(),
                 account  = account,
                 name     = name,
                 race     = char_values["race"].value,
@@ -58,14 +100,14 @@ class CharacterManager(object):
                 return 3
             gender = char_values["gender"]
 
-            stats = CharacterManager._get_default_char_stats(consts, gender)
-            position = CharacterManager._get_default_char_position(consts)
+            stats = _CharacterCreator._get_default_char_stats(consts, gender)
+            position = _CharacterCreator._get_default_char_position(consts)
             character.stats = stats
             character.position = position
 
             character.save()
 
-            CharacterManager._add_default_skills(character, consts)
+            _CharacterCreator._add_default_skills(character, consts)
         except PeeweeException as exc:
             LOG.error("An error occured while creating character: " + str(exc))
             return 1
@@ -185,8 +227,6 @@ class CharacterManager(object):
     @staticmethod
     @db_connection
     def _add_default_skills(char_data, consts):
-        from durator.world.game.skill.skill import Skill
-        from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
         skills = consts["class"]["skills"]
         for skill in skills:
             values = skills[skill]
@@ -202,30 +242,8 @@ class CharacterManager(object):
                 max_stat_level = max_values[1]
             )
 
-    @staticmethod
-    @db_connection
-    def get_char_data(guid):
-        """ Get the CharacterData associated to that GUID. """
-        try:
-            return CharacterData.get(CharacterData.guid == guid)
-        except CharacterData.DoesNotExist:
-            return None
 
-    @staticmethod
-    @db_connection
-    def does_char_with_name_exist(name):
-        return ( CharacterData
-                 .select()
-                 .where(CharacterData.name == name)
-                 .exists() )
-
-    @staticmethod
-    @db_connection
-    def does_char_with_guid_exist(guid):
-        return ( CharacterData
-                 .select()
-                 .where(CharacterData.guid == guid)
-                 .exists() )
+class _CharacterDestructor(object):
 
     @staticmethod
     @db_connection
@@ -235,16 +253,16 @@ class CharacterManager(object):
         try:
             character = CharacterData.get(CharacterData.guid == guid)
 
-            CharacterManager._delete_char_skills(character)
+            _CharacterDestructor._delete_char_skills(character)
 
             features = character.features
             stats = character.stats
             position = character.position
+
             character.delete_instance()
             features.delete_instance()
             stats.delete_instance()
             position.delete_instance()
-
         except PeeweeException as exc:
             LOG.error("An error occured while deleting character {}: {}".format(
                 guid, str(exc)
@@ -257,4 +275,4 @@ class CharacterManager(object):
     @staticmethod
     @db_connection
     def _delete_char_skills(character):
-        pass
+        Skill.delete().where(Skill.character == character).execute()
