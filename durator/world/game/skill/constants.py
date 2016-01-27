@@ -3,7 +3,7 @@
 from enum import Enum
 
 
-class SkillIdent(Enum):
+class SkillId(Enum):
 
     COMBAT                = 38
     SUBTLETY              = 39

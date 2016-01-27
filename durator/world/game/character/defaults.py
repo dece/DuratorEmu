@@ -1,14 +1,14 @@
 """ Default values for characters, races and classes.
 
-These values are mostly taken from the WoWCore vanilla sandbox, so they may or
-may not be right, but they're good enough for me.
-
-Skill values are current level and current stat leve (whatever that means).
+Actually, I'm only going to support undead rogues for now. These values are
+mostly taken from the WoWCore vanilla sandbox, so they may or may not be right,
+but they're good enough for me. Skill values are current level and current stat
+level (whatever that means).
 """
 
 from durator.world.game.character.constants import CharacterRace, CharacterClass
 from durator.world.game.object.type.unit import UnitPower
-from durator.world.game.skill.constants import SkillIdent
+from durator.world.game.skill.constants import SkillId
 
 
 # ------------------------------------------------------------------------------
@@ -129,60 +129,60 @@ UNDEAD_ROGUE_DEFAULTS = {
     "max_ranged_damage": 9.54,
 
     "skills": {
-        SkillIdent.COMBAT:                (   5, 0 ),
-        SkillIdent.SUBTLETY:              (   0, 0 ),
-        SkillIdent.POISONS:               (   0, 0 ),
-        SkillIdent.SWORDS:                (   0, 0 ),
-        SkillIdent.BOWS:                  (   0, 0 ),
-        SkillIdent.MACES:                 (   0, 0 ),
-        SkillIdent.GUNS:                  (   0, 0 ),
-        SkillIdent.DEFENSE:               (   1, 0 ),
-        SkillIdent.LANGUAGE_ORCISH:       ( 300, 0 ),
-        SkillIdent.LANGUAGE_DWARVEN:      (   0, 0 ),
-        SkillIdent.LANGUAGE_DARNASSIAN:   (   0, 0 ),
-        SkillIdent.LANGUAGE_TAURAHE:      (   0, 0 ),
-        SkillIdent.DUAL_WIELD:            (   0, 0 ),
-        SkillIdent.FIRST_AID:             (   0, 0 ),
-        SkillIdent.LANGUAGE_THALASSIAN:   (   0, 0 ),
-        SkillIdent.LANGUAGE_DRACONIC:     (   0, 0 ),
-        SkillIdent.LANGUAGE_DEMON_TONGUE: (   0, 0 ),
-        SkillIdent.LANGUAGE_TITAN:        (   0, 0 ),
-        SkillIdent.LANGUAGE_OLD_TONGUE:   (   0, 0 ),
-        SkillIdent.SURVIVAL:              (   0, 0 ),
-        SkillIdent.HORSE_RIDING:          (   0, 0 ),
-        SkillIdent.WOLF_RIDING:           (   0, 0 ),
-        SkillIdent.TIGER_RIDING:          (   0, 0 ),
-        SkillIdent.RAM_RIDING:            (   0, 0 ),
-        SkillIdent.UNARMED:               (   1, 0 ),
-        SkillIdent.BLACKSMITHING:         (   0, 0 ),
-        SkillIdent.LEATHERWORKING:        (   0, 0 ),
-        SkillIdent.ALCHEMY:               (   0, 0 ),
-        SkillIdent.DAGGERS:               (   1, 0 ),
-        SkillIdent.THROWN:                (   1, 0 ),
-        SkillIdent.HERBALISM:             (   0, 0 ),
-        SkillIdent.GENERIC_DND:           (   5, 0 ),
-        SkillIdent.COOKING:               (   0, 0 ),
-        SkillIdent.MINING:                (   0, 0 ),
-        SkillIdent.TAILORING:             (   0, 0 ),
-        SkillIdent.ENGINEERING:           (   0, 0 ),
-        SkillIdent.RACIAL_UNDEAD:         (   5, 0 ),
-        SkillIdent.CROSSBOWS:             (   0, 0 ),
-        SkillIdent.ASSASSINATION:         (   5, 0 ),
-        SkillIdent.LANGUAGE_GNOMISH:      (   0, 0 ),
-        SkillIdent.LANGUAGE_TROLL:        (   0, 0 ),
-        SkillIdent.ENCHANTING:            (   0, 0 ),
-        SkillIdent.FISHING:               (   0, 0 ),
-        SkillIdent.SKINNING:              (   0, 0 ),
-        SkillIdent.LEATHER:               (   1, 0 ),
-        SkillIdent.CLOTH:                 (   1, 0 ),
-        SkillIdent.FIST_WEAPONS:          (   0, 0 ),
-        SkillIdent.RAPTOR_RIDING:         (   0, 0 ),
-        SkillIdent.UNDEAD_HORSEMANSHIP:   (   0, 0 ),
-        SkillIdent.LOCKPICKING:           (   0, 0 ),
-        SkillIdent.LANGUAGE_GUTTERSPEAK:  ( 300, 0 ),
-        SkillIdent.KODO_RIDING:           (   0, 0 ),
-        SkillIdent.JEWELCRAFTING:         (   0, 0 )
-    }
+        SkillId.COMBAT:                (   5, 0 ),
+        SkillId.SUBTLETY:              (   0, 0 ),
+        SkillId.POISONS:               (   0, 0 ),
+        SkillId.SWORDS:                (   0, 0 ),
+        SkillId.BOWS:                  (   0, 0 ),
+        SkillId.MACES:                 (   0, 0 ),
+        SkillId.GUNS:                  (   0, 0 ),
+        SkillId.DEFENSE:               (   1, 0 ),
+        SkillId.LANGUAGE_ORCISH:       ( 300, 0 ),
+        SkillId.LANGUAGE_DWARVEN:      (   0, 0 ),
+        SkillId.LANGUAGE_DARNASSIAN:   (   0, 0 ),
+        SkillId.LANGUAGE_TAURAHE:      (   0, 0 ),
+        SkillId.DUAL_WIELD:            (   0, 0 ),
+        SkillId.FIRST_AID:             (   0, 0 ),
+        SkillId.LANGUAGE_THALASSIAN:   (   0, 0 ),
+        SkillId.LANGUAGE_DRACONIC:     (   0, 0 ),
+        SkillId.LANGUAGE_DEMON_TONGUE: (   0, 0 ),
+        SkillId.LANGUAGE_TITAN:        (   0, 0 ),
+        SkillId.LANGUAGE_OLD_TONGUE:   (   0, 0 ),
+        SkillId.SURVIVAL:              (   0, 0 ),
+        SkillId.HORSE_RIDING:          (   0, 0 ),
+        SkillId.WOLF_RIDING:           (   0, 0 ),
+        SkillId.TIGER_RIDING:          (   0, 0 ),
+        SkillId.RAM_RIDING:            (   0, 0 ),
+        SkillId.UNARMED:               (   1, 0 ),
+        SkillId.BLACKSMITHING:         (   0, 0 ),
+        SkillId.LEATHERWORKING:        (   0, 0 ),
+        SkillId.ALCHEMY:               (   0, 0 ),
+        SkillId.DAGGERS:               (   1, 0 ),
+        SkillId.THROWN:                (   1, 0 ),
+        SkillId.HERBALISM:             (   0, 0 ),
+        SkillId.GENERIC_DND:           (   5, 0 ),
+        SkillId.COOKING:               (   0, 0 ),
+        SkillId.MINING:                (   0, 0 ),
+        SkillId.TAILORING:             (   0, 0 ),
+        SkillId.ENGINEERING:           (   0, 0 ),
+        SkillId.RACIAL_UNDEAD:         (   5, 0 ),
+        SkillId.CROSSBOWS:             (   0, 0 ),
+        SkillId.ASSASSINATION:         (   5, 0 ),
+        SkillId.LANGUAGE_GNOMISH:      (   0, 0 ),
+        SkillId.LANGUAGE_TROLL:        (   0, 0 ),
+        SkillId.ENCHANTING:            (   0, 0 ),
+        SkillId.FISHING:               (   0, 0 ),
+        SkillId.SKINNING:              (   0, 0 ),
+        SkillId.LEATHER:               (   1, 0 ),
+        SkillId.CLOTH:                 (   1, 0 ),
+        SkillId.FIST_WEAPONS:          (   0, 0 ),
+        SkillId.RAPTOR_RIDING:         (   0, 0 ),
+        SkillId.UNDEAD_HORSEMANSHIP:   (   0, 0 ),
+        SkillId.LOCKPICKING:           (   0, 0 ),
+        SkillId.LANGUAGE_GUTTERSPEAK:  ( 300, 0 ),
+        SkillId.KODO_RIDING:           (   0, 0 ),
+        SkillId.JEWELCRAFTING:         (   0, 0 )
+    },
 }
 
 
