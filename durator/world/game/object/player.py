@@ -1,6 +1,8 @@
 from durator.db.database import db_connection
 from durator.world.game.object.object_fields import PlayerField
 from durator.world.game.object.unit import Unit
+from durator.world.game.skill.constants import SkillIdent
+from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
 from durator.world.game.skill.skill import Skill
 
 
@@ -38,11 +40,14 @@ class Player(Unit):
 
         self.set(id_field, skill.ident)
 
-        level_value = skill.level | skill.max_level << 16
-        self.set(level_field, level_value)
+        level, stat_level = skill.level, skill.stat_level
+        max_level, max_stat_level = SKILL_MAX_LEVELS[SkillIdent(skill.ident)]
 
-        stat_level_value = skill.stat_level | skill.max_stat_level << 16
-        self.set(stat_level_field, stat_level_value)
+        level_values = level | max_level << 16
+        self.set(level_field, level_values)
+
+        stat_level_values = stat_level | max_stat_level << 16
+        self.set(stat_level_field, stat_level_values)
 
     @db_connection
     def export_skills(self):

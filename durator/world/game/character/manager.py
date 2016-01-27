@@ -234,16 +234,21 @@ class _CharacterCreator(object):
         for skill in skills:
             values = skills[skill]
             max_values = SKILL_MAX_LEVELS[skill]
-            Skill.create(
-                character      = char_data,
-                ident          = skill.value,
 
-                level          = values[0],
-                stat_level     = values[1],
-
-                max_level      = max_values[0],
-                max_stat_level = max_values[1]
-            )
+            try:
+                Skill.create(
+                    character      = char_data,
+                    ident          = skill.value,
+                    level          = values[0],
+                    stat_level     = values[1],
+                    max_level      = max_values[0],
+                    max_stat_level = max_values[1]
+                )
+            except PeeweeException as exc:
+                LOG.error("Couldn't add skill {} for char {}".format(
+                    skill.name, char_data.guid
+                ))
+                LOG.error(str(exc))
 
 
 class _CharacterDestructor(object):
