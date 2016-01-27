@@ -13,7 +13,6 @@ from durator.world.handlers.character.char_enum import CharEnumHandler
 from durator.world.handlers.chat.join_channel import JoinChannelHandler
 from durator.world.handlers.chat.leave_channel import LeaveChannelHandler
 from durator.world.handlers.chat.message import MessageHandler
-from durator.world.handlers.game.account_data import RequestAccountDataHandler
 from durator.world.handlers.game.account_data import UpdateAccountDataHandler
 from durator.world.handlers.game.logout import LogoutRequestHandler
 from durator.world.handlers.game.movement import MovementHandler
@@ -98,7 +97,6 @@ class WorldConnection(ConnectionAutomaton):
         OpCode.CMSG_PING:                   PingHandler,
         OpCode.CMSG_AUTH_SESSION:           AuthSessionHandler,
         OpCode.CMSG_ZONEUPDATE:             ZoneUpdateHandler,
-        OpCode.CMSG_REQUEST_ACCOUNT_DATA:   RequestAccountDataHandler,
         OpCode.CMSG_UPDATE_ACCOUNT_DATA:    UpdateAccountDataHandler
     }
 

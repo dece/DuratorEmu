@@ -146,7 +146,6 @@ class UpdateBlocksBuilder(object):
     def _set_field_mask_bits(self, field_index, field_struct):
         num_mask_blocks = math.ceil(field_struct.size / 4)
         for index in range(field_index, field_index + num_mask_blocks):
-            print("Field", index, "")
             self._set_field_mask_bit(index)
 
     def _set_field_mask_bit(self, field_index):

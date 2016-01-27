@@ -24,7 +24,7 @@ class CharDeleteHandler(object):
 
     def process(self):
         guid = self.PACKET_BIN.unpack(self.packet)[0]
-        manager_code = CharacterManager.delete_character(guid)
+        manager_code = CharacterManager.delete_char(guid)
         packet = self._get_response_packet(manager_code)
         return None, packet
 
@@ -33,7 +33,7 @@ class CharDeleteHandler(object):
             0: CharDeleteResponseCode.SUCCESS,
             1: CharDeleteResponseCode.FAILED
         }.get(manager_code, 1)
-        LOG.debug("Character creation status: " + str(response_code))
+        LOG.debug("Character creation status: " + str(response_code.name))
 
         response_data = self.RESPONSE_BIN.pack(response_code.value)
         return WorldPacket(OpCode.SMSG_CHAR_DELETE, response_data)

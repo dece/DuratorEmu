@@ -41,6 +41,7 @@ class CharCreateHandler(object):
         self._parse_packet(self.packet)
 
         char_values = {
+            "account": self.conn.account,
             "name": self.char_name,
             "race": self.char_race,
             "class": self.char_class,
@@ -53,9 +54,7 @@ class CharCreateHandler(object):
                 "facial_hair": self.char_features[4]
             }
         }
-        manager_code = CharacterManager.create_character(
-            self.conn.account, char_values
-        )
+        manager_code = CharacterManager.create_char(char_values)
 
         packet = self._get_response_packet(manager_code)
         return None, packet
@@ -79,7 +78,7 @@ class CharCreateHandler(object):
             2: CharCreateResponseCode.NAME_IN_USE,
             3: CharCreateResponseCode.ERROR
         }.get(manager_code, 1)
-        LOG.debug("Character creation status: " + str(response_code))
+        LOG.debug("Character creation status: " + str(response_code.name))
 
         response_data = self.RESPONSE_BIN.pack(response_code.value)
         return WorldPacket(OpCode.SMSG_CHAR_CREATE, response_data)

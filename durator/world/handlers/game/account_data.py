@@ -1,19 +1,9 @@
-""" Handlers for CMSG_REQUEST_ACCOUNT_DATA and CMSG_UPDATE_ACCOUNT_DATA. """
+""" Handler for CMSG_UPDATE_ACCOUNT_DATA (CMSG_REQUEST_ACCOUNT_DATA later?) """
 
 from struct import Struct
 
 from durator.common.account.account_data import AccountDataType
 from durator.common.account.managers import AccountDataManager
-
-
-class RequestAccountDataHandler(object):
-
-    def __init__(self, connection, packet):
-        self.conn = connection
-        self.packet = packet
-
-    def process(self):
-        return None, None
 
 
 class UpdateAccountDataHandler(object):
