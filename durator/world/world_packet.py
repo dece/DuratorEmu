@@ -1,4 +1,5 @@
 from struct import Struct
+import traceback
 
 from durator.common.crypto.session_cipher import SessionCipher
 from durator.config import DEBUG
@@ -106,9 +107,16 @@ class WorldPacketReceiver(object):
             LOG.warning("Unknown opcode {:X}".format(opcode_value))
 
     def _get_more_data(self):
-        some_data = self.socket.recv(1024)
+        some_data = None
+        try:
+            some_data = self.socket.recv(1024)
+        except ConnectionError as exc:
+            LOG.warning("WorldPacketReceiver: ConnectionError: " + str(exc))
+            traceback.print_tb(exc.__traceback__)
+
         if not some_data:
             raise WorldPacketReceiverException()
+
         self.packet_buf += some_data
 
     def clean(self):

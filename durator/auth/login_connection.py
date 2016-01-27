@@ -52,7 +52,7 @@ class LoginConnection(ConnectionAutomaton):
         try:
             data = self.socket.recv(1024)
             return data or None
-        except ConnectionResetError:
+        except ConnectionError:
             LOG.info("Lost connection.")
             return None
 

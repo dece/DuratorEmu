@@ -34,8 +34,11 @@ class RealmConnection(object):
 
         packet_size = data[0]
         while len(data[1:]) < packet_size:
-            data_part = self.socket.recv(1024)
-            if not data_part:
+            try:
+                data_part = self.socket.recv(1024)
+                if not data_part:
+                    return None
+            except ConnectionError:
                 return None
             data += data_part
 
