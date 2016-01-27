@@ -2,12 +2,13 @@ from enum import Enum
 import io
 from struct import Struct
 
-from durator.world.game.character.character_data import CharacterManager
+from durator.world.game.character.manager import CharacterManager
 from durator.world.game.character.constants import (
     CharacterRace, CharacterClass, CharacterGender )
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring, read_struct
+from pyshgck.logger import LOG
 
 
 class CharCreateResponseCode(Enum):
@@ -75,8 +76,10 @@ class CharCreateHandler(object):
         response_code = {
             0: CharCreateResponseCode.SUCCESS,
             1: CharCreateResponseCode.FAILED,
-            2: CharCreateResponseCode.NAME_IN_USE
-        }.get(manager_code)
+            2: CharCreateResponseCode.NAME_IN_USE,
+            3: CharCreateResponseCode.ERROR
+        }.get(manager_code, 1)
+        LOG.debug("Character creation status: " + str(response_code))
 
         response_data = self.RESPONSE_BIN.pack(response_code.value)
         return WorldPacket(OpCode.SMSG_CHAR_CREATE, response_data)

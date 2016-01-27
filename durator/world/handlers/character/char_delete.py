@@ -1,9 +1,10 @@
 from enum import Enum
 from struct import Struct
 
-from durator.world.game.character.character_data import CharacterManager
+from durator.world.game.character.manager import CharacterManager
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
+from pyshgck.logger import LOG
 
 
 class CharDeleteResponseCode(Enum):
@@ -31,7 +32,8 @@ class CharDeleteHandler(object):
         response_code = {
             0: CharDeleteResponseCode.SUCCESS,
             1: CharDeleteResponseCode.FAILED
-        }.get(manager_code)
+        }.get(manager_code, 1)
+        LOG.debug("Character creation status: " + str(response_code))
 
         response_data = self.RESPONSE_BIN.pack(response_code.value)
         return WorldPacket(OpCode.SMSG_CHAR_DELETE, response_data)
