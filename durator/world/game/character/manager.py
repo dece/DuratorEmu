@@ -317,6 +317,7 @@ class _CharacterDestructor(object):
         character = CharacterData.get(CharacterData.guid == guid)
 
         _CharacterDestructor._delete_char_skills(character)
+        _CharacterDestructor._delete_char_spells(character)
 
         features = character.features
         stats = character.stats
@@ -334,3 +335,8 @@ class _CharacterDestructor(object):
     @db_connection
     def _delete_char_skills(character):
         Skill.delete().where(Skill.character == character).execute()
+
+    @staticmethod
+    @db_connection
+    def _delete_char_spells(character):
+        Spell.delete().where(Spell.character == character).execute()
