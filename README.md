@@ -50,6 +50,7 @@ Documentation
 Some related projects and documentation that I used, first for Vanilla (mostly
 1.12):
 
+- [WoWCore](https://github.com/RomanRom2/WoWCore/)
 - [MangosClassic](https://github.com/cmangos/mangos-classic)
 - [Ember](https://github.com/EmberEmu/Ember)
 - [Miceiken's server](http://git.clusterbrain.net/miceiken/WoWClassicServer)
