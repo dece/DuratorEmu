@@ -4,6 +4,8 @@ from durator.world.game.object.type.unit import Unit
 from durator.world.game.skill.constants import SkillId
 from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
 from durator.world.game.skill.skill import Skill
+from durator.world.game.spell.constants import SpellId, SPELL_VALUES
+from durator.world.game.spell.spell import Spell
 
 
 class Player(Unit):
@@ -19,10 +21,12 @@ class Player(Unit):
     def __init__(self):
         super().__init__()
         self.skills = []
+        self.spells = []
 
     @db_connection
     def import_skills(self, char_data):
         """ Import skills in the local skills list and in the update fields. """
+        self.skills = []
         skills = ( Skill
                    .select()
                    .where(Skill.character == char_data)
@@ -51,7 +55,12 @@ class Player(Unit):
         self.set(stat_level_field, stat_level_values)
 
     @db_connection
-    def export_skills(self):
-        """ Save the local list of skills in the database. """
-        for skill in self.skills:
-            skill.save()
+    def import_spells(self, char_data):
+        self.spells = []
+        spells = ( Spell
+                   .select()
+                   .where(Spell.character == char_data)
+                   .order_by(Spell.ident)
+                   .limit(self.NUM_SPELLS))
+        for spell in spells:
+            self.spells.append(spell)

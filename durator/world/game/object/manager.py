@@ -52,6 +52,7 @@ class ObjectManager(object):
         _PlayerManager.add_unit_fields(player, char_data)
         _PlayerManager.add_player_fields(player, char_data)
         player.import_skills(char_data)
+        player.import_spells(char_data)
 
         self._add_player(player)
         return player
