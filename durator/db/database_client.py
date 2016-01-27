@@ -2,7 +2,7 @@ import getpass
 
 from peewee import OperationalError
 
-from durator.common.account.account import AccountManager
+from durator.common.account.managers import AccountManager
 from durator.db.database import DB, db_connection
 from durator.db.models import MODELS
 from pyshgck.logger import LOG
@@ -30,7 +30,7 @@ class DatabaseClient(object):
                 "help": "test database availability",
                 "func": self._test_db
             },
-            "new_account": {
+            "account": {
                 "help": "create a new player account",
                 "func": self._new_account
             }
