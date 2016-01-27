@@ -3,6 +3,7 @@ import durator.common.account.account_data
 import durator.common.account.account_session
 import durator.world.game.character.character_data
 import durator.world.game.skill.skill
+import durator.world.game.spell.spell
 
 
 MODELS = [
@@ -13,5 +14,6 @@ MODELS = [
     durator.world.game.character.character_data.CharacterFeatures,
     durator.world.game.character.character_data.CharacterPosition,
     durator.world.game.character.character_data.CharacterStats,
-    durator.world.game.skill.skill.Skill
+    durator.world.game.skill.skill.Skill,
+    durator.world.game.spell.spell.Spell
 ]
