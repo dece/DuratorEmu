@@ -279,7 +279,6 @@ class _CharacterCreator(object):
 class _CharacterDestructor(object):
 
     @staticmethod
-    @db_connection
     def delete_char(guid):
         """ Try to delete character and all associated data from the database.
         Return 0 on success, 1 on error. """
