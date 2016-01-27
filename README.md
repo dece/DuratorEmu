@@ -2,9 +2,9 @@ DuratorEmu
 ==========
 
 This is a World of Warcraft 1.1.2.4125 tiny emulator, which tries to remain
-small, clean and understandable. The minimal goal is to get in world, then maybe
-handle several player and basic stuff like chat to have some fun with old school
-exploration techniques.
+small, clean and understandable. The goal is to handle several player and basic
+stuff like chat and groups to have some fun with old school exploration
+techniques.
 
 
 
