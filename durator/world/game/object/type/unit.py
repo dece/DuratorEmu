@@ -1,8 +1,8 @@
 from enum import Enum
 
 from durator.world.game.movement import Movement, MovementFlags
-from durator.world.game.object.base_object import BaseObject
 from durator.world.game.object.object_fields import UnitField
+from durator.world.game.object.type.base_object import BaseObject
 
 
 class UnitPower(Enum):

@@ -5,7 +5,7 @@ import math
 from struct import Struct
 
 from durator.world.game.character.defaults import NEW_CHAR_DEFAULTS
-from durator.world.game.object.base_object import ObjectType
+from durator.world.game.object.type.base_object import ObjectType
 from durator.world.game.object.object_fields_type import (
     FieldType, FIELD_TYPE_MAP )
 from durator.world.opcodes import OpCode

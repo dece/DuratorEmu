@@ -1,6 +1,6 @@
 from durator.world.game.object.object_fields import (
     ObjectField, UnitField, PlayerField )
-from durator.world.game.object.player import Player
+from durator.world.game.object.type.player import Player
 from durator.world.game.update_object_packet import (
     UpdateType, UpdateObjectPacket )
 from pyshgck.logger import LOG

@@ -7,7 +7,7 @@ Skill values are current level and current stat leve (whatever that means).
 """
 
 from durator.world.game.character.constants import CharacterRace, CharacterClass
-from durator.world.game.object.unit import UnitPower
+from durator.world.game.object.type.unit import UnitPower
 from durator.world.game.skill.constants import SkillIdent
 
 

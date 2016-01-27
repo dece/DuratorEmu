@@ -1,6 +1,6 @@
 from durator.db.database import db_connection
 from durator.world.game.object.object_fields import PlayerField
-from durator.world.game.object.unit import Unit
+from durator.world.game.object.type.unit import Unit
 from durator.world.game.skill.constants import SkillIdent
 from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
 from durator.world.game.skill.skill import Skill

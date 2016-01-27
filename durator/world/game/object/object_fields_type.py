@@ -6,7 +6,7 @@ from durator.world.game.object.object_fields import (
     ObjectField, ItemField, ContainerField,
     UnitField, PlayerField,
     DynamicObjectField, GameObjectField, CorpseField )
-from durator.world.game.object.player import Player
+from durator.world.game.object.type.player import Player
 
 
 class FieldType(Enum):
