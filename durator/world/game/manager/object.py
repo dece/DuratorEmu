@@ -1,5 +1,6 @@
 from threading import Lock
 
+from durator.db.database import db_connection
 from durator.world.game.character.manager import CharacterManager
 from durator.world.game.object.base_object import ObjectType, ObjectTypeFlags
 from durator.world.game.object.object_fields import (
@@ -38,6 +39,7 @@ class ObjectManager(object):
     def _add_player(self, player):
         self.objects["players"][player.guid] = player
 
+    @db_connection
     def add_player(self, char_data):
         """ Create (and return) a Player object from the data stored in the
         database, and add it to the managed object list. """
@@ -95,6 +97,7 @@ class ObjectManager(object):
             ObjectManager._save_player_data(player)
 
     @staticmethod
+    @db_connection
     def _save_player_data(player):
         char_data = CharacterManager.get_char_data(player.guid)
         ObjectManager._get_coords_from_object(player, char_data.position)
@@ -115,6 +118,7 @@ class _PlayerManager(object):
     """ Static methods to transfer data from database models to objects. """
 
     @staticmethod
+    @db_connection
     def add_object_fields(player, char_data):
         object_type = (
             ObjectTypeFlags.OBJECT.value |
@@ -126,6 +130,7 @@ class _PlayerManager(object):
         player.set(ObjectField.SCALE_X, char_data.stats.scale_x)
 
     @staticmethod
+    @db_connection
     def add_unit_fields(player, char_data):
         stats = char_data.stats
 
@@ -201,6 +206,7 @@ class _PlayerManager(object):
         player.set(UnitField.MAX_RANGED_DAMAGE, stats.max_ranged_damage)
 
     @staticmethod
+    @db_connection
     def add_player_fields(player, char_data):
         stats = char_data.stats
 
@@ -237,11 +243,13 @@ class _PlayerManager(object):
         player.set(PlayerField.COINAGE,        stats.coinage)
 
     @staticmethod
+    @db_connection
     def get_object_fields(player, char_data):
         char_data.guid    = player.get(ObjectField.GUID)
         char_data.scale_x = player.get(ObjectField.SCALE_X)
 
     @staticmethod
+    @db_connection
     def get_unit_fields(player, char_data):
         stats = char_data.stats
 
@@ -314,6 +322,7 @@ class _PlayerManager(object):
         stats.max_ranged_damage = player.get(UnitField.MAX_RANGED_DAMAGE)
 
     @staticmethod
+    @db_connection
     def get_player_fields(player, char_data):
         stats = char_data.stats
         features = char_data.features

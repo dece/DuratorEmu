@@ -2,7 +2,7 @@ import threading
 
 from peewee import MySQLDatabase, OperationalError
 
-from durator.config import CONFIG
+from durator.config import CONFIG, DEBUG
 from pyshgck.logger import LOG
 
 
@@ -40,6 +40,8 @@ class _DbConnector(object):
             if self.num_connections == 1:
                 try:
                     self.database.connect()
+                    if DEBUG:
+                        LOG.debug("DATABASE CONNECTED")
                 except OperationalError as exc:
                     _DbConnector.log_error("connect", exc)
                     self.num_connections -= 1
@@ -53,6 +55,8 @@ class _DbConnector(object):
             if self.num_connections == 0:
                 try:
                     self.database.close()
+                    if DEBUG:
+                        LOG.debug("DATABASE CLOSED")
                 except OperationalError as exc:
                     _DbConnector.log_error("close", exc)
                     return False
@@ -72,14 +76,22 @@ _DB_CONNECTOR = _DbConnector(DB)
 
 def db_connection(func):
     """ Decorator that connects to the db with correct credentials and properly
-    closes the connection after return. If a connection couldn't be made, it
-    returns None and does not call the decorated function. """
+    closes the connection after return.
+
+    If a connection couldn't be made, it returns None and does not call the
+    decorated function. However, if a connection couldn't be closed, we still go
+    on and return the function return value and assume it isn't that bad.
+    """
 
     def db_connection_decorator(*args, **kwargs):
         if not _DB_CONNECTOR.connect():
             return None
-        return_value = func(*args, **kwargs)
-        _DB_CONNECTOR.close()
+
+        return_value = None
+        try:
+            return_value = func(*args, **kwargs)
+        finally:
+            _DB_CONNECTOR.close()
         return return_value
 
     return db_connection_decorator

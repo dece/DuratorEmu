@@ -81,6 +81,7 @@ class AccountDataManager(object):
         return md5s
 
     @staticmethod
+    @db_connection
     def set_account_data(account, data_type, compressed_data):
         """ Update values for that account and data_type with this data. """
         account_data = AccountDataManager.get_account_data(account, data_type)

@@ -4,6 +4,7 @@ from struct import Struct
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.common.account.managers import AccountSessionManager
+from durator.db.database import db_connection
 from pyshgck.logger import LOG
 
 
@@ -54,7 +55,7 @@ class ReconChallenge(object):
         session = AccountSessionManager.get_session(self.account_name)
         if session is not None:
             LOG.debug("Reconnection: account was logged in.")
-            self.conn.account = session.account
+            self.conn.account = ReconChallenge._get_session_account(session)
             self.conn.recon_challenge = os.urandom(16)
             response = self._get_success_response()
             return LoginConnectionState.RECON_CHALL, response
@@ -62,6 +63,11 @@ class ReconChallenge(object):
             LOG.warning("Reconnection: account wasn't logged in!")
             response = self._get_failure_response()
             return LoginConnectionState.CLOSED, response
+
+    @staticmethod
+    @db_connection
+    def _get_session_account(session):
+        return session.account
 
     def _get_success_response(self):
         response = self.RESPONSE_SUCC_BIN.pack(

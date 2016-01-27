@@ -1,3 +1,4 @@
+from durator.db.database import db_connection
 from durator.world.game.object.object_fields import PlayerField
 from durator.world.game.object.unit import Unit
 from durator.world.game.skill.skill import Skill
@@ -17,7 +18,9 @@ class Player(Unit):
         super().__init__()
         self.skills = []
 
+    @db_connection
     def import_skills(self, char_data):
+        """ Import skills in the local skills list and in the update fields. """
         skills = ( Skill
                    .select()
                    .where(Skill.character == char_data)
@@ -41,6 +44,8 @@ class Player(Unit):
         stat_level_value = skill.stat_level | skill.max_stat_level << 16
         self.set(stat_level_field, stat_level_value)
 
+    @db_connection
     def export_skills(self):
+        """ Save the local  """
         for skill in self.skills:
             skill.save()

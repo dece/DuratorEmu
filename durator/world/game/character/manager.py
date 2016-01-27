@@ -2,7 +2,7 @@ import random
 
 from peewee import PeeweeException
 
-from durator.db.database import db_connection
+from durator.db.database import DB, db_connection
 from durator.world.game.character.character_data import (
     CharacterData, CharacterFeatures, CharacterStats, CharacterPosition )
 from durator.world.game.character.constants import CharacterGender
@@ -123,6 +123,8 @@ class _CharacterCreator(object):
         return guid
 
     @staticmethod
+    @staticmethod
+    @db_connection
     def _get_default_char_stats(consts, gender):
         if gender == CharacterGender.MALE:
             model = consts["race"]["model_male"]
@@ -214,6 +216,7 @@ class _CharacterCreator(object):
         )
 
     @staticmethod
+    @db_connection
     def _get_default_char_position(consts):
         return CharacterPosition.create(
             map_id      = consts["race"]["start_map"],

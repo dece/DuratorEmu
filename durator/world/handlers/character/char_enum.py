@@ -1,5 +1,6 @@
 from struct import Struct
 
+from durator.db.database import db_connection
 from durator.world.game.character.constants import CharacterEquipSlot
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
@@ -20,6 +21,7 @@ class CharEnumHandler(object):
         self.conn = connection
         self.packet = packet
 
+    @db_connection
     def process(self):
         num_chars = 0
         characters_data = []

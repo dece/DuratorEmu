@@ -6,6 +6,7 @@ from durator.common.account.managers import AccountSessionManager
 from durator.common.crypto.session_cipher import SessionCipher
 from durator.common.crypto.sha1 import sha1
 from durator.config import CONFIG
+from durator.db.database import db_connection
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
@@ -110,8 +111,13 @@ class AuthSessionHandler(object):
     def _load_session_key(self):
         session = AccountSessionManager.get_session(self.account_name)
         if session is not None:
-            self.conn.account = session.account
+            self.conn.account = AuthSessionHandler._get_session_account(session)
             self.session_key = session.session_key_as_bytes
+
+    @staticmethod
+    @db_connection
+    def _get_session_account(session):
+        return session.account
 
     def _generate_server_hash(self):
         auth_seed = self.conn.shared_data["auth_seed"]
