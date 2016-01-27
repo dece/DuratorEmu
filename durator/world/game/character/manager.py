@@ -283,24 +283,31 @@ class _CharacterDestructor(object):
     def delete_char(guid):
         """ Try to delete character and all associated data from the database.
         Return 0 on success, 1 on error. """
-        try:
-            character = CharacterData.get(CharacterData.guid == guid)
+        with DB.transaction() as transaction:
+            try:
+                _CharacterDestructor._delete_char(guid)
+            except PeeweeException as exc:
+                LOG.error("An error occured while deleting character:")
+                LOG.error(str(exc))
+                transaction.rollback()
+                return 1
+        return 0
 
-            _CharacterDestructor._delete_char_skills(character)
+    @staticmethod
+    @db_connection
+    def _delete_char(guid):
+        character = CharacterData.get(CharacterData.guid == guid)
 
-            features = character.features
-            stats = character.stats
-            position = character.position
+        _CharacterDestructor._delete_char_skills(character)
 
-            character.delete_instance()
-            features.delete_instance()
-            stats.delete_instance()
-            position.delete_instance()
-        except PeeweeException as exc:
-            LOG.error("An error occured while deleting character {}: {}".format(
-                guid, str(exc)
-            ))
-            return 1
+        features = character.features
+        stats = character.stats
+        position = character.position
+
+        character.delete_instance()
+        features.delete_instance()
+        stats.delete_instance()
+        position.delete_instance()
 
         LOG.debug("Character " + str(guid) + " deleted.")
         return 0
