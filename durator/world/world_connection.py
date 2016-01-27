@@ -14,10 +14,10 @@ from durator.world.handlers.chat.join_channel import JoinChannelHandler
 from durator.world.handlers.chat.leave_channel import LeaveChannelHandler
 from durator.world.handlers.chat.message import MessageHandler
 from durator.world.handlers.game.account_data import UpdateAccountDataHandler
+from durator.world.handlers.game.login import PlayerLoginHandler
 from durator.world.handlers.game.logout import LogoutRequestHandler
 from durator.world.handlers.game.movement import MovementHandler
 from durator.world.handlers.game.name_query import NameQueryHandler
-from durator.world.handlers.game.player_login import PlayerLoginHandler
 from durator.world.handlers.game.time_query import TimeQueryHandler
 from durator.world.handlers.game.zone_update import ZoneUpdateHandler
 from durator.world.handlers.nop import NopHandler
