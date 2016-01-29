@@ -26,16 +26,17 @@ class Player(Unit):
     @db_connection
     def import_skills(self, char_data):
         """ Import skills in the local skills list and in the update fields. """
-        self.skills = []
-        skills = ( Skill
-                   .select()
-                   .where(Skill.character == char_data)
-                   .order_by(Skill.ident)
-                   .limit(self.NUM_SKILLS) )
-        for skill in skills:
-            slot = len(self.skills)
-            self.skills.append(skill)
-            self._set_skill_fields(slot, skill)
+        with self.lock:
+            self.skills = []
+            skills = ( Skill
+                       .select()
+                       .where(Skill.character == char_data)
+                       .order_by(Skill.ident)
+                       .limit(self.NUM_SKILLS) )
+            for skill in skills:
+                slot = len(self.skills)
+                self.skills.append(skill)
+                self._set_skill_fields(slot, skill)
 
     def _set_skill_fields(self, slot, skill):
         """ Update the object's fields for that skill at this skill slot. """
@@ -56,11 +57,12 @@ class Player(Unit):
 
     @db_connection
     def import_spells(self, char_data):
-        self.spells = []
-        spells = ( Spell
-                   .select()
-                   .where(Spell.character == char_data)
-                   .order_by(Spell.ident)
-                   .limit(self.NUM_SPELLS))
-        for spell in spells:
-            self.spells.append(spell)
+        with self.lock:
+            self.spells = []
+            spells = ( Spell
+                       .select()
+                       .where(Spell.character == char_data)
+                       .order_by(Spell.ident)
+                       .limit(self.NUM_SPELLS))
+            for spell in spells:
+                self.spells.append(spell)

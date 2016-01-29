@@ -48,6 +48,8 @@ class PlayerLoginHandler(object):
         self.conn.set_player(character_data)
 
         # Finally, send the packets necessary to let the client get in world.
+        # Only the tutorial flags and update object packets are really necessary
+        # to let the client show the world.
         self.conn.send_packet(self._get_verify_login_packet())
         self.conn.send_packet(self._get_account_data_md5_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
@@ -70,15 +72,15 @@ class PlayerLoginHandler(object):
             return None
 
     def _get_verify_login_packet(self):
-        """ Send the unique (?) SMSG_LOGIN_VERIFY_WORLD packet.
-        Not mandatory to get in world. """
-        response_data = self.VERIFY_WORLD_BIN.pack(
-            self.conn.player.map_id,
-            self.conn.player.position.x,
-            self.conn.player.position.y,
-            self.conn.player.position.z,
-            self.conn.player.position.o
-        )
+        """ Send the unique (?) SMSG_LOGIN_VERIFY_WORLD packet. """
+        with self.conn.player.lock:
+            response_data = self.VERIFY_WORLD_BIN.pack(
+                self.conn.player.map_id,
+                self.conn.player.position.x,
+                self.conn.player.position.y,
+                self.conn.player.position.z,
+                self.conn.player.position.o
+            )
         return WorldPacket(OpCode.SMSG_LOGIN_VERIFY_WORLD, response_data)
 
     DATA_TIMES_HEADER_BIN = Struct("<IBI")

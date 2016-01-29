@@ -81,19 +81,20 @@ class UpdateObjectPacket(WorldPacket):
 
         # Assumes no flag for the movement
         movement_struct = Struct(self.PACKET_MOVEMENT_FMT.format())
-        data += movement_struct.pack(
-            0, 0,
-            player.position.x,
-            player.position.y,
-            player.position.z,
-            player.position.o,
-            NEW_CHAR_DEFAULTS["speed_walk"],
-            NEW_CHAR_DEFAULTS["speed_run"],
-            NEW_CHAR_DEFAULTS["speed_run_bw"],
-            NEW_CHAR_DEFAULTS["speed_swim"],
-            NEW_CHAR_DEFAULTS["speed_swim_bw"],
-            NEW_CHAR_DEFAULTS["speed_turn"]
-        )
+        with player.lock:
+            data += movement_struct.pack(
+                0, 0,
+                player.position.x,
+                player.position.y,
+                player.position.z,
+                player.position.o,
+                NEW_CHAR_DEFAULTS["speed_walk"],
+                NEW_CHAR_DEFAULTS["speed_run"],
+                NEW_CHAR_DEFAULTS["speed_run_bw"],
+                NEW_CHAR_DEFAULTS["speed_swim"],
+                NEW_CHAR_DEFAULTS["speed_swim_bw"],
+                NEW_CHAR_DEFAULTS["speed_turn"]
+            )
 
         data += self.PACKET_PART2_BIN.pack(1, 1, 0, 0)
 

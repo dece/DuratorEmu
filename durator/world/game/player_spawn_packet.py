@@ -85,8 +85,10 @@ class PlayerSpawnPacket(UpdateObjectPacket):
     def __init__(self, player):
         update_infos = { "player": player }
         super().__init__(UpdateType.CREATE_OBJECT, update_infos)
-        self._add_required_fields(player)
-        self._add_int_fields(player)
+
+        with player.lock:
+            self._add_required_fields(player)
+            self._add_int_fields(player)
 
     def _add_required_fields(self, player):
         for required_field in PLAYER_SPAWN_FIELDS:

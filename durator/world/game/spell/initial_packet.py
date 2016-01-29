@@ -1,5 +1,7 @@
 from struct import Struct
+import time
 
+from durator.world.game.spell.constants import SpellId, SPELL_VALUES
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 
@@ -15,6 +17,13 @@ class InitialSpellsPacket(WorldPacket):
     # uint16    unk
     SPELL_BIN  = Struct("<2H")
 
+    # uint16    spell_id
+    # uint16    item_id
+    # uint16    spell_category
+    # uint32    cooldown
+    # uint32    cooldown_category
+    COOLDOWN_BIN = Struct("<3H2I")
+
     def __init__(self, player):
         super().__init__(OpCode.SMSG_INITIAL_SPELLS)
         self.player = player
@@ -24,12 +33,20 @@ class InitialSpellsPacket(WorldPacket):
         """ Compute the bytes of the WorldPacket. """
         data = b""
 
-        num_spells = len(self.player.spells)
-        data += self.HEADER_BIN.pack(0, num_spells)
+        with self.player.lock:
+            num_spells = len(self.player.spells)
+            data += self.HEADER_BIN.pack(0, num_spells)
 
-        for spell in self.player.spells:
-            data += self.SPELL_BIN.pack(spell.ident, 0)
+            count = 1
+            for spell in self.player.spells:
+                data += self.SPELL_BIN.pack(spell.ident, count)
+                count += 1
 
-        data += int.to_bytes(0, 2, "little")  # no cooldowns
+            data += int.to_bytes(num_spells, 2, "little")
+            now = int(time.time())
+            for spell in self.player.spells:
+                values = SPELL_VALUES[SpellId(spell.ident)]
+                category = values[0]
+                data += self.COOLDOWN_BIN.pack(spell.ident, category, 0, now, 0)
 
         self.data = data

@@ -1,4 +1,5 @@
 from enum import Enum
+import threading
 
 from durator.world.game.object.object_fields import ObjectField
 from durator.world.game.position import Position
@@ -72,9 +73,12 @@ OBJECT_FLAGS_TO_TYPE = {
 
 
 class BaseObject(object):
-    """ A BaseObject is the base type for all things spawned in world.
+    """ A BaseObject is the base type for all things spawned in world. Objects
+    will frequently get accessed from several connections, so any read/write
+    must be used in the object's lock.
 
     Attributes:
+    - lock: a thread lock that must be used to read/write object's data
     - name: can be queried by clients
     - map_id
     - zone_id
@@ -85,6 +89,7 @@ class BaseObject(object):
     """
 
     def __init__(self):
+        self.lock = threading.RLock()
         self.name = "Unnamed object"
         self.map_id = 0
         self.zone_id = 0
@@ -93,17 +98,29 @@ class BaseObject(object):
 
     @property
     def guid(self):
-        return self.get(ObjectField.GUID)
+        """ Thread-safely return GUID. """
+        return self.threaded_get(ObjectField.GUID)
 
     @property
     def type(self):
-        flags = self.get(ObjectField.TYPE)  # misleading field name
+        """ Thread-safely return the ObjectType. """
+        flags = self.threaded_get(ObjectField.TYPE)  # misleading field name
         return ObjectType(OBJECT_FLAGS_TO_TYPE[flags])
 
     def get(self, field):
         """ Return the object field value, or None if it hasn't been set. """
         return self.fields.get(field)
 
+    def threaded_get(self, field):
+        """ Thread-safe get. """
+        with self.lock:
+            return self.get(field)
+
     def set(self, field, value):
         """ Set a new object field value. """
         self.fields[field] = value
+
+    def threaded_set(self, field, value):
+        """ Thread-safe set. """
+        with self.lock:
+            self.set(field, value)

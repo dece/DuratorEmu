@@ -21,5 +21,6 @@ class MovementHandler(object):
         This currently doesn't take into account transports and stuff, it just
         update the player position from the base position in the Movement.
         """
-        self.conn.player.movement = self.movement
-        self.conn.player.position = self.movement.position
+        with self.conn.player.lock:
+            self.conn.player.movement = self.movement
+            self.conn.player.position = self.movement.position

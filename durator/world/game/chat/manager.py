@@ -93,9 +93,12 @@ class ChatManager(object):
         # This call assumes that after create_channel, the chan always exists.
         channel = self.get_channel(chan_name)
         if password == channel.password:
-            LOG.info("{} joins channel '{}'.".format(player.name, channel.name))
-            channel.add_member(player.guid)
-            self._notify_join(channel, player.guid)
+            with player.lock:
+                player_guid = player.guid
+                player_name = player.name
+            LOG.info("{} joins channel '{}'.".format(player_name, channel.name))
+            channel.add_member(player_guid)
+            self._notify_join(channel, player_guid)
             return 0
         else:
             self.clean(chan_name)
@@ -126,13 +129,17 @@ class ChatManager(object):
         if chan_name not in self.get_channels_names():
             return 2
         channel = self.get_channel(chan_name)
-        if player.guid not in channel.get_members():
+
+        with player.lock:
+            player_guid = player.guid
+            player_name = player.name
+
+        if player_guid not in channel.get_members():
             return 1
 
-        LOG.info("{} leaves channel '{}'.".format(player.name, channel.name))
-        guid = player.guid
-        channel.remove_member(guid)
-        self._notify_leave(channel, guid)
+        LOG.info("{} leaves channel '{}'.".format(player_name, channel.name))
+        channel.remove_member(player_guid)
+        self._notify_leave(channel, player_guid)
         return 0
 
     def _notify_leave(self, channel, leaver_guid):
