@@ -33,7 +33,7 @@ class CharDeleteHandler(object):
             0: CharDeleteResponseCode.SUCCESS,
             1: CharDeleteResponseCode.FAILED
         }.get(manager_code, 1)
-        LOG.debug("Character creation status: " + str(response_code.name))
+        LOG.debug("Character deletion status: " + str(response_code.name))
 
         response_data = self.RESPONSE_BIN.pack(response_code.value)
         return WorldPacket(OpCode.SMSG_CHAR_DELETE, response_data)
