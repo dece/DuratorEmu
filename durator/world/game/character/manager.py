@@ -90,7 +90,7 @@ class _CharacterCreator(object):
     @db_connection
     def _try_create_char(char_values, consts):
         char_data = None
-        with DB.transaction() as transaction:
+        with DB.atomic() as transaction:
             try:
                 char_data = _CharacterCreator._create_char(char_values, consts)
             except PeeweeException as exc:
@@ -298,10 +298,11 @@ class _CharacterCreator(object):
 class _CharacterDestructor(object):
 
     @staticmethod
+    @db_connection
     def delete_char(guid):
         """ Try to delete character and all associated data from the database.
         Return 0 on success, 1 on error. """
-        with DB.transaction() as transaction:
+        with DB.atomic() as transaction:
             try:
                 _CharacterDestructor._delete_char(guid)
             except PeeweeException as exc:
