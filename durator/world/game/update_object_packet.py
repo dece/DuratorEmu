@@ -4,8 +4,8 @@ from enum import Enum
 import math
 from struct import Struct
 
-from durator.world.game.character.defaults import NEW_CHAR_DEFAULTS
 from durator.world.game.object.type.base_object import ObjectType
+from durator.world.game.object.type.unit import DEFAULT_SPEEDS
 from durator.world.game.object.object_fields_type import (
     FieldType, FIELD_TYPE_MAP )
 from durator.world.opcodes import OpCode
@@ -26,40 +26,54 @@ class UpdateType(Enum):
 class UpdateObjectPacket(WorldPacket):
     """ WIP """
 
-    UPDATE_TYPES_WITH_FIELDS = ( UpdateType.PARTIAL
-                               , UpdateType.MOVEMENT
-                               , UpdateType.CREATE_OBJECT )
+    TYPES_WITH_MOVEMENT = ( UpdateType.MOVEMENT
+                          , UpdateType.CREATE_OBJECT )
 
-    # uint32  count
-    # uint8   bool hasTransport (?)
-    # uint8   UPDATE_TYPE
-    # uint64  guid
-    # uint8   OBJECT_TYPE
-    PACKET_PART1_BIN = Struct("<I2BQB")
+    TYPES_WITH_MISC = ( UpdateType.CREATE_OBJECT, )
 
-    # uint32    flags
-    # uint32    unk
-    # float[4]  position+ori
-    # float[6]  speeds (walk, run, bw, swim, swim bw, turn)
-    # may be more complete with some flags
-    PACKET_MOVEMENT_FMT = "<2I4f6f"
+    TYPES_WITH_FIELDS = ( UpdateType.PARTIAL   # ?
+                        , UpdateType.MOVEMENT  # ?
+                        , UpdateType.CREATE_OBJECT )
 
-    # uint32  isPlayer ? 1 : 0
-    # uint32  attack cycle
-    # uint32  timer ID
-    # uint64  victim guid
-    PACKET_PART2_BIN = Struct("<3IQ")
+    IMPLEMENTED = ( UpdateType.MOVEMENT
+                  , UpdateType.CREATE_OBJECT )
+
+    # - uint32  count
+    # - uint8   bool hasTransport (?)
+    # - uint8   UpdateType
+    # - uint64  guid
+    # - uint8   ObjectType
+    PACKET_HEADER_BIN = Struct("<I2BQB")
+
+    # - float       speed_walk
+    # - float       speed_run
+    # - float       speed_run_bw
+    # - float       speed_swim
+    # - float       speed_swim_bw
+    # - float       speed_turn
+    #     if movement.flags & 0x00400000
+    #     more stuff
+    PACKET_SPEED_BIN = Struct("6f")
+
+    # - uint32  isPlayer ? 1 : 0
+    # - uint32  attack cycle
+    # - uint32  timer ID
+    # - uint64  victim guid
+    PACKET_MISC_BIN = Struct("<3IQ")
 
     def __init__(self, update_type, update_infos):
+        if update_type not in self.IMPLEMENTED:
+            raise NotImplementedError(str(update_type))
+
         super().__init__(OpCode.SMSG_UPDATE_OBJECT)
         self.update_type = update_type
         self.update_infos = update_infos
 
-        if self.update_type != UpdateType.CREATE_OBJECT:
-            raise NotImplementedError()
+        if self.has_fields():
+            self.blocks_builder = UpdateBlocksBuilder()
 
-        self.has_fields = self.update_type in self.UPDATE_TYPES_WITH_FIELDS
-        self.blocks_builder = UpdateBlocksBuilder() if self.has_fields else None
+    def has_fields(self):
+        return self.update_type in self.TYPES_WITH_FIELDS
 
     def add_field(self, field, value):
         """ If this update packet can hold update fields, add it. """
@@ -69,36 +83,36 @@ class UpdateObjectPacket(WorldPacket):
         self.blocks_builder.add(field, value)
 
     def to_socket(self, session_cipher = None):
-        """ WIP, this stuff still shouldn't be hardcoded """
+        """ Prepare the bytes to be sent to clients.  """
         data = b""
 
-        # The update_infos dict should contain the player field at least for
-        # type 2 updates, and maybe some others.
-        player = self.update_infos["player"]
-        data += self.PACKET_PART1_BIN.pack(
-            1, 0, self.update_type.value, player.guid, ObjectType.PLAYER.value
+        unit = self.update_infos["unit"]
+        data += self.PACKET_HEADER_BIN.pack(
+            1,  # we only send one batch of update values at a time for now
+            int(False),
+            self.update_type.value,
+            unit.guid,
+            ObjectType.PLAYER.value
         )
 
-        # Assumes no flag for the movement
-        movement_struct = Struct(self.PACKET_MOVEMENT_FMT.format())
-        with player.lock:
-            data += movement_struct.pack(
-                0, 0,
-                player.position.x,
-                player.position.y,
-                player.position.z,
-                player.position.o,
-                NEW_CHAR_DEFAULTS["speed_walk"],
-                NEW_CHAR_DEFAULTS["speed_run"],
-                NEW_CHAR_DEFAULTS["speed_run_bw"],
-                NEW_CHAR_DEFAULTS["speed_swim"],
-                NEW_CHAR_DEFAULTS["speed_swim_bw"],
-                NEW_CHAR_DEFAULTS["speed_turn"]
+        if self.update_type in self.TYPES_WITH_MOVEMENT:
+            with unit.lock:
+                movement_bytes = unit.movement.to_bytes()
+            data += movement_bytes
+            data += self.PACKET_SPEED_BIN.pack(
+                DEFAULT_SPEEDS["walk"],
+                DEFAULT_SPEEDS["run"],
+                DEFAULT_SPEEDS["run_bw"],
+                DEFAULT_SPEEDS["swim"],
+                DEFAULT_SPEEDS["swim_bw"],
+                DEFAULT_SPEEDS["turn"]
             )
 
-        data += self.PACKET_PART2_BIN.pack(1, 1, 0, 0)
+        if self.update_type in self.TYPES_WITH_MISC:
+            data += self.PACKET_MISC_BIN.pack(1, 1, 0, 0)
 
-        data += self.blocks_builder.to_bytes()
+        if self.update_type in self.TYPES_WITH_FIELDS:
+            data += self.blocks_builder.to_bytes()
 
         self.data = data
         return super().to_socket(session_cipher)

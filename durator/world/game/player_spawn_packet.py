@@ -83,7 +83,7 @@ class PlayerSpawnPacket(UpdateObjectPacket):
     """
 
     def __init__(self, player):
-        update_infos = { "player": player }
+        update_infos = { "unit": player }
         super().__init__(UpdateType.CREATE_OBJECT, update_infos)
 
         with player.lock:

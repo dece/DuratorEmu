@@ -54,7 +54,7 @@ class PlayerLoginHandler(object):
         self.conn.send_packet(self._get_account_data_md5_packet())
         self.conn.send_packet(self._get_tutorial_flags_packet())
         self.conn.send_packet(self._get_update_object_packet())
-        self.conn.send_packet(self._get_initial_spells_packet())
+        # self.conn.send_packet(self._get_initial_spells_packet())
 
         return WorldConnectionState.IN_WORLD, None
 
