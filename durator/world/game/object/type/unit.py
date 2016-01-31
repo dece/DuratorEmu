@@ -31,6 +31,16 @@ class Bytes0Mask(Enum):
     UNK    = 0xFF000000
 
 
+DEFAULT_SPEEDS = {
+    "walk":    2.5,
+    "run":     7.0,
+    "run_bw":  4.5,
+    "swim":    4.7222223,
+    "swim_bw": 2.5,
+    "turn":    3.141593
+}
+
+
 class Unit(BaseObject):
     """ A Unit is a BaseObject that can move, attack, etc.
 
@@ -41,6 +51,7 @@ class Unit(BaseObject):
     def __init__(self):
         super().__init__()
         self.movement = Movement()
+        self.speeds = DEFAULT_SPEEDS.copy()
 
     def get_race(self):
         unit_bytes_0 = self._get_bytes_0()
@@ -59,6 +70,5 @@ class Unit(BaseObject):
         return unit_bytes_0 or 0
 
     def is_falling(self):
-        falling_flags = ( MovementFlags.IS_FALLING.value
-                        | MovementFlags.IS_FALLING_FAR.value )
+        falling_flags = MovementFlags.IS_FALLING.value
         return bool(self.movement.flags & falling_flags)

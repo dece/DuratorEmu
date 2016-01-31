@@ -7,7 +7,7 @@ level (whatever that means).
 """
 
 from durator.world.game.character.constants import CharacterRace, CharacterClass
-from durator.world.game.object.type.unit import UnitPower
+from durator.world.game.object.type.unit import UnitPower, DEFAULT_SPEEDS
 from durator.world.game.skill.constants import SkillId
 from durator.world.game.spell.constants import SpellId
 
@@ -18,12 +18,12 @@ from durator.world.game.spell.constants import SpellId
 
 
 NEW_CHAR_DEFAULTS = {
-    "speed_walk":    2.5,
-    "speed_run":     7.0,
-    "speed_run_bw":  4.5,
-    "speed_swim":    4.7222223,
-    "speed_swim_bw": 2.5,
-    "speed_turn":    3.141593,
+    "speed_walk":    DEFAULT_SPEEDS["walk"],
+    "speed_run":     DEFAULT_SPEEDS["run"],
+    "speed_run_bw":  DEFAULT_SPEEDS["run_bw"],
+    "speed_swim":    DEFAULT_SPEEDS["swim"],
+    "speed_swim_bw": DEFAULT_SPEEDS["swim_bw"],
+    "speed_turn":    DEFAULT_SPEEDS["turn"],
 
     "level":        1,
     "unit_flags":   0,
