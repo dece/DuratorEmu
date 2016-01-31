@@ -27,7 +27,7 @@ class BaseObjectManager(metaclass = ABCMeta):
     def __init__(self, server):
         self.server = server
         self.objects = {}
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()  # temporary fix, should be a Lock
 
     @lock
     def _add_object(self, misc_object):
@@ -98,6 +98,9 @@ class ObjectManager(BaseObjectManager):
     def get_player_guids(self):
         """ Return an iterable over registered Player GUIDs. """
         return self.player_manager.get_guids()
+
+    def players_in_range_of(self, player, dist_range):
+        return self.player_manager.players_in_range_of(player, dist_range)
 
     # ----------------------------------------
     # Modify objects in the world
@@ -325,6 +328,7 @@ class _PlayerManager(BaseObjectManager):
         object_type = OBJECT_TYPE_TO_FLAGS[ObjectType.PLAYER]
 
         ObjectManager.add_object_coords(player, position)
+        player.movement.position = player.position
         ObjectManager.add_object_fields(player, char_data, object_type)
         _UnitManager.add_unit_fields(player, char_data)
         _PlayerManager.add_player_fields(player, char_data)
@@ -382,6 +386,20 @@ class _PlayerManager(BaseObjectManager):
 
     def get_guids(self):
         return self._get_guids()
+
+    @lock
+    def players_in_range_of(self, ref_player, dist_range):
+        """ Return a list of Players' GUIDs in that ref_player's range."""
+        with ref_player.lock:
+            ref_position = ref_player.position
+
+        guids_in_range = []
+        for player_guid in self.objects:
+            player = self.get_player(player_guid)
+            if ref_position.distance_from(player.position) < dist_range:
+                if ref_player.guid != player_guid:
+                    guids_in_range.append(player_guid)
+        return guids_in_range
 
     # ----------------------------------------
     # Remove players from world
