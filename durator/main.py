@@ -16,7 +16,7 @@ MODULES = {
 
 
 def main():
-    LOG.info("DuratorEmu - WoW 1.1.2.4125 Sandbox Server - Shgck 2015")
+    LOG.info("DuratorEmu - WoW 1.1.2.4125 Sandbox Server - Shgck 2016")
 
     argparser = argparse.ArgumentParser()
     argparser.add_argument("module", type = str, help = "module to start")
