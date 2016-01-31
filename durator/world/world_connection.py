@@ -104,7 +104,7 @@ class WorldConnection(ConnectionAutomaton):
     END_STATES       = [ WorldConnectionState.ERROR ]
     MAIN_ERROR_STATE = WorldConnectionState.ERROR
 
-    RECV_TIMEOUT = float(CONFIG["realm"]["recv_timeout"])
+    RECV_TIMEOUT = float(CONFIG["world"]["recv_timeout"])
 
     def __init__(self, server, connection):
         super().__init__(connection)
