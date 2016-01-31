@@ -3,6 +3,7 @@ import threading
 
 from peewee import PeeweeException
 
+from durator.config import CONFIG
 from durator.db.database import DB, db_connection
 from durator.world.game.character.manager import CharacterManager
 from durator.world.game.object.object_fields import (
@@ -10,6 +11,10 @@ from durator.world.game.object.object_fields import (
 from durator.world.game.object.type.base_object import (
     ObjectType, OBJECT_TYPE_TO_FLAGS )
 from durator.world.game.object.type.player import Player
+from durator.world.game.player_spawn_packet import PlayerSpawnPacket
+from durator.world.game.update_object_packet import (
+    UpdateType, UpdateObjectPacket )
+from durator.world.world_connection_state import WorldConnectionState
 from pyshgck.logger import LOG
 
 
@@ -94,7 +99,6 @@ class ObjectManager(BaseObjectManager):
         """ Return the player with that GUID, or None if it doesn't exist. """
         return self.player_manager.get_player(guid)
 
-    @lock
     def get_player_guids(self):
         """ Return an iterable over registered Player GUIDs. """
         return self.player_manager.get_guids()
@@ -107,7 +111,68 @@ class ObjectManager(BaseObjectManager):
     # ----------------------------------------
 
     def save_player(self, player):
+        """ Save the Player to the database. """
         self.player_manager.save_player(player)
+
+    def update_movement(self, ref_player):
+        """ Send ref_player update movement packets to near players. """
+        LOG.debug("Updating movement of " + ref_player.name)
+        
+        ref_guid = ref_player.guid
+        dist_range = float(CONFIG["world"]["update_range"])
+        players_guids = self.players_in_range_of(ref_player, dist_range)
+
+        LOG.debug("In range " + str(players_guids))
+
+        update_movement_guids, update_create_guids = \
+            self._tracking_and_untracking_players(
+                ref_guid,
+                players_guids,
+                update = True
+            )
+
+        LOG.debug("MVM and CREATE " + str(update_movement_guids) + ", " +
+                    str(update_create_guids))
+
+        infos = { "object": ref_player, "is_player": False }
+        create_packet = PlayerSpawnPacket(infos)
+        movement_packet = UpdateObjectPacket(UpdateType.MOVEMENT, infos)
+
+        # If a player is not tracking our reference player (= it doesn't
+        # know about that GUID), send a create object packet.
+        self.server.broadcast(
+            create_packet,
+            state = WorldConnectionState.IN_WORLD,
+            guids = update_create_guids
+        )
+
+        # Else (already tracking ref_player), send a movement update.
+        self.server.broadcast(
+            movement_packet,
+            state = WorldConnectionState.IN_WORLD,
+            guids = update_movement_guids
+        )
+
+    def _tracking_and_untracking_players(self, ref_guid, players_guids,
+            update = False):
+        """ Return lists of players (from the GUID list) that are tracking or
+        not tracking ref_player. If update is True, append ref_guid to all not
+        previously tracking players. """
+        tracking_guids = []
+        not_tracking_guids = []
+
+        for player in [self.get_player(guid) for guid in players_guids]:
+            if player is None:
+                continue
+            with player.lock:
+                if ref_guid not in player.tracked_guids:
+                    not_tracking_guids.append(player.guid)
+                    if update:
+                        player.tracked_guids.append(ref_guid)
+                else:
+                    tracking_guids.append(player.guid)
+
+        return tracking_guids, not_tracking_guids
 
     # ----------------------------------------
     # Remove diverse objects from the world

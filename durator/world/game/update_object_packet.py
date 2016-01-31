@@ -4,10 +4,11 @@ from enum import Enum
 import math
 from struct import Struct
 
-from durator.world.game.object.type.base_object import ObjectType
-from durator.world.game.object.type.unit import DEFAULT_SPEEDS
+from durator.world.game.object.object_fields import ObjectField
 from durator.world.game.object.object_fields_type import (
     FieldType, FIELD_TYPE_MAP )
+from durator.world.game.object.type.base_object import ObjectTypeFlags
+from durator.world.game.object.type.unit import DEFAULT_SPEEDS
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.logger import LOG
@@ -24,26 +25,35 @@ class UpdateType(Enum):
 
 
 class UpdateObjectPacket(WorldPacket):
-    """ WIP """
+    """ Handle the creation of update packets. It can handle object fields
+    update and movement update.
 
+    The update_infos dict contains the most values of interest. Some elements
+    must be provided for some update types only:
+    - unit: Unit object that this packet concerns. Always provide it.
+    - is_player: boolean about whether or not this packet concerns
+        the destination player or another unit. Provide it for CREATE_OBJECT.
+    """
+
+    TYPES_WITH_OBJECT_TYPE = ( UpdateType.CREATE_OBJECT, )
     TYPES_WITH_MOVEMENT = ( UpdateType.MOVEMENT
                           , UpdateType.CREATE_OBJECT )
-
     TYPES_WITH_MISC = ( UpdateType.CREATE_OBJECT, )
-
     TYPES_WITH_FIELDS = ( UpdateType.PARTIAL   # ?
                         , UpdateType.MOVEMENT  # ?
                         , UpdateType.CREATE_OBJECT )
 
-    IMPLEMENTED = ( UpdateType.MOVEMENT
-                  , UpdateType.CREATE_OBJECT )
+    IMPLEMENTED_TYPES = ( UpdateType.MOVEMENT
+                        , UpdateType.CREATE_OBJECT )
 
     # - uint32  count
     # - uint8   bool hasTransport (?)
     # - uint8   UpdateType
     # - uint64  guid
+    PACKET_HEADER_BIN = Struct("<I2BQ")
+
     # - uint8   ObjectType
-    PACKET_HEADER_BIN = Struct("<I2BQB")
+    PACKET_OBJECT_TYPE_BIN = Struct("<B")
 
     # - float       speed_walk
     # - float       speed_run
@@ -53,7 +63,7 @@ class UpdateObjectPacket(WorldPacket):
     # - float       speed_turn
     #     if movement.flags & 0x00400000
     #     more stuff
-    PACKET_SPEED_BIN = Struct("6f")
+    PACKET_SPEED_BIN = Struct("<6f")
 
     # - uint32  isPlayer ? 1 : 0
     # - uint32  attack cycle
@@ -62,7 +72,7 @@ class UpdateObjectPacket(WorldPacket):
     PACKET_MISC_BIN = Struct("<3IQ")
 
     def __init__(self, update_type, update_infos):
-        if update_type not in self.IMPLEMENTED:
+        if update_type not in self.IMPLEMENTED_TYPES:
             raise NotImplementedError(str(update_type))
 
         super().__init__(OpCode.SMSG_UPDATE_OBJECT)
@@ -84,20 +94,26 @@ class UpdateObjectPacket(WorldPacket):
 
     def to_socket(self, session_cipher = None):
         """ Prepare the bytes to be sent to clients.  """
+        base_object = self.update_infos["object"]
         data = b""
 
-        unit = self.update_infos["unit"]
         data += self.PACKET_HEADER_BIN.pack(
             1,  # we only send one batch of update values at a time for now
             int(False),
             self.update_type.value,
-            unit.guid,
-            ObjectType.PLAYER.value
+            base_object.guid
         )
 
+        if self.update_type in self.TYPES_WITH_OBJECT_TYPE:
+            data += self.PACKET_OBJECT_TYPE_BIN.pack(base_object.type.value)
+
         if self.update_type in self.TYPES_WITH_MOVEMENT:
-            with unit.lock:
-                movement_bytes = unit.movement.to_bytes()
+            with base_object.lock:
+                # Only objects with movement (= Units and Players) in there.
+                object_type_value = base_object.get(ObjectField.TYPE)
+                assert object_type_value & ObjectTypeFlags.UNIT.value
+
+                movement_bytes = base_object.movement.to_bytes()
             data += movement_bytes
             data += self.PACKET_SPEED_BIN.pack(
                 DEFAULT_SPEEDS["walk"],
@@ -109,7 +125,12 @@ class UpdateObjectPacket(WorldPacket):
             )
 
         if self.update_type in self.TYPES_WITH_MISC:
-            data += self.PACKET_MISC_BIN.pack(1, 1, 0, 0)
+            data += self.PACKET_MISC_BIN.pack(
+                int(self.update_infos["is_player"]),
+                1,
+                0,
+                0
+            )
 
         if self.update_type in self.TYPES_WITH_FIELDS:
             data += self.blocks_builder.to_bytes()

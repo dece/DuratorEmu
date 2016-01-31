@@ -78,14 +78,14 @@ PLAYER_SPAWN_FIELDS = [
 
 
 class PlayerSpawnPacket(UpdateObjectPacket):
-    """ This specific UpdateObjectPacket is used to let the player spawn.
-    May be a temporary solution until I have a better update object system.
-    """
+    """ This specific UpdateObjectPacket is used to let a player spawn.
+    Basically a wrapper around CREATE_OBJECT UpdateObjectPacket for Players that
+    add some required fields. """
 
-    def __init__(self, player):
-        update_infos = { "unit": player }
+    def __init__(self, update_infos):
         super().__init__(UpdateType.CREATE_OBJECT, update_infos)
 
+        player = update_infos["object"]
         with player.lock:
             self._add_required_fields(player)
             self._add_int_fields(player)

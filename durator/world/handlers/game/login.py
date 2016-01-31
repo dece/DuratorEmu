@@ -56,6 +56,9 @@ class PlayerLoginHandler(object):
         self.conn.send_packet(self._get_update_object_packet())
         # self.conn.send_packet(self._get_initial_spells_packet())
 
+        self._get_near_objects()
+        self._notify_near_players()
+
         return WorldConnectionState.IN_WORLD, None
 
     @db_connection
@@ -98,8 +101,16 @@ class PlayerLoginHandler(object):
 
     def _get_update_object_packet(self):
         """ Get the UpdateObjectPacket needed to spawn in world. """
-        return PlayerSpawnPacket(self.conn.player)
+        update_infos = { "object": self.conn.player, "is_player": True }
+        return PlayerSpawnPacket(update_infos)
 
     def _get_initial_spells_packet(self):
         """ Get a packet with player spells. """
         return InitialSpellsPacket(self.conn.player)
+
+    def _get_near_objects(self):
+        pass
+
+    def _notify_near_players(self):
+        object_manager = self.conn.server.object_manager
+        object_manager.update_movement(self.conn.player)

@@ -4,7 +4,6 @@ from durator.world.game.object.type.unit import Unit
 from durator.world.game.skill.constants import SkillId
 from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
 from durator.world.game.skill.skill import Skill
-from durator.world.game.spell.constants import SpellId, SPELL_VALUES
 from durator.world.game.spell.spell import Spell
 
 
@@ -22,6 +21,7 @@ class Player(Unit):
         super().__init__()
         self.skills = []
         self.spells = []
+        self.tracked_guids = []
 
     @db_connection
     def import_skills(self, char_data):
