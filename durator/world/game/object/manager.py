@@ -116,13 +116,9 @@ class ObjectManager(BaseObjectManager):
 
     def update_movement(self, ref_player):
         """ Send ref_player update movement packets to near players. """
-        LOG.debug("Updating movement of " + ref_player.name)
-        
         ref_guid = ref_player.guid
         dist_range = float(CONFIG["world"]["update_range"])
         players_guids = self.players_in_range_of(ref_player, dist_range)
-
-        LOG.debug("In range " + str(players_guids))
 
         update_movement_guids, update_create_guids = \
             self._tracking_and_untracking_players(
@@ -130,9 +126,6 @@ class ObjectManager(BaseObjectManager):
                 players_guids,
                 update = True
             )
-
-        LOG.debug("MVM and CREATE " + str(update_movement_guids) + ", " +
-                    str(update_create_guids))
 
         infos = { "object": ref_player, "is_player": False }
         create_packet = PlayerSpawnPacket(infos)
