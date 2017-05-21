@@ -1,10 +1,10 @@
 DuratorEmu
 ==========
 
-This is a World of Warcraft 1.1.2.4125 tiny emulator, written in Python, which
-tries to remain small, clean and understandable. The goal is to handle several
-player and basic stuff like chat and groups to have some fun with old school
-exploration techniques.
+This is a World of Warcraft 1.1.2.4125 tiny server emulator, written in Python,
+which tries to remain small, clean and understandable. The goal is to handle
+several player and basic stuff like chat and groups to have some fun with old
+school exploration techniques.
 
 I'll repeat that again: it is a TINY emulator, which means that it is not meant
 for serious use (you shouldn't run a serious private server anyway). There are
@@ -17,6 +17,8 @@ that correctly. It would mean that I have to look in my reading notes about the
 readers-writers problems and stuff, and these notes are almost unreadable.
 
 Use it to have fun exploring with a few friends, that's all.
+
+Demo: https://youtu.be/uucpgeK3ILk
 
 
 
