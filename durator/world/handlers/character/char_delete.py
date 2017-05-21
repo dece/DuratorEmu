@@ -4,7 +4,7 @@ from struct import Struct
 from durator.world.game.character.manager import CharacterManager
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class CharDeleteResponseCode(Enum):

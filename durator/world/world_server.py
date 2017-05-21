@@ -7,8 +7,8 @@ from durator.world.game.chat.manager import ChatManager
 from durator.world.game.object.manager import ObjectManager
 from durator.world.realm import Realm, RealmId, RealmFlags, RealmPopulation
 from durator.world.world_connection import WorldConnection
-from pyshgck.concurrency import simple_thread
-from pyshgck.logger import LOG
+from pyshgck.conc import simple_thread
+from durator.common.log import LOG
 
 
 class WorldServer(object):
@@ -90,7 +90,8 @@ class WorldServer(object):
 
     def _handle_client(self, connection, address):
         """ Start the threaded WorldConnection and add it to the local list. """
-        LOG.info("Accepting client connection from " + str(address))
+        address_string = str(address[0]) + ":" + str(address[1])
+        LOG.info("Accepting client connection from " + address_string)
         world_connection = WorldConnection(self, connection)
 
         with self.world_connections_lock:

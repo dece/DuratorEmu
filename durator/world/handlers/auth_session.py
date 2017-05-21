@@ -11,7 +11,7 @@ from durator.world.world_connection_state import WorldConnectionState
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring, read_struct
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class AuthSessionResponseCode(Enum):
@@ -101,7 +101,7 @@ class AuthSessionHandler(object):
         self.build = part1_data[0]
         self.unk = part1_data[1]
 
-        account_name_bytes = read_cstring(packet_io, packet_io.tell())
+        account_name_bytes = read_cstring(packet_io)
         self.account_name = account_name_bytes.decode("ascii")
 
         part2_data = read_struct(packet_io, self.PACKET_PART2_BIN)

@@ -3,7 +3,7 @@ import threading
 from peewee import MySQLDatabase, OperationalError
 
 from durator.config import CONFIG, DEBUG
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 _DB_NAME = CONFIG["db"]["db_name"]

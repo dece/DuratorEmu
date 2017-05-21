@@ -5,7 +5,7 @@ import argparse
 from durator.auth.login_server import LoginServer
 from durator.db.database_client import DatabaseClient
 from durator.world.world_server import WorldServer
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 MODULES = {

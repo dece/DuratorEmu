@@ -15,7 +15,7 @@ from durator.world.game.player_spawn_packet import PlayerSpawnPacket
 from durator.world.game.update_object_packet import (
     UpdateType, UpdateObjectPacket )
 from durator.world.world_connection_state import WorldConnectionState
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 def lock(func):

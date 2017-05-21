@@ -6,7 +6,7 @@ from durator.auth.login_connection_state import LoginConnectionState
 from durator.auth.srp import Srp
 from durator.common.account.account import AccountStatus
 from durator.common.account.managers import AccountManager
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class LoginChallenge(object):

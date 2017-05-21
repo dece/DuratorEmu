@@ -47,7 +47,8 @@ class RealmConnection(object):
     def _parse_realm_info_packet(self, packet):
         """ Parse that realm packet and grab the realm name. """
         packet_io = io.BytesIO(packet)
-        self.realm_name = read_cstring(packet_io, 5).decode("ascii")
+        packet_io.seek(5)  # skip some data, we only grab name for now
+        self.realm_name = read_cstring(packet_io).decode("ascii")
 
     def _get_realm_state(self, packet):
         realm_state = { "packet": packet, "last_update": time.time() }

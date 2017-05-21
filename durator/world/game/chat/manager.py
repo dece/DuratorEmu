@@ -10,7 +10,7 @@ from durator.world.game.chat.channel import Channel
 from durator.world.game.chat.message import ServerChatMessage, ChatMessageType
 from durator.world.game.chat.notification import Notification, NotificationType
 from durator.world.world_connection_state import WorldConnectionState
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 INTERNAL_NAME_PREFIX_MAP = {

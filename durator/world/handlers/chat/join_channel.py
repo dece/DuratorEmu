@@ -25,8 +25,8 @@ class JoinChannelHandler(object):
 
     def _parse_packet(self, packet):
         packet_io = io.BytesIO(packet)
-        channel_name_bytes = read_cstring(packet_io, 0)
-        password_bytes = read_cstring(packet_io, packet_io.tell())
+        channel_name_bytes = read_cstring(packet_io)
+        password_bytes = read_cstring(packet_io)
 
         self.channel_name = channel_name_bytes.decode("utf8")
         self.password = password_bytes.decode("utf8")

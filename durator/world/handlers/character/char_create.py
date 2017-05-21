@@ -8,7 +8,7 @@ from durator.world.game.character.constants import (
 from durator.world.opcodes import OpCode
 from durator.world.world_packet import WorldPacket
 from pyshgck.bin import read_cstring, read_struct
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class CharCreateResponseCode(Enum):
@@ -61,7 +61,7 @@ class CharCreateHandler(object):
 
     def _parse_packet(self, packet):
         packet_io = io.BytesIO(packet)
-        char_name_bytes = read_cstring(packet_io, 0)
+        char_name_bytes = read_cstring(packet_io)
         self.char_name = char_name_bytes.decode("utf8")
         char_data = read_struct(packet_io, self.PACKET_CHAR_BIN)
 

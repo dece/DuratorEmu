@@ -11,7 +11,7 @@ from durator.world.game.character.defaults import (
 from durator.world.game.skill.defaults import SKILL_MAX_LEVELS
 from durator.world.game.skill.skill import Skill
 from durator.world.game.spell.spell import Spell
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class CharacterManager(object):

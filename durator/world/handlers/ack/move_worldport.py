@@ -1,6 +1,6 @@
 from durator.world.opcodes import OpCode
 
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class MoveWorldportAckHandler(object):

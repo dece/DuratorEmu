@@ -5,7 +5,7 @@ from peewee import OperationalError
 from durator.common.account.managers import AccountManager
 from durator.db.database import DB, db_connection
 from durator.db.models import MODELS
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class DatabaseClient(object):

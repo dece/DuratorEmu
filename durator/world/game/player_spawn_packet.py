@@ -3,7 +3,7 @@ from durator.world.game.object.object_fields import (
 from durator.world.game.object.type.player import Player
 from durator.world.game.update_object_packet import (
     UpdateType, UpdateObjectPacket )
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 # These values are enough to let the client make the player show in world.

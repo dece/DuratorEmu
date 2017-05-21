@@ -5,7 +5,7 @@ from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.common.account.managers import AccountSessionManager
 from durator.db.database import db_connection
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class ReconChallenge(object):

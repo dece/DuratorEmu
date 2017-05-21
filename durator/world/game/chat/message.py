@@ -80,10 +80,10 @@ class ClientChatMessage(object):
         message.language = Language(header_data[1])
 
         if message.message_type == ChatMessageType.CHANNEL:
-            channel_name = read_cstring(data_io, data_io.tell())
+            channel_name = read_cstring(data_io)
             message.channel_name = channel_name.decode("utf8")
 
-        content = read_cstring(data_io, data_io.tell())
+        content = read_cstring(data_io)
         message.content = content.decode("utf8")
 
         return message

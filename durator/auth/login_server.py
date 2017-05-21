@@ -6,8 +6,8 @@ from durator.auth.login_connection import LoginConnection
 from durator.auth.realm_connection import RealmConnection
 from durator.common.account.managers import AccountSessionManager
 from durator.config import CONFIG
-from pyshgck.concurrency import simple_thread
-from pyshgck.logger import LOG
+from pyshgck.conc import simple_thread
+from durator.common.log import LOG
 
 
 class LoginServer(object):
@@ -96,7 +96,8 @@ class LoginServer(object):
 
     def _handle_client(self, connection, address):
         """ Start another thread to securely handle the client connection. """
-        LOG.info("Accepting client connection from " + str(address))
+        address_string = str(address[0]) + ":" + str(address[1])
+        LOG.info("Accepting client connection from " + address_string)
         login_connection = LoginConnection(self, connection)
         simple_thread(login_connection.handle_connection)
 

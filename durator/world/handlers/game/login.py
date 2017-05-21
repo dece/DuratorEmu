@@ -8,7 +8,7 @@ from durator.world.game.player_spawn_packet import PlayerSpawnPacket
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class PlayerLoginHandler(object):

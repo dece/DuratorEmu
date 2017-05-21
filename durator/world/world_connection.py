@@ -25,7 +25,7 @@ from durator.world.handlers.ping import PingHandler
 from durator.world.opcodes import OpCode
 from durator.world.world_connection_state import WorldConnectionState
 from durator.world.world_packet import WorldPacket, WorldPacketReceiver
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class WorldConnection(ConnectionAutomaton):

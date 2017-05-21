@@ -2,10 +2,10 @@ from struct import Struct
 import traceback
 
 from durator.common.crypto.session_cipher import SessionCipher
+from durator.common.log import LOG
 from durator.config import DEBUG
 from durator.world.opcodes import OpCode
 from pyshgck.format import dump_data
-from pyshgck.logger import LOG
 
 
 class WorldPacket(object):

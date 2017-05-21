@@ -5,7 +5,7 @@ from durator.common.account.account_data import AccountData, AccountDataType
 from durator.common.account.account_session import AccountSession
 from durator.common.crypto.md5 import md5
 from durator.db.database import db_connection
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class AccountManager(object):

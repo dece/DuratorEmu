@@ -7,7 +7,9 @@ from durator.auth.recon_challenge import ReconChallenge
 from durator.auth.recon_proof import ReconProof
 from durator.auth.srp import Srp
 from durator.common.networking.connection_automaton import ConnectionAutomaton
-from pyshgck.logger import LOG
+from durator.common.log import LOG
+from durator.config import DEBUG
+from pyshgck.format import dump_data
 
 
 class LoginConnection(ConnectionAutomaton):
@@ -51,6 +53,8 @@ class LoginConnection(ConnectionAutomaton):
         # with how short login messages are.
         try:
             data = self.socket.recv(1024)
+            if data and DEBUG:
+                print(dump_data(data), end = "")
             return data or None
         except ConnectionError:
             LOG.info("Lost connection.")

@@ -2,7 +2,7 @@ from struct import Struct
 
 from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class LoginProof(object):

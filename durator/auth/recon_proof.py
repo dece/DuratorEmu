@@ -4,7 +4,7 @@ from durator.auth.constants import LoginOpCode, LoginResult
 from durator.auth.login_connection_state import LoginConnectionState
 from durator.common.account.managers import AccountSessionManager
 from durator.common.crypto.sha1 import sha1
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class ReconProof(object):

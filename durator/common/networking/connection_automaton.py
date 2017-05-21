@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 import socket
 import traceback
 
-from pyshgck.logger import LOG
+from durator.common.log import LOG
 
 
 class ConnectionAutomaton(metaclass = ABCMeta):
