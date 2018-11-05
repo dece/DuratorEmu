@@ -5,7 +5,7 @@ from durator.common.crypto.session_cipher import SessionCipher
 from durator.common.log import LOG
 from durator.config import DEBUG
 from durator.world.opcodes import OpCode
-from pyshgck.format import dump_data
+from pyshgck.format import get_data_dump
 
 
 class WorldPacket(object):
@@ -22,7 +22,7 @@ class WorldPacket(object):
         """ Return ready-to-send bytes, possibly encrypted, from the packet. """
         if DEBUG:
             print(">>>", self.opcode)
-            print(dump_data(self.data), end = "")
+            print(get_data_dump(self.data), end = "")
 
         opcode_bytes = self.OUTGOING_OPCODE_BIN.pack(self.opcode.value)
         packet = opcode_bytes + self.data
@@ -64,7 +64,7 @@ class WorldPacketReceiver(object):
         if DEBUG:
             if self.opcode is not None:
                 print("<<<", self.opcode)
-            print(dump_data(self.content), end = "")
+            print(get_data_dump(self.content), end = "")
 
         packet = WorldPacket(self.opcode, self.content)
         self.clean()
