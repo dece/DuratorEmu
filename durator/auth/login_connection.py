@@ -9,7 +9,7 @@ from durator.auth.srp import Srp
 from durator.common.networking.connection_automaton import ConnectionAutomaton
 from durator.common.log import LOG
 from durator.config import DEBUG
-from pyshgck.format import dump_data
+from pyshgck.format import get_data_dump
 
 
 class LoginConnection(ConnectionAutomaton):
@@ -54,7 +54,7 @@ class LoginConnection(ConnectionAutomaton):
         try:
             data = self.socket.recv(1024)
             if data and DEBUG:
-                print(dump_data(data), end = "")
+                print(get_data_dump(data), end = "")
             return data or None
         except ConnectionError:
             LOG.info("Lost connection.")
